@@ -154,9 +154,9 @@ button:active,
 }
 
 .switcher-chip {
-  background: rgba(255, 255, 255, 0.86);
-  color: var(--text);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  color: var(--primary-fg);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
 .danger-button,
@@ -262,13 +262,7 @@ button:active,
 }
 
 .switcher-chip.active {
-  min-width: 72px;
-  height: 46px;
-  background: var(--primary);
-  color: var(--primary-fg);
-  border-color: rgba(17, 17, 17, 0.95);
-  border-width: 1px;
-  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.16);
+  background: linear-gradient(180deg, #151515 0%, #000000 100%);
 }
 
 .app-main {
@@ -1570,11 +1564,6 @@ select:focus {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.06);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
-  }
-
-  .switcher-chip {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.06);
   }
 
 
