@@ -753,6 +753,12 @@ function renderSwitcher() {
     button.addEventListener('click', () => showAthleteView(person.id));
     elements.athleteSwitcher.append(fragment);
   }
+  if (state.people.length > 3) {
+    const activeChip = elements.athleteSwitcher.querySelector('.switcher-chip.active');
+    if (activeChip) {
+      activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
 }
 
 function syncFormOptions() {

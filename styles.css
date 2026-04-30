@@ -214,9 +214,20 @@ button:active,
 .athlete-switcher {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
-  flex: 1;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  max-width: fit-content;
+  margin: 0 auto;
+}
+.athlete-switcher::-webkit-scrollbar {
+  display: none;
 }
 
 .topbar .brand-button,
@@ -237,6 +248,8 @@ button:active,
   font-weight: 500;
   line-height: 1;
   border-width: 1px;
+  flex-shrink: 0;
+  scroll-snap-align: center;
 }
 
 .switcher-chip.active {
