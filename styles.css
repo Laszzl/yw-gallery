@@ -215,6 +215,7 @@ button:active,
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  align-self: stretch;
 }
 
 /* 人数 > 3 时 JS 添加 .scrollable 类 */
@@ -228,7 +229,7 @@ button:active,
   max-width: 420px;
   padding: 0 6px;
   margin: 0 auto;
-  height: 46px;
+  height: 100%;
   align-items: center;
 }
 .athlete-switcher.scrollable::-webkit-scrollbar {
