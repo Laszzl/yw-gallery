@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YW Gallery</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-branding">
+          <button id="homeButton" class="brand-button" type="button">原味</button>
+        </div>
+        <nav id="athleteSwitcher" class="athlete-switcher"></nav>
+        <div class="topbar-actions">
+          <button id="addButton" class="primary-button" type="button">添加</button>
+          <button id="settingsButton" class="secondary-button" type="button">设置</button>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <section id="homeView" class="view-panel" hidden>
+          <section id="homeEmptyState" class="empty-state-panel" hidden>
+            <div class="empty-state-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <p class="empty-state-copy">还没有体育生，去设置里添加一位吧，然后就能管理他的装备和物品了</p>
+            <button id="emptySettingsButton" class="primary-button" type="button">去设置</button>
+          </section>
+          <section id="athleteSelectorGrid" class="athlete-selector-grid"></section>
+        </section>
+
+        <section id="athleteView" class="view-panel" hidden>
+          <section id="athleteDetailHero" class="athlete-detail-hero"></section>
+          <section id="athleteGroupedContent" class="grouped-content"></section>
+        </section>
+
+        <section id="addView" class="view-panel" hidden>
+          <div class="add-view-shell">
+            <div class="section-heading">
+              <h2>添加 YW</h2>
+            </div>
+            <form id="itemForm" class="glass-form add-item-form">
+              <div class="form-grid three-columns add-row-grid">
+                <label>
+                  <span>体育生</span>
+                  <select name="personId" id="itemPersonSelect" required></select>
+                </label>
+                <label>
+                  <span>大品类</span>
+                  <select name="groupId" id="itemGroupSelect" required></select>
+                </label>
+                <label>
+                  <span>小品类</span>
+                  <select name="categoryId" id="itemCategorySelect" required></select>
+                </label>
+              </div>
+              <div class="form-grid three-columns add-row-grid">
+                <label>
+                  <span>名称</span>
+                  <input name="label" type="text" required placeholder="如：白色长袜" />
+                </label>
+                <label>
+                  <span>数量</span>
+                  <input name="quantity" type="number" min="1" step="1" required value="1" />
+                </label>
+                <label>
+                  <span>单位</span>
+                  <input name="unit" type="text" required placeholder="如：双" />
+                </label>
+              </div>
+              <div class="form-grid three-columns add-row-grid add-row-grid-bottom">
+                <label>
+                  <span>备注</span>
+                  <input name="notes" type="text" placeholder="选填" />
+                </label>
+                <label class="status-field">
+                  <span>状态</span>
+                  <div class="checkbox-panel checkbox-panel-inline">
+                    <div class="checkbox-inline-group">
+                      <label class="checkbox-label">
+                        <input name="isGift" id="itemGiftInput" type="checkbox" />
+                        <span class="checkbox-ui"></span>
+                        <span>赠送</span>
+                      </label>
+                      <label class="checkbox-label">
+                        <input name="isOwnedNow" id="itemOwnedNowInput" type="checkbox" checked />
+                        <span class="checkbox-ui"></span>
+                        <span>当前现存</span>
+                      </label>
+                    </div>
+                  </div>
+                </label>
+                <div class="form-spacer" aria-hidden="true"></div>
+              </div>
+              <div class="upload-card">
+                <div>
+                  <span class="upload-title">YW 图片</span>
+                  <p id="itemPhotosSummary" class="upload-summary">可多选图片，未选择文件</p>
+                </div>
+                <div class="inline-actions">
+                  <label class="file-picker primary-button">
+                    选择图片
+                    <input name="photos" id="itemPhotosInput" type="file" accept="image/*" multiple />
+                  </label>
+                  <button id="clearItemFilesButton" class="mini-button" type="button">清空已选</button>
+                </div>
+              </div>
+              <div class="form-footer-actions">
+                <button type="submit" class="primary-button">保存 YW</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section id="settingsView" class="view-panel" hidden>
+          <div class="settings-layout">
+            <section class="settings-block wide-block">
+              <div class="section-heading left">
+                <h2>体育生设置</h2>
+              </div>
+              <div class="settings-person-shell settings-person-card">
+                <div class="person-form-layout person-manager-layout">
+                  <label class="inline-field grow-field select-only-field person-name-field" aria-label="当前体育生">
+                    <select id="settingsPersonSelect"></select>
+                  </label>
+                  <div class="person-photo-actions person-create-actions">
+                    <label class="file-picker mini-file-button action-button-wide">
+                      更换主页图片
+                      <input id="settingsPersonHomePhotoInput" type="file" accept="image/*" />
+                    </label>
+                    <label class="file-picker mini-file-button action-button-wide">
+                      更换个人页图片
+                      <input id="settingsPersonDetailPhotoInput" type="file" accept="image/*" />
+                    </label>
+                    <button id="settingsDeletePersonBtn" class="danger-button action-button-wide" type="button">删除体育生</button>
+                  </div>
+                </div>
+                <form id="personForm" class="compact-form person-card-form">
+                  <div class="person-form-layout">
+                    <label class="person-name-field">
+                      <input name="name" type="text" required placeholder="输入姓名" />
+                    </label>
+                    <div class="person-create-actions">
+                      <label class="file-picker mini-file-button action-button-wide">
+                        选择主页图
+                        <input name="homePhoto" id="personHomePhotoInput" type="file" accept="image/*" />
+                      </label>
+                      <label class="file-picker mini-file-button action-button-wide">
+                        选择个人页图
+                        <input name="detailPhoto" id="personDetailPhotoInput" type="file" accept="image/*" />
+                      </label>
+                      <button type="submit" class="primary-button action-button-wide">保存新体育生</button>
+                    </div>
+                  </div>
+                  <div class="dual-upload-grid person-upload-summary-grid">
+                    <div class="upload-card small-upload">
+                      <div>
+                        <span class="upload-title">主页图片</span>
+                        <p id="personHomePhotoSummary" class="upload-summary">未选择文件</p>
+                      </div>
+                    </div>
+                    <div class="upload-card small-upload">
+                      <div>
+                        <span class="upload-title">个人页图片</span>
+                        <p id="personDetailPhotoSummary" class="upload-summary">未选择文件</p>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </section>
+
+            <section class="settings-block wide-block">
+              <div class="section-heading left">
+                <h2>大小品类添加</h2>
+              </div>
+              <div class="settings-stack-layout">
+                <div class="settings-subcard">
+                  <h3>大品类</h3>
+                  <form id="groupForm" class="glass-form compact-form slim-form">
+                    <label>
+                      <input name="name" type="text" required placeholder="如：鞋子" />
+                    </label>
+                    <button type="submit" class="primary-button">保存大品类</button>
+                  </form>
+                </div>
+                <div class="settings-subcard">
+                  <h3>小品类</h3>
+                  <form id="categoryForm" class="glass-form compact-form slim-form">
+                    <div class="category-form-row">
+                      <label>
+                        <select name="groupId" id="categoryGroupSelect" required></select>
+                      </label>
+                      <label>
+                        <input name="name" type="text" required placeholder="如：运动鞋" />
+                      </label>
+                    </div>
+                    <button type="submit" class="primary-button">保存小品类</button>
+                  </form>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-block wide-block">
+              <div class="section-heading left">
+                <h2>大小品类查看</h2>
+              </div>
+              <div class="overview-toolbar">
+                <label class="inline-field overview-person-filter" aria-label="体育生选择">
+                  <select id="overviewPersonSelect"></select>
+                </label>
+              </div>
+              <div id="categoryOverviewList" class="overview-list"></div>
+            </section>
+            <section class="settings-block wide-block">
+              <div class="section-heading left">
+                <h2>数据管理</h2>
+              </div>
+              <div class="data-manage-actions">
+                <button id="exportDataBtn" class="primary-button" type="button">导出备份</button>
+                <label class="file-picker primary-button">
+                  导入备份
+                  <input id="importDataInput" type="file" accept=".json,application/json" />
+                </label>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="cropModal" class="modal-overlay" hidden>
+      <div class="modal-content crop-modal-content">
+        <h3>裁剪图片</h3>
+        <div id="cropPreviewContainer" class="crop-preview-container">
+          <img id="cropImage" alt="裁剪预览" />
+          <div id="cropOverlay" class="crop-overlay">
+            <div id="cropRect" class="crop-rect">
+              <div class="crop-handle crop-handle-tl" data-handle="tl"></div>
+              <div class="crop-handle crop-handle-tr" data-handle="tr"></div>
+              <div class="crop-handle crop-handle-bl" data-handle="bl"></div>
+              <div class="crop-handle crop-handle-br" data-handle="br"></div>
+            </div>
+          </div>
+        </div>
+        <div class="crop-modal-actions">
+          <button id="cropSkipBtn" class="mini-button">原图保存</button>
+          <button id="cropConfirmBtn" class="primary-button">确认裁剪</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="customModal" class="modal-overlay" hidden>
+      <div class="modal-content dialog-modal-content">
+        <p id="modalMessage" class="modal-msg"></p>
+        <div class="modal-actions">
+          <button id="modalConfirmBtn" class="primary-button">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="photoManageModal" class="modal-overlay" hidden>
+      <div class="modal-content photo-manage-content">
+        <h3 class="modal-title">图片管理</h3>
+        <div id="photoThumbGrid" class="photo-thumb-grid"></div>
+        <div class="modal-actions-col">
+          <button id="modalPhotoAddBtn" class="primary-button center-btn">添加图片</button>
+          <button id="modalPhotoDeleteBtn" class="danger-button center-btn">删除所有图片</button>
+        </div>
+        <input id="modalPhotoInput" type="file" accept="image/*" class="visually-hidden-input" />
+      </div>
+    </div>
+
+    <div id="itemActionsModal" class="modal-overlay" hidden>
+      <div class="modal-content item-actions-content">
+        <h3 class="modal-title">更多操作</h3>
+        <div class="modal-actions-col item-actions-list">
+          <button id="itemActionManageBtn" class="primary-button center-btn" type="button">图片管理</button>
+          <button id="itemActionDeleteBtn" class="danger-button center-btn" type="button">删除</button>
+        </div>
+      </div>
+    </div>
+
+    <template id="photoThumbTemplate">
+      <div class="photo-thumb-item">
+        <img class="photo-thumb-img" alt="缩略图" />
+        <button class="photo-thumb-replace" type="button">替换</button>
+      </div>
+    </template>
+
+    <template id="switcherChipTemplate">
+      <button class="switcher-chip" type="button"></button>
+    </template>
+
+    <template id="selectorCardTemplate">
+      <article class="selector-card">
+        <div class="selector-image-wrap">
+          <img class="selector-image" alt="体育生图片" />
+          <div class="selector-image-placeholder">暂无照片</div>
+          <div class="selector-name-overlay">
+            <h2 class="selector-name"></h2>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <template id="detailHeroTemplate">
+      <article class="detail-hero-card">
+        <div class="detail-hero-image-wrap">
+          <img class="detail-hero-image" alt="体育生图片" />
+          <div class="detail-hero-placeholder">暂无照片</div>
+        </div>
+        <h1 class="detail-hero-name"></h1>
+      </article>
+    </template>
+
+    <template id="categorySectionTemplate">
+      <section class="category-section">
+        <div class="category-section-header">
+          <h2 class="category-section-title"></h2>
+        </div>
+        <div class="subcategory-sections"></div>
+      </section>
+    </template>
+
+    <template id="subcategoryTemplate">
+      <section class="subcategory-block">
+        <div class="subcategory-header">
+          <div>
+            <h3 class="subcategory-title"></h3>
+            <p class="subcategory-counts"></p>
+          </div>
+          <div class="subcategory-actions">
+            <button class="mini-button icon-btn subtle-icon-btn" data-subcategory-toggle type="button" title="切换展开状态">
+              <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="subcategory-content">
+          <div class="rail-block">
+            <div class="rail-list image-items-rail"></div>
+          </div>
+          <div class="rail-block text-rail-block">
+            <div class="rail-list text-items-rail"></div>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <template id="ywCardTemplate">
+      <article class="yw-card rail-card">
+        <div class="yw-card-image-wrap">
+          <img class="yw-card-image" alt="YW 图片" draggable="false" />
+        </div>
+        <div class="yw-card-body">
+          <div class="card-topline">
+            <div>
+              <h3 class="yw-title"></h3>
+              <p class="yw-notes"></p>
+            </div>
+            <div class="item-menu-wrap">
+              <button class="mini-button icon-btn" data-item-menu-toggle type="button" title="更多操作">
+                <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <template id="textItemTemplate">
+      <article class="text-item-row rail-card">
+        <div class="text-item-copy">
+          <h4 class="text-item-title"></h4>
+          <p class="text-item-notes"></p>
+        </div>
+        <div class="item-menu-wrap compact-menu-wrap">
+          <button class="mini-button icon-btn" data-item-menu-toggle type="button" title="更多操作">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+          </button>
+        </div>
+      </article>
+    </template>
+
+    <template id="overviewGroupTemplate">
+      <section class="overview-group-card">
+        <div class="overview-group-header">
+          <div>
+            <h3 class="overview-group-title"></h3>
+            <p class="overview-group-meta"></p>
+          </div>
+          <div class="overview-group-actions">
+            <button class="mini-button danger-lite-button icon-btn" data-group-delete type="button" title="删除">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+            </button>
+            <button class="mini-button icon-btn subtle-icon-btn" data-group-toggle type="button" title="切换展开状态">
+              <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="overview-group-content"></div>
+      </section>
+    </template>
+
+    <template id="overviewCategoryTemplate">
+      <div class="manager-row overview-category-row">
+        <div class="manager-copy">
+          <span class="manager-row-title"></span>
+        </div>
+        <div class="order-actions">
+          <button class="mini-button danger-lite-button icon-btn" data-category-delete type="button" title="删除">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
