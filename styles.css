@@ -214,19 +214,25 @@ button:active,
 .athlete-switcher {
   display: flex;
   gap: 10px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: center;
+}
+
+/* 人数 > 3 时 JS 添加 .scrollable 类 */
+.athlete-switcher.scrollable {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-  max-width: fit-content;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  max-width: 430px;
   margin: 0 auto;
 }
-.athlete-switcher::-webkit-scrollbar {
+.athlete-switcher.scrollable::-webkit-scrollbar {
   display: none;
 }
 

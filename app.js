@@ -743,6 +743,8 @@ function showSettingsView() { viewState.currentView = 'settings'; renderAll(); }
 
 function renderSwitcher() {
   elements.athleteSwitcher.innerHTML = '';
+  const overflow = state.people.length > 3;
+  elements.athleteSwitcher.classList.toggle('scrollable', overflow);
   for (const person of state.people) {
     const fragment = elements.templates.switcherChip.content.cloneNode(true);
     const button = fragment.querySelector('.switcher-chip');
@@ -753,7 +755,7 @@ function renderSwitcher() {
     button.addEventListener('click', () => showAthleteView(person.id));
     elements.athleteSwitcher.append(fragment);
   }
-  if (state.people.length > 3) {
+  if (overflow) {
     const activeChip = elements.athleteSwitcher.querySelector('.switcher-chip.active');
     if (activeChip) {
       activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
