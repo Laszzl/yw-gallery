@@ -263,7 +263,7 @@ button:active,
 
 .switcher-chip.active {
   background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
-  color: var(--primary-fg);
+  color: #ffffff;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
