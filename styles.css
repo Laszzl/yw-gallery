@@ -216,6 +216,9 @@ button:active,
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  background: rgba(15, 23, 42, 0.035);
+  border-radius: 30px;
+  padding: 5px;
 }
 
 /* 人数 > 3 时 JS 添加 .scrollable 类 */
@@ -229,7 +232,7 @@ button:active,
   mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(255,255,255,1) 5%, rgba(255,255,255,1) 95%, rgba(0,0,0,0) 100%);
   -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(255,255,255,1) 5%, rgba(255,255,255,1) 95%, rgba(0,0,0,0) 100%);
   max-width: 420px;
-  padding: 0 12px;
+  padding: 5px 12px;
   margin: 0 auto;
 }
 .athlete-switcher.scrollable::-webkit-scrollbar {
@@ -1579,6 +1582,10 @@ select:focus {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.06);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  }
+
+  .athlete-switcher {
+    background: rgba(255, 255, 255, 0.05);
   }
 
   /* Panels */
