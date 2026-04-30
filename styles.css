@@ -223,12 +223,12 @@ button:active,
   flex-wrap: nowrap;
   justify-content: flex-start;
   overflow-x: auto;
-  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%);
   max-width: 430px;
   margin: 0 auto;
 }
@@ -255,7 +255,6 @@ button:active,
   line-height: 1;
   border-width: 1px;
   flex-shrink: 0;
-  scroll-snap-align: center;
 }
 
 .switcher-chip.active {

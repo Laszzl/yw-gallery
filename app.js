@@ -758,7 +758,9 @@ function renderSwitcher() {
   if (overflow) {
     const activeChip = elements.athleteSwitcher.querySelector('.switcher-chip.active');
     if (activeChip) {
-      activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      requestAnimationFrame(() => {
+        activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      });
     }
   }
 }
