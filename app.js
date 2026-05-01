@@ -214,6 +214,7 @@ function cacheElements() {
     settingsView: document.querySelector('#settingsView'),
 
     athleteSwitcher: document.querySelector('#athleteSwitcher'),
+    switcherScrollArea: document.querySelector('.switcher-scroll-area'),
     homeEmptyState: document.querySelector('#homeEmptyState'),
     athleteSelectorGrid: document.querySelector('#athleteSelectorGrid'),
     athleteDetailHero: document.querySelector('#athleteDetailHero'),
@@ -742,17 +743,9 @@ function showAthleteView(personId) { viewState.currentView = 'athlete'; viewStat
 function showSettingsView() { viewState.currentView = 'settings'; renderAll(); }
 
 function renderSwitcher() {
-  elements.athleteSwitcher.innerHTML = '';
+  elements.switcherScrollArea.innerHTML = '';
   const overflow = state.people.length > 3;
   elements.athleteSwitcher.classList.toggle('scrollable', overflow);
-
-  let chipContainer = elements.athleteSwitcher;
-  if (overflow) {
-    chipContainer = document.createElement('div');
-    chipContainer.className = 'switcher-scroll-inner';
-    elements.athleteSwitcher.appendChild(chipContainer);
-  }
-
   for (const person of state.people) {
     const fragment = elements.templates.switcherChip.content.cloneNode(true);
     const button = fragment.querySelector('.switcher-chip');
@@ -761,10 +754,10 @@ function renderSwitcher() {
       button.classList.add('active');
     }
     button.addEventListener('click', () => showAthleteView(person.id));
-    chipContainer.append(fragment);
+    elements.switcherScrollArea.append(fragment);
   }
   if (overflow) {
-    const activeChip = elements.athleteSwitcher.querySelector('.switcher-chip.active');
+    const activeChip = elements.switcherScrollArea.querySelector('.switcher-chip.active');
     if (activeChip) {
       requestAnimationFrame(() => {
         activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
