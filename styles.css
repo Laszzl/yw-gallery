@@ -267,7 +267,6 @@ button:active,
 .switcher-chip.active {
   background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: #ffffff;
-  box-shadow: var(--shadow-control);
 }
 
 .app-main {
@@ -1570,10 +1569,6 @@ select:focus {
   .switcher-chip {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.06);
-  }
-
-  .switcher-chip.active {
-    box-shadow: var(--shadow-control);
   }
 
   /* Panels */
