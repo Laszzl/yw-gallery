@@ -15,7 +15,6 @@
   --danger-bg: rgba(192, 54, 44, 0.10);
   --accent-soft: rgba(17, 17, 17, 0.04);
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
-  --shadow-control: 0 8px 20px rgba(15, 23, 42, 0.05);
   --shadow-elevated: 0 20px 42px rgba(15, 23, 42, 0.1);
   --shadow-floating: 0 16px 32px rgba(15, 23, 42, 0.07);
   --radius-2xl: 36px;
@@ -134,38 +133,37 @@ button:active,
   color: var(--primary-fg);
   font-size: 1.05rem;
   letter-spacing: 0.08em;
-  box-shadow: var(--shadow-control);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
 .primary-button,
 .secondary-button {
   background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: var(--primary-fg);
-  box-shadow: var(--shadow-control);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
 .mini-button,
 .mini-file-button,
 .subtle-icon-btn,
 .file-picker:not(.primary-button) {
-  background: var(--panel-strong);
+  background: rgba(255, 255, 255, 0.86);
   color: var(--text);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-control);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
 .switcher-chip {
-  background: var(--panel-strong);
+  background: rgba(255, 255, 255, 0.86);
   color: var(--text);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-control);
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .danger-button,
 .danger-lite-button {
   background: var(--danger-bg);
   color: var(--danger);
-  box-shadow: var(--shadow-control);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
 .topbar-actions,
@@ -228,7 +226,7 @@ button:active,
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   max-width: 420px;
-  padding: 10px 6px 20px;
+  padding: 20px 6px;
   margin: 0 auto;
   align-items: center;
 }
@@ -267,6 +265,7 @@ button:active,
 .switcher-chip.active {
   background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: #ffffff;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
 .app-main {
@@ -327,9 +326,9 @@ button:active,
   height: 84px;
   display: grid;
   place-items: center;
-  border-radius: var(--radius-xl);
+  border-radius: 28px;
   color: var(--muted);
-  background: var(--accent-soft);
+  background: rgba(17, 17, 17, 0.04);
 }
 
 .empty-state-copy {
@@ -347,7 +346,7 @@ button:active,
 .selector-card {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-xl);
+  border-radius: 30px;
   cursor: pointer;
   transition: transform 0.28s ease, box-shadow 0.28s ease;
   background: var(--panel-strong);
@@ -446,7 +445,7 @@ button:active,
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: #ffffff;
-  box-shadow: var(--shadow-control);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   will-change: transform;
 }
@@ -470,8 +469,8 @@ button:active,
   gap: 16px;
   padding: 20px 22px;
   border-radius: var(--radius-lg);
-  background: var(--panel-strong);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: var(--shadow-soft);
 }
 
@@ -491,8 +490,8 @@ button:active,
   min-height: 100%;
   padding: 16px 20px;
   border-radius: var(--radius-lg);
-  background: var(--panel-strong);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: var(--shadow-soft);
 }
 
@@ -572,7 +571,7 @@ button:active,
 
 .category-section {
   padding: 28px;
-  background: var(--panel-soft);
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .category-section-header,
@@ -598,8 +597,8 @@ button:active,
 }
 
 .manager-row {
-  background: var(--panel);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .order-row .order-actions {
@@ -634,7 +633,7 @@ button:active,
 }
 
 .subcategory-block {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(15, 23, 42, 0.05);
   border-radius: var(--radius-xl);
   padding: 24px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(250, 250, 252, 0.98));
@@ -724,12 +723,12 @@ button:active,
 
 .yw-card,
 .text-item-row {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(15, 23, 42, 0.04);
   box-shadow: none;
 }
 
 .yw-card {
-  background: var(--panel-strong);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .yw-card-image-wrap {
@@ -759,7 +758,7 @@ button:active,
   justify-content: space-between;
   gap: 16px;
   align-items: flex-start;
-  background: var(--panel-strong);
+  background: rgba(255, 255, 255, 0.94);
 }
 
 .text-item-copy {
@@ -802,7 +801,7 @@ button:active,
 .settings-person-card {
   padding: 28px;
   border-radius: var(--radius-xl);
-  background: var(--panel);
+  background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(255, 255, 255, 0.72);
   box-shadow: var(--shadow-soft);
 }
@@ -1002,9 +1001,9 @@ button:active,
 .overview-category-row {
   margin-bottom: 0;
   margin-top: 8px;
-  background: var(--panel-strong);
+  background: rgba(255, 255, 255, 0.92);
   box-shadow: none;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .overview-empty {
@@ -1040,11 +1039,11 @@ select {
   width: 100%;
   min-height: 52px;
   border-radius: 16px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   padding: 0 40px 0 16px;
-  background: var(--panel-strong);
+  background: rgba(255, 255, 255, 0.92);
   color: var(--text);
-  box-shadow: var(--shadow-control);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
   transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, border-color 0.22s ease;
   will-change: transform;
 }
@@ -1083,7 +1082,7 @@ input[type="number"]:focus,
 select:focus {
   border-color: rgba(17, 17, 17, 0.24);
   background-color: #ffffff;
-  box-shadow: var(--shadow-control), 0 0 0 4px rgba(17, 17, 17, 0.05);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05), 0 0 0 4px rgba(17, 17, 17, 0.05);
 }
 
 
@@ -1138,6 +1137,11 @@ select:focus {
   justify-content: center;
 }
 
+.subtle-icon-btn {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
 .icon-btn svg {
   width: 20px;
   height: 20px;
@@ -1164,9 +1168,9 @@ select:focus {
 }
 
 .modal-content {
-  background: var(--panel-strong);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: var(--radius-xl);
+  border-radius: 30px;
   padding: 32px;
   width: min(420px, 100%);
   text-align: center;
@@ -1531,7 +1535,6 @@ select:focus {
     --danger-bg: rgba(255, 105, 97, 0.12);
     --accent-soft: rgba(255, 255, 255, 0.06);
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
-    --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
     --shadow-elevated: 0 20px 42px rgba(0, 0, 0, 0.4);
     --shadow-floating: 0 16px 32px rgba(0, 0, 0, 0.3);
   }
@@ -1548,12 +1551,12 @@ select:focus {
   .secondary-button,
   .file-picker.primary-button {
     color: #ffffff;
-    box-shadow: var(--shadow-control);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   }
 
   .danger-button,
   .danger-lite-button {
-    box-shadow: var(--shadow-control);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   }
 
   /* Mini / subtle buttons */
@@ -1563,12 +1566,16 @@ select:focus {
   .file-picker:not(.primary-button) {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.06);
-    box-shadow: var(--shadow-control);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   }
 
   .switcher-chip {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .switcher-chip.active {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   }
 
   /* Panels */
@@ -1623,6 +1630,11 @@ select:focus {
     background: rgba(44, 44, 46, 0.96);
   }
 
+  .yw-card,
+  .text-item-row {
+    border-color: rgba(255, 255, 255, 0.04);
+  }
+
   .text-item-row {
     background: rgba(44, 44, 46, 0.94);
   }
@@ -1671,7 +1683,7 @@ select:focus {
   .checkbox-panel {
     background: #2c2c2e;
     border-color: var(--line);
-    box-shadow: var(--shadow-control);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   }
 
   .checkbox-panel:active {
@@ -1691,7 +1703,7 @@ select:focus {
     background-color: #2c2c2e;
     border-color: rgba(255, 255, 255, 0.08);
     color: var(--text);
-    box-shadow: var(--shadow-control);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   }
 
   input[type="text"]:active,
@@ -1706,7 +1718,7 @@ select:focus {
   select:focus {
     border-color: rgba(255, 255, 255, 0.32);
     background-color: rgba(255, 255, 255, 0.1);
-    box-shadow: var(--shadow-control), 0 0 0 4px rgba(255, 255, 255, 0.06);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18), 0 0 0 4px rgba(255, 255, 255, 0.06);
   }
 
   select {
@@ -1784,6 +1796,5 @@ select:focus {
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
   }
-
 }
 
