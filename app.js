@@ -252,6 +252,7 @@ function cacheElements() {
     itemActionsModal: document.querySelector('#itemActionsModal'),
     itemActionManageBtn: document.querySelector('#itemActionManageBtn'),
     itemActionDeleteBtn: document.querySelector('#itemActionDeleteBtn'),
+    itemStatusToggles: document.querySelectorAll('.toggle-switch[data-status-toggle]'),
     cropModal: document.querySelector('#cropModal'),
     cropPreviewContainer: document.querySelector('#cropPreviewContainer'),
     cropImage: document.querySelector('#cropImage'),
@@ -1073,6 +1074,26 @@ function appendTextItemCard(container, item) {
 function openItemActionsModal(itemId, type) {
   activeItemAction = { itemId, type };
   elements.itemActionsModal.hidden = false;
+
+  const item = state.items.find((i) => i.id === itemId);
+
+  for (const toggle of elements.itemStatusToggles) {
+    const key = toggle.dataset.statusToggle;
+    const value = item?.[key] ?? false;
+    toggle.classList.toggle('active', value);
+    toggle.setAttribute('aria-checked', String(value));
+    toggle.onclick = async () => {
+      const active = toggle.classList.toggle('active');
+      toggle.setAttribute('aria-checked', String(active));
+      const currentItem = state.items.find((i) => i.id === itemId);
+      if (currentItem) {
+        currentItem[key] = active;
+        await saveState();
+        renderAll();
+      }
+    };
+  }
+
   elements.itemActionManageBtn.onclick = () => {
     const current = activeItemAction;
     closeItemActionsModal();
@@ -1089,6 +1110,9 @@ function closeItemActionsModal() {
   elements.itemActionsModal.hidden = true;
   elements.itemActionManageBtn.onclick = null;
   elements.itemActionDeleteBtn.onclick = null;
+  for (const toggle of elements.itemStatusToggles) {
+    toggle.onclick = null;
+  }
   activeItemAction = null;
 }
 

@@ -275,6 +275,20 @@
     <div id="itemActionsModal" class="modal-overlay" hidden>
       <div class="modal-content item-actions-content">
         <h3 class="modal-title">更多操作</h3>
+        <div class="item-status-toggles">
+          <div class="status-toggle-row">
+            <span class="status-toggle-label">赠送</span>
+            <button class="toggle-switch" data-status-toggle="isGift" type="button" role="switch">
+              <span class="toggle-knob"></span>
+            </button>
+          </div>
+          <div class="status-toggle-row">
+            <span class="status-toggle-label">现存</span>
+            <button class="toggle-switch" data-status-toggle="isOwnedNow" type="button" role="switch">
+              <span class="toggle-knob"></span>
+            </button>
+          </div>
+        </div>
         <div class="modal-actions-col item-actions-list">
           <button id="itemActionManageBtn" class="primary-button center-btn" type="button">图片管理</button>
           <button id="itemActionDeleteBtn" class="danger-button center-btn" type="button">删除</button>
