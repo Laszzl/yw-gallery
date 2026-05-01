@@ -235,11 +235,14 @@ button:active,
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  overflow-y: visible;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   align-items: center;
+  padding-top: 12px;
+  padding-bottom: 28px;
+  margin-top: -12px;
+  margin-bottom: -28px;
 }
 .athlete-switcher.scrollable .switcher-scroll-area::-webkit-scrollbar {
   display: none;
