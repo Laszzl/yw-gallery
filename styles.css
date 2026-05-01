@@ -158,6 +158,7 @@ button:active,
   background: var(--panel-strong);
   color: var(--text);
   border: 1px solid var(--line);
+  box-shadow: var(--shadow-control);
 }
 
 .danger-button,
