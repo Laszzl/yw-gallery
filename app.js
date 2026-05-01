@@ -745,6 +745,14 @@ function renderSwitcher() {
   elements.athleteSwitcher.innerHTML = '';
   const overflow = state.people.length > 3;
   elements.athleteSwitcher.classList.toggle('scrollable', overflow);
+
+  let chipContainer = elements.athleteSwitcher;
+  if (overflow) {
+    chipContainer = document.createElement('div');
+    chipContainer.className = 'switcher-scroll-inner';
+    elements.athleteSwitcher.appendChild(chipContainer);
+  }
+
   for (const person of state.people) {
     const fragment = elements.templates.switcherChip.content.cloneNode(true);
     const button = fragment.querySelector('.switcher-chip');
@@ -753,7 +761,7 @@ function renderSwitcher() {
       button.classList.add('active');
     }
     button.addEventListener('click', () => showAthleteView(person.id));
-    elements.athleteSwitcher.append(fragment);
+    chipContainer.append(fragment);
   }
   if (overflow) {
     const activeChip = elements.athleteSwitcher.querySelector('.switcher-chip.active');

@@ -217,20 +217,24 @@ button:active,
   justify-content: center;
 }
 
-/* 人数 > 3 时 JS 添加 .scrollable 类 */
+/* 人数 > 3 时 JS 添加 .scrollable 类 —— 外层容器 overflow:visible 让阴影自由溢出 */
 .athlete-switcher.scrollable {
-  flex-wrap: nowrap;
-  justify-content: flex-start;
+  max-width: 420px;
+  padding: 0 6px;
+  margin: 0 auto;
+}
+
+/* 内层滚动容器，承载 overflow-x:auto，与外层解耦避免裁剪 chip 阴影 */
+.switcher-scroll-inner {
+  display: flex;
+  gap: 10px;
+  align-items: center;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
-  max-width: 420px;
-  padding: 20px 6px;
-  margin: 0 auto;
-  align-items: center;
 }
-.athlete-switcher.scrollable::-webkit-scrollbar {
+.switcher-scroll-inner::-webkit-scrollbar {
   display: none;
 }
 .athlete-switcher.scrollable .switcher-chip {
