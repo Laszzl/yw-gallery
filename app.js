@@ -1089,7 +1089,6 @@ function openItemActionsModal(itemId, type) {
       if (currentItem) {
         currentItem[key] = active;
         await saveState();
-        renderAll();
       }
     };
   }
@@ -1113,6 +1112,7 @@ function closeItemActionsModal() {
   for (const toggle of elements.itemStatusToggles) {
     toggle.onclick = null;
   }
+  renderAll();
   activeItemAction = null;
 }
 
