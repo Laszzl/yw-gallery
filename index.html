@@ -44,7 +44,6 @@
         </section>
 
         <section id="addView" class="view-panel" hidden>
-          <div class="add-view-shell">
             <div class="section-heading">
               <h2>添加 YW</h2>
             </div>
@@ -118,7 +117,6 @@
                 <button type="submit" class="primary-button">保存 YW</button>
               </div>
             </form>
-          </div>
         </section>
 
         <section id="settingsView" class="view-panel" hidden>
@@ -127,7 +125,6 @@
               <div class="section-heading left">
                 <h2>体育生设置</h2>
               </div>
-              <div class="settings-person-shell settings-person-card">
                 <div class="person-form-layout person-manager-layout">
                   <label class="inline-field grow-field select-only-field person-name-field" aria-label="当前体育生">
                     <select id="settingsPersonSelect"></select>
@@ -176,7 +173,6 @@
                     </div>
                   </div>
                 </form>
-              </div>
             </section>
 
             <section class="settings-block wide-block">
@@ -184,18 +180,15 @@
                 <h2>大小品类添加</h2>
               </div>
               <div class="settings-stack-layout">
-                <div class="settings-subcard">
-                  <h3>大品类</h3>
-                  <form id="groupForm" class="glass-form compact-form slim-form">
+                  <form id="groupForm" class="glass-form">
+                    <h3 class="form-heading">大品类</h3>
                     <label>
                       <input name="name" type="text" required placeholder="如：鞋子" />
                     </label>
                     <button type="submit" class="primary-button">保存大品类</button>
                   </form>
-                </div>
-                <div class="settings-subcard">
-                  <h3>小品类</h3>
-                  <form id="categoryForm" class="glass-form compact-form slim-form">
+                  <form id="categoryForm" class="glass-form">
+                    <h3 class="form-heading">小品类</h3>
                     <div class="category-form-row">
                       <label>
                         <select name="groupId" id="categoryGroupSelect" required></select>
@@ -206,7 +199,6 @@
                     </div>
                     <button type="submit" class="primary-button">保存小品类</button>
                   </form>
-                </div>
               </div>
             </section>
 

@@ -190,7 +190,6 @@ button:active,
 .empty-inline,
 .settings-block,
 .manager-row,
-.settings-subcard,
 .overview-group-card,
 .upload-card {
   background: var(--panel-strong);
@@ -205,8 +204,7 @@ button:active,
 .settings-block,
 .glass-form,
 .overview-group-card,
-.upload-card,
-.settings-subcard {
+.upload-card {
   border-radius: var(--radius-xl);
 }
 
@@ -318,12 +316,17 @@ button:active,
 }
 
 .section-heading h2,
-.settings-subcard h3,
+.form-heading,
 .category-section-title,
 .subcategory-title,
 .overview-group-title {
   margin: 0;
   letter-spacing: -0.02em;
+}
+
+.form-heading {
+  font-size: 1.17em;
+  font-weight: 600;
 }
 
 .empty-state-panel {
@@ -427,7 +430,7 @@ button:active,
   text-shadow: 0 4px 14px rgba(0, 0, 0, 0.32);
 }
 
-.add-view-shell {
+#addView {
   display: grid;
   gap: 12px;
 }
@@ -791,8 +794,7 @@ button:active,
 }
 
 .settings-block,
-.glass-form,
-.settings-subcard {
+.glass-form {
   padding: 26px;
   display: grid;
   gap: 18px;
@@ -806,19 +808,6 @@ button:active,
   grid-column: 1 / -1;
 }
 
-
-.settings-person-shell {
-  display: grid;
-  gap: 20px;
-}
-
-.settings-person-card {
-  padding: 28px;
-  border-radius: var(--radius-xl);
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: var(--shadow-soft);
-}
 
 .person-card-form {
   display: grid;
@@ -906,22 +895,6 @@ button:active,
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-}
-
-.settings-subcard {
-  align-content: start;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  background: transparent;
-}
-
-.slim-form {
-  background: transparent;
-  box-shadow: none;
-}
-
-.slim-form select,
-.slim-form input[type="text"] {
-  height: 52px;
 }
 
 .category-form-row {
@@ -1344,7 +1317,6 @@ select:focus {
   .category-section,
   .settings-block,
   .glass-form,
-  .settings-subcard,
   .empty-state-panel,
   .subcategory-block,
   .upload-card,
@@ -1603,7 +1575,6 @@ select:focus {
   .empty-inline,
   .settings-block,
   .manager-row,
-  .settings-subcard,
   .overview-group-card,
   .upload-card {
     border-color: rgba(255, 255, 255, 0.06);
@@ -1669,16 +1640,6 @@ select:focus {
 
   .overview-group-header {
     background: transparent;
-  }
-
-  .settings-person-card {
-    background: rgba(44, 44, 46, 0.82);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: var(--shadow-soft);
-  }
-
-  .settings-subcard {
-    border-color: rgba(255, 255, 255, 0.08);
   }
 
   .upload-card {
