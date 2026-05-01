@@ -235,6 +235,7 @@ button:active,
   display: flex;
   gap: 10px;
   overflow-x: auto;
+  overflow-y: visible;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
