@@ -1128,7 +1128,15 @@ function openPhotoManageModal(itemId) {
     const item = state.items.find((i) => i.id === itemId);
     if (!item) return;
     deleteBtn.hidden = !item.photoUrls || item.photoUrls.length === 0;
-    for (let i = 0; i < (item.photoUrls || []).length; i++) {
+    const photoCount = (item.photoUrls || []).length;
+    if (photoCount === 0) {
+      const emptyEl = document.createElement('div');
+      emptyEl.className = 'photo-thumb-empty';
+      emptyEl.textContent = '暂无图片';
+      thumbGrid.appendChild(emptyEl);
+      return;
+    }
+    for (let i = 0; i < photoCount; i++) {
       const frag = elements.templates.photoThumb.content.cloneNode(true);
       const thumbImg = frag.querySelector('.photo-thumb-img');
       const replaceBtn = frag.querySelector('.photo-thumb-replace');
