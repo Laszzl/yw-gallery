@@ -877,6 +877,7 @@ function renderAthleteView() {
   for (const group of groupsWithContent) {
     elements.athleteGroupedContent.append(renderGroupSection(person.id, group));
   }
+  setupRailMasks();
 }
 
 function renderCategoryOverview() {
@@ -1755,6 +1756,63 @@ async function cropMultipleInputFiles(input, aspectRatio) {
   }
   setInputFiles(input, cropped);
   syncFileSummaries();
+}
+
+// ═══════════════════════════════════════════════
+// 滚动边界模糊
+// ═══════════════════════════════════════════════
+function updateRailMask(rail) {
+  var scrollLeft = rail.scrollLeft;
+  var maxScroll = rail.scrollWidth - rail.clientWidth;
+
+  if (maxScroll <= 1) {
+    rail.style.setProperty('--rail-mask-image', 'none');
+    return;
+  }
+
+  var atStart = scrollLeft <= 1;
+  var atEnd = scrollLeft >= maxScroll - 1;
+  var fadeWidth = '32px';
+
+  var maskImage;
+  if (atStart && atEnd) {
+    maskImage = 'none';
+  } else if (atStart) {
+    maskImage = 'linear-gradient(to right, black 0%, black calc(100% - ' + fadeWidth + '), transparent 100%)';
+  } else if (atEnd) {
+    maskImage = 'linear-gradient(to right, transparent 0%, black ' + fadeWidth + ', black 100%)';
+  } else {
+    maskImage = 'linear-gradient(to right, transparent 0%, black ' + fadeWidth + ', black calc(100% - ' + fadeWidth + '), transparent 100%)';
+  }
+
+  rail.style.setProperty('--rail-mask-image', maskImage);
+}
+
+var _railMaskResizeObserver = null;
+
+function setupRailMasks() {
+  if (!_railMaskResizeObserver) {
+    _railMaskResizeObserver = new ResizeObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        updateRailMask(entries[i].target);
+      }
+    });
+  }
+
+  var rails = document.querySelectorAll('.rail-list');
+  for (var i = 0; i < rails.length; i++) {
+    var rail = rails[i];
+    if (rail.dataset.railMaskSetup) {
+      updateRailMask(rail);
+      continue;
+    }
+    rail.dataset.railMaskSetup = '1';
+    rail.addEventListener('scroll', function () {
+      updateRailMask(this);
+    }, { passive: true });
+    _railMaskResizeObserver.observe(rail);
+    updateRailMask(rail);
+  }
 }
 
 // ═══════════════════════════════════════════════

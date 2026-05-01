@@ -703,6 +703,8 @@ button:active,
   padding: 6px 4px 12px;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  -webkit-mask-image: var(--rail-mask-image, none);
+  mask-image: var(--rail-mask-image, none);
 }
 
 .rail-list::-webkit-scrollbar {
