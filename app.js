@@ -1089,6 +1089,11 @@ function openItemActionsModal(itemId, type) {
       if (currentItem) {
         currentItem[key] = active;
         await saveState();
+        const card = document.querySelector(`[data-item-id="${itemId}"]`);
+        if (card) {
+          const title = card.querySelector('.yw-title, .text-item-title');
+          if (title) title.textContent = formatItemLabel(currentItem);
+        }
       }
     };
   }
@@ -1112,7 +1117,6 @@ function closeItemActionsModal() {
   for (const toggle of elements.itemStatusToggles) {
     toggle.onclick = null;
   }
-  renderAll();
   activeItemAction = null;
 }
 
