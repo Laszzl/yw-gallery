@@ -1434,14 +1434,6 @@ select:focus {
   padding: 4px 0;
 }
 
-.photo-thumb-empty {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: var(--muted);
-  font-size: var(--text-sm);
-  padding: 8px 0;
-}
-
 .photo-thumb-item {
   position: relative;
   aspect-ratio: 1 / 1;

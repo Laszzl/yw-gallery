@@ -1130,12 +1130,10 @@ function openPhotoManageModal(itemId) {
     deleteBtn.hidden = !item.photoUrls || item.photoUrls.length === 0;
     const photoCount = (item.photoUrls || []).length;
     if (photoCount === 0) {
-      const emptyEl = document.createElement('div');
-      emptyEl.className = 'photo-thumb-empty';
-      emptyEl.textContent = '暂无图片';
-      thumbGrid.appendChild(emptyEl);
+      thumbGrid.style.display = 'none';
       return;
     }
+    thumbGrid.style.display = '';
     for (let i = 0; i < photoCount; i++) {
       const frag = elements.templates.photoThumb.content.cloneNode(true);
       const thumbImg = frag.querySelector('.photo-thumb-img');
