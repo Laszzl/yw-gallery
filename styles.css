@@ -15,6 +15,7 @@
   --danger-bg: rgba(192, 54, 44, 0.10);
   --accent-soft: rgba(17, 17, 17, 0.04);
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
+  --shadow-control: 0 8px 20px rgba(15, 23, 42, 0.05);
   --shadow-elevated: 0 20px 42px rgba(15, 23, 42, 0.1);
   --shadow-floating: 0 16px 32px rgba(15, 23, 42, 0.07);
   --radius-2xl: 36px;
@@ -133,14 +134,14 @@ button:active,
   color: var(--primary-fg);
   font-size: 1.05rem;
   letter-spacing: 0.08em;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-control);
 }
 
 .primary-button,
 .secondary-button {
   background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: var(--primary-fg);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-control);
 }
 
 .mini-button,
@@ -150,7 +151,7 @@ button:active,
   background: var(--panel-strong);
   color: var(--text);
   border: 1px solid var(--line);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-control);
 }
 
 .switcher-chip {
@@ -163,7 +164,7 @@ button:active,
 .danger-lite-button {
   background: var(--danger-bg);
   color: var(--danger);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-control);
 }
 
 .topbar-actions,
@@ -265,7 +266,7 @@ button:active,
 .switcher-chip.active {
   background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: #ffffff;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-control);
 }
 
 .app-main {
@@ -445,7 +446,7 @@ button:active,
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: #ffffff;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-control);
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   will-change: transform;
 }
@@ -1043,7 +1044,7 @@ select {
   padding: 0 40px 0 16px;
   background: var(--panel-strong);
   color: var(--text);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-control);
   transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, border-color 0.22s ease;
   will-change: transform;
 }
@@ -1082,7 +1083,7 @@ input[type="number"]:focus,
 select:focus {
   border-color: rgba(17, 17, 17, 0.24);
   background-color: #ffffff;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05), 0 0 0 4px rgba(17, 17, 17, 0.05);
+  box-shadow: var(--shadow-control), 0 0 0 4px rgba(17, 17, 17, 0.05);
 }
 
 
@@ -1530,6 +1531,7 @@ select:focus {
     --danger-bg: rgba(255, 105, 97, 0.12);
     --accent-soft: rgba(255, 255, 255, 0.06);
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
+    --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
     --shadow-elevated: 0 20px 42px rgba(0, 0, 0, 0.4);
     --shadow-floating: 0 16px 32px rgba(0, 0, 0, 0.3);
   }
@@ -1546,12 +1548,12 @@ select:focus {
   .secondary-button,
   .file-picker.primary-button {
     color: #ffffff;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-control);
   }
 
   .danger-button,
   .danger-lite-button {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-control);
   }
 
   /* Mini / subtle buttons */
@@ -1561,7 +1563,7 @@ select:focus {
   .file-picker:not(.primary-button) {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.06);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-control);
   }
 
   .switcher-chip {
@@ -1570,7 +1572,7 @@ select:focus {
   }
 
   .switcher-chip.active {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-control);
   }
 
   /* Panels */
@@ -1673,7 +1675,7 @@ select:focus {
   .checkbox-panel {
     background: #2c2c2e;
     border-color: var(--line);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-control);
   }
 
   .checkbox-panel:active {
@@ -1693,7 +1695,7 @@ select:focus {
     background-color: #2c2c2e;
     border-color: rgba(255, 255, 255, 0.08);
     color: var(--text);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-control);
   }
 
   input[type="text"]:active,
@@ -1708,7 +1710,7 @@ select:focus {
   select:focus {
     border-color: rgba(255, 255, 255, 0.32);
     background-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18), 0 0 0 4px rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-control), 0 0 0 4px rgba(255, 255, 255, 0.06);
   }
 
   select {
