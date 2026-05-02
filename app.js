@@ -361,7 +361,7 @@ function syncFileSummaries() {
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-');
-  return `${parseInt(y, 10)}年${parseInt(m, 10)}月${parseInt(d, 10)}日`;
+  return `${parseInt(y, 10)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
 }
 
 function formatItemLabel(item) {
@@ -1044,7 +1044,7 @@ function appendImageItemCard(container, item) {
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '1998年3月25日';
+  dateEl.textContent = formatDate(item.date) || item.notes || '1998/3/25';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'image'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1079,7 +1079,7 @@ function appendTextItemCard(container, item) {
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '1998年3月25日';
+  dateEl.textContent = formatDate(item.date) || item.notes || '1998/3/25';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'text'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
