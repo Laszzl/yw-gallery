@@ -97,7 +97,7 @@ button:active,
   align-items: center;
   gap: 20px;
   position: sticky;
-  top: 24px;
+  top: 0;
   z-index: 100;
   margin-bottom: 12px;
   padding: 18px 22px;
@@ -1506,7 +1506,7 @@ select:focus {
   }
 
   .topbar {
-    top: 16px;
+    top: 0;
     padding: 18px;
     border-radius: 28px;
   }
