@@ -522,6 +522,14 @@ async function deleteCategory(categoryId) {
 // ═══════════════════════════════════════════════
 // CRUD: Items
 // ═══════════════════════════════════════════════
+function moveItemToFront(item) {
+  const siblings = state.items
+    .filter((i) => i.personId === item.personId && i.categoryId === item.categoryId && i.id !== item.id)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  item.order = 0;
+  siblings.forEach((sib, i) => { sib.order = i + 1; });
+}
+
 async function createItem(itemData) {
   const item = {
     id: crypto.randomUUID(),
@@ -534,9 +542,10 @@ async function createItem(itemData) {
     isGift: itemData.isGift,
     isOwnedNow: itemData.isOwnedNow,
     photoUrls: itemData.photoUrls || [],
-    order: state.items.filter((i) => i.categoryId === itemData.categoryId && i.personId === itemData.personId).length,
+    order: 0,
   };
   state.items.push(item);
+  moveItemToFront(item);
   await saveState();
   return item;
 }
@@ -548,7 +557,10 @@ async function deleteItem(itemId) {
 
 async function updateItemPhotos(itemId, photoUrls) {
   const item = state.items.find((i) => i.id === itemId);
-  if (item) item.photoUrls = photoUrls;
+  if (item) {
+    item.photoUrls = photoUrls;
+    moveItemToFront(item);
+  }
   await saveState();
 }
 
