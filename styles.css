@@ -701,19 +701,13 @@ button:active,
   gap: 18px;
   overflow-x: auto;
   padding: 6px 4px 12px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  scrollbar-width: none;
   -webkit-mask-image: var(--rail-mask-image, none);
   mask-image: var(--rail-mask-image, none);
 }
 
 .rail-list::-webkit-scrollbar {
-  height: 6px;
-}
-
-.rail-list::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 3px;
+  display: none;
 }
 
 .rail-card {
