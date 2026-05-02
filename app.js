@@ -99,6 +99,105 @@ function restoreStateFromData(data) {
   state.collapsedSettingsGroups = data.collapsedSettingsGroups || {};
   state.groupOrderByPerson = data.groupOrderByPerson || {};
   state.categoryOrderByPerson = data.categoryOrderByPerson || {};
+  return normalizeState();
+}
+
+function normalizeOrderList(currentOrder, validIds) {
+  const validSet = new Set(validIds);
+  const seen = new Set();
+  const normalized = [];
+
+  if (Array.isArray(currentOrder)) {
+    for (const id of currentOrder) {
+      if (validSet.has(id) && !seen.has(id)) {
+        normalized.push(id);
+        seen.add(id);
+      }
+    }
+  }
+
+  for (const id of validIds) {
+    if (!seen.has(id)) normalized.push(id);
+  }
+
+  return normalized;
+}
+
+function arraysEqual(a, b) {
+  if (!Array.isArray(a) || a.length !== b.length) return false;
+  return a.every((value, index) => value === b[index]);
+}
+
+function normalizeState() {
+  let changed = false;
+  const peopleIds = state.people.map((p) => p.id);
+  const peopleIdSet = new Set(peopleIds);
+  const groupIds = state.groups.map((g) => g.id);
+  const groupIdSet = new Set(groupIds);
+
+  if (!state.groupOrderByPerson || typeof state.groupOrderByPerson !== 'object') {
+    state.groupOrderByPerson = {};
+    changed = true;
+  }
+  if (!state.categoryOrderByPerson || typeof state.categoryOrderByPerson !== 'object') {
+    state.categoryOrderByPerson = {};
+    changed = true;
+  }
+
+  for (const personId of Object.keys(state.groupOrderByPerson)) {
+    if (!peopleIdSet.has(personId)) {
+      delete state.groupOrderByPerson[personId];
+      changed = true;
+    }
+  }
+  for (const personId of Object.keys(state.categoryOrderByPerson)) {
+    if (!peopleIdSet.has(personId)) {
+      delete state.categoryOrderByPerson[personId];
+      changed = true;
+    }
+  }
+
+  for (const person of state.people) {
+    const currentGroupOrder = state.groupOrderByPerson[person.id];
+    const nextGroupOrder = normalizeOrderList(currentGroupOrder, groupIds);
+    if (!arraysEqual(currentGroupOrder, nextGroupOrder)) {
+      state.groupOrderByPerson[person.id] = nextGroupOrder;
+      changed = true;
+    }
+
+    if (!state.categoryOrderByPerson[person.id] || typeof state.categoryOrderByPerson[person.id] !== 'object') {
+      state.categoryOrderByPerson[person.id] = {};
+      changed = true;
+    }
+
+    const categoryOrderMap = state.categoryOrderByPerson[person.id];
+    for (const groupId of Object.keys(categoryOrderMap)) {
+      if (!groupIdSet.has(groupId)) {
+        delete categoryOrderMap[groupId];
+        changed = true;
+      }
+    }
+
+    for (const group of state.groups) {
+      const categoryIds = state.categories.filter((c) => c.groupId === group.id).map((c) => c.id);
+      if (!categoryIds.length) {
+        if (categoryOrderMap[group.id]) {
+          delete categoryOrderMap[group.id];
+          changed = true;
+        }
+        continue;
+      }
+
+      const currentCategoryOrder = categoryOrderMap[group.id];
+      const nextCategoryOrder = normalizeOrderList(currentCategoryOrder, categoryIds);
+      if (!arraysEqual(currentCategoryOrder, nextCategoryOrder)) {
+        categoryOrderMap[group.id] = nextCategoryOrder;
+        changed = true;
+      }
+    }
+  }
+
+  return changed;
 }
 
 async function loadState() {
@@ -112,7 +211,8 @@ async function loadState() {
       request.onerror = () => reject(request.error);
     });
     if (data) {
-      restoreStateFromData(data);
+      const changed = restoreStateFromData(data);
+      if (changed) await saveState();
       return true;
     }
   } catch (e) {
@@ -794,24 +894,7 @@ function ensureCategoryOrderForPersonGroup(personId, groupId) {
 }
 
 async function syncMissingGroupOrders() {
-  let changed = false;
-  for (const person of state.people) {
-    if (!Array.isArray(state.groupOrderByPerson[person.id])) {
-      state.groupOrderByPerson[person.id] = state.groups.map((g) => g.id);
-      changed = true;
-    }
-    for (const group of state.groups) {
-      if (!state.groupOrderByPerson[person.id].includes(group.id)) {
-        state.groupOrderByPerson[person.id].push(group.id);
-        changed = true;
-      }
-    }
-    const before = state.groupOrderByPerson[person.id].length;
-    state.groupOrderByPerson[person.id] = state.groupOrderByPerson[person.id].filter((id) =>
-      state.groups.some((g) => g.id === id)
-    );
-    if (state.groupOrderByPerson[person.id].length !== before) changed = true;
-  }
+  const changed = normalizeState();
   if (changed) await saveState();
 }
 
@@ -831,7 +914,6 @@ function reorderGroupsByDrag(personId, draggedGroupId, targetGroupId) {
 }
 
 function reorderCategoriesByDrag(personId, groupId, draggedCategoryId, targetCategoryId) {
-  console.log('DEBUG reorderCategoriesByDrag', { personId, groupId, draggedCategoryId, targetCategoryId });
   const order = [...getCategoryOrderIdsForPersonGroup(personId, groupId)];
   const draggedIndex = order.indexOf(draggedCategoryId);
   const targetIndex = order.indexOf(targetCategoryId);
@@ -891,13 +973,11 @@ function reorderRailCardsByItemList(itemsInOrder) {
 function createDragHandler({ dragOverClass, onDrop }) {
   return function attachDrag(element, id) {
     element.draggable = true;
-    console.log('DEBUG attachDrag', { dragOverClass, element, id });
     element.addEventListener('dragstart', (event) => {
       event.stopPropagation();
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('text/plain', id);
       element.classList.add('dragging');
-      console.log('DEBUG dragstart', { dragOverClass, id });
     });
     element.addEventListener('dragend', () => {
       element.classList.remove('dragging');
@@ -922,7 +1002,6 @@ function createDragHandler({ dragOverClass, onDrop }) {
       event.preventDefault();
       element.classList.remove('drag-over');
       const draggedId = event.dataTransfer.getData('text/plain');
-      console.log('DEBUG drop', { dragOverClass, draggedId, targetId: id });
       if (!draggedId || draggedId === id) return;
       onDrop(draggedId, id);
     });
@@ -1214,6 +1293,8 @@ function renderGroupSection(personId, group) {
     const totalQty = categoryItems.reduce((sum, item) => sum + item.quantity, 0);
     const ownedQty = categoryItems.filter((item) => item.isOwnedNow).reduce((sum, item) => sum + item.quantity, 0);
     const collapseKey = `${personId}:${category.id}`;
+    block.dataset.personId = personId;
+    block.dataset.categoryId = category.id;
     if (state.collapsedSubcategories[collapseKey]) block.classList.add('collapsed');
     titleNode.textContent = category.name;
     countsNode.textContent = `总数量 ${totalQty} · 现存 ${ownedQty}`;
@@ -1235,7 +1316,7 @@ function renderGroupSection(personId, group) {
   return fragment;
 }
 
-function appendImageItemCard(container, item) {
+function buildImageItemCard(item) {
   const fragment = elements.templates.ywCard.content.cloneNode(true);
   const card = fragment.querySelector('.rail-card');
   const image = fragment.querySelector('.yw-card-image');
@@ -1269,10 +1350,14 @@ function appendImageItemCard(container, item) {
       });
     }
   }
-  container.append(fragment);
+  return card;
 }
 
-function appendTextItemCard(container, item) {
+function appendImageItemCard(container, item) {
+  container.append(buildImageItemCard(item));
+}
+
+function buildTextItemCard(item) {
   const fragment = elements.templates.textItem.content.cloneNode(true);
   const card = fragment.querySelector('.rail-card');
   const title = fragment.querySelector('.text-item-title');
@@ -1284,7 +1369,85 @@ function appendTextItemCard(container, item) {
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'text'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
-  container.append(fragment);
+  return card;
+}
+
+function appendTextItemCard(container, item) {
+  container.append(buildTextItemCard(item));
+}
+
+function findItemCard(itemId) {
+  return Array.from(document.querySelectorAll('.rail-card[data-item-id]')).find((card) => card.dataset.itemId === itemId) || null;
+}
+
+function getRenderedSubcategoryBlock(personId, categoryId) {
+  return Array.from(document.querySelectorAll('.subcategory-block[data-person-id][data-category-id]')).find((block) =>
+    block.dataset.personId === personId && block.dataset.categoryId === categoryId
+  ) || null;
+}
+
+function updateRailVisibility(block) {
+  const imageRail = block.querySelector('.image-items-rail');
+  const textRail = block.querySelector('.text-items-rail');
+  if (imageRail?.parentElement) imageRail.parentElement.hidden = imageRail.childElementCount === 0;
+  if (textRail?.parentElement) textRail.parentElement.hidden = textRail.childElementCount === 0;
+}
+
+function refreshCategoryCounts(personId, categoryId) {
+  const block = getRenderedSubcategoryBlock(personId, categoryId);
+  if (!block) return;
+  const categoryItems = state.items.filter((item) => item.personId === personId && item.categoryId === categoryId);
+  const countsNode = block.querySelector('.subcategory-counts');
+  if (!countsNode) return;
+  const totalQty = categoryItems.reduce((sum, item) => sum + item.quantity, 0);
+  const ownedQty = categoryItems.filter((item) => item.isOwnedNow).reduce((sum, item) => sum + item.quantity, 0);
+  countsNode.textContent = `总数量 ${totalQty} · 现存 ${ownedQty}`;
+}
+
+function removeEmptyRenderedSubcategory(personId, categoryId) {
+  if (state.items.some((item) => item.personId === personId && item.categoryId === categoryId)) return false;
+  const block = getRenderedSubcategoryBlock(personId, categoryId);
+  if (!block) return false;
+  const section = block.closest('.category-section');
+  block.remove();
+  if (section && !section.querySelector('.subcategory-block')) section.remove();
+  return true;
+}
+
+function refreshItemCard(itemId) {
+  const item = state.items.find((i) => i.id === itemId);
+  if (!item) return;
+  const block = getRenderedSubcategoryBlock(item.personId, item.categoryId);
+  if (!block) return;
+
+  const targetRail = (item.photoUrls || []).length > 0
+    ? block.querySelector('.image-items-rail')
+    : block.querySelector('.text-items-rail');
+  if (!targetRail) return;
+
+  const currentCard = findItemCard(itemId);
+  const nextCard = (item.photoUrls || []).length > 0 ? buildImageItemCard(item) : buildTextItemCard(item);
+  if (currentCard) currentCard.replaceWith(nextCard);
+  targetRail.prepend(nextCard);
+
+  refreshCategoryCounts(item.personId, item.categoryId);
+  updateRailVisibility(block);
+  setupRailMasks();
+}
+
+function removeItemCard(itemId, removedItem) {
+  const card = findItemCard(itemId);
+  if (card) card.remove();
+  if (!removedItem) return;
+  if (removeEmptyRenderedSubcategory(removedItem.personId, removedItem.categoryId)) {
+    setupRailMasks();
+    return;
+  }
+  const block = getRenderedSubcategoryBlock(removedItem.personId, removedItem.categoryId);
+  if (!block) return;
+  refreshCategoryCounts(removedItem.personId, removedItem.categoryId);
+  updateRailVisibility(block);
+  setupRailMasks();
 }
 
 // ═══════════════════════════════════════════════
@@ -1313,6 +1476,7 @@ function openItemActionsModal(itemId, type) {
           const title = card.querySelector('.yw-title, .text-item-title');
           if (title) title.textContent = formatItemLabel(currentItem);
         }
+        refreshCategoryCounts(currentItem.personId, currentItem.categoryId);
       }
     };
   }
@@ -1357,7 +1521,12 @@ function closePhotoManageModal() {
 async function handleDeleteItem(itemId) {
   const item = state.items.find((i) => i.id === itemId);
   if (!item) return;
-  await confirmAndDelete(`确认删除 YW"${item.label}"吗？`, () => deleteItem(itemId), 'YW 已删除');
+  const removedItem = { personId: item.personId, categoryId: item.categoryId };
+  const confirmed = await showModal(`确认删除 YW"${item.label}"吗？`, { showCancel: true });
+  if (!confirmed) return;
+  await deleteItem(itemId);
+  removeItemCard(itemId, removedItem);
+  await showModal('YW 已删除');
 }
 
 function openPhotoManageModal(itemId) {
@@ -1426,7 +1595,7 @@ function openPhotoManageModal(itemId) {
           } else {
             await updateItemPhotos(itemId, [...item.photoUrls, ...photoUrls]);
           }
-          renderAll();
+          refreshItemCard(itemId);
           await showModal(`已更新 ${photoUrls.length} 张，剩余已取消`);
         } else {
           await showModal('已取消本次图片更新');
@@ -1445,7 +1614,7 @@ function openPhotoManageModal(itemId) {
     } else {
       await updateItemPhotos(itemId, [...item.photoUrls, ...photoUrls]);
     }
-    renderAll();
+    refreshItemCard(itemId);
     await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${photoUrls.length} 张图片`);
     renderThumbGrid();
     modal.hidden = false;
@@ -1476,7 +1645,7 @@ function openPhotoManageModal(itemId) {
     const confirmed = await showModal('确认删除所有图片吗？', { showCancel: true });
     if (!confirmed) { modal.hidden = false; return; }
     await updateItemPhotos(itemId, []);
-    renderAll();
+    refreshItemCard(itemId);
     await showModal('图片已删除');
     renderThumbGrid();
     modal.hidden = false;
@@ -1932,15 +2101,19 @@ function bindEvents() {
       const groupId = String(formData.get('groupId'));
       const categoryId = String(formData.get('categoryId'));
       const label = String(formData.get('label')).trim();
-      const quantity = Number(formData.get('quantity'));
+      const quantityRaw = String(formData.get('quantity')).trim();
+      const quantity = Number(quantityRaw);
       const unit = String(formData.get('unit')).trim();
       const date = String(formData.get('date')).trim() || '1998-03-25';
       const isGift = formData.has('isGift');
       const isOwnedNow = formData.has('isOwnedNow');
       const rawFiles = formData.getAll('photos').filter((f) => f instanceof File && f.size > 0);
 
-      if (!personId || !groupId || !categoryId || !label || !quantity || !unit) {
+      if (!personId || !groupId || !categoryId || !label || !quantityRaw || !unit) {
         await showModal('请把 YW 信息填写完整'); return;
+      }
+      if (!Number.isInteger(quantity) || quantity < 1) {
+        await showModal('数量必须是大于 0 的整数'); return;
       }
 
       const photoUrls = [];
