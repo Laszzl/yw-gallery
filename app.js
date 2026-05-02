@@ -1025,6 +1025,7 @@ function renderAll() {
   syncFormOptions();
   renderSwitcher();
   renderCurrentView();
+
 }
 
 function renderCurrentView() {
