@@ -1876,6 +1876,14 @@ async function initApp() {
   bindCropModalEvents();
   renderAll();
   syncFileSummaries();
+  updateTopbarScrollState();
+  window.addEventListener('scroll', updateTopbarScrollState, { passive: true });
+}
+
+function updateTopbarScrollState() {
+  var topbar = document.querySelector('.topbar');
+  if (!topbar) return;
+  topbar.classList.toggle('scrolled', window.scrollY > 10);
 }
 
 cacheElements();
