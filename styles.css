@@ -751,9 +751,10 @@ button:active,
 }
 
 .yw-card-body {
-  padding: 16px 18px;
+  padding: 18px 18px 20px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .yw-title,
@@ -763,6 +764,9 @@ button:active,
   font-weight: 600;
 }
 
+.card-topline {
+  align-items: center;
+}
 
 .text-item-row {
   padding: 20px;
