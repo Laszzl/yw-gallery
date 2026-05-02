@@ -103,10 +103,30 @@ button:active,
   padding: 18px 22px;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: var(--radius-2xl);
-  background: rgba(255, 255, 255, 0.62);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  --topbar-blur: 20px;
+  --topbar-saturate: 180%;
+  --topbar-alpha: 0.72;
+  background: rgba(255, 255, 255, var(--topbar-alpha));
+  backdrop-filter: blur(var(--topbar-blur)) saturate(var(--topbar-saturate));
+  -webkit-backdrop-filter: blur(var(--topbar-blur)) saturate(var(--topbar-saturate));
   box-shadow: var(--shadow-soft), 0 8px 16px rgba(15, 23, 42, 0.04);
+  transform: translateZ(0);
+  will-change: backdrop-filter;
+}
+
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
 .topbar-branding {
@@ -1561,7 +1581,11 @@ select:focus {
     flex-basis: 260px;
   }
 
-  .topbar,
+  .topbar {
+    --topbar-blur: 12px;
+    --topbar-saturate: 140%;
+  }
+
   .view-panel,
   .modal-overlay {
     backdrop-filter: none;
@@ -1759,8 +1783,17 @@ select:focus {
 
   /* Topbar */
   .topbar {
-    background: rgba(44, 44, 46, 0.62);
+    background: rgba(44, 44, 46, var(--topbar-alpha, 0.62));
     border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .topbar::before {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.02) 30%,
+      transparent 60%
+    );
   }
 
   /* Brand / primary / secondary — have dark gradient bg, text must stay white */

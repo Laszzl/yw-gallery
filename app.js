@@ -2260,6 +2260,31 @@ function setupRailMasks() {
 // ═══════════════════════════════════════════════
 // Init
 // ═══════════════════════════════════════════════
+// Progressive topbar blur — iOS 26 Liquid Glass style
+let topbarRaf = null;
+
+function updateTopbarGlass() {
+  var scrollY = window.scrollY;
+  var t = Math.min(scrollY / 120, 1);
+  var blur = 8 + t * 12;
+  var saturate = 100 + t * 80;
+  var alpha = 0.40 + t * 0.32;
+  var topbar = document.querySelector('.topbar');
+  if (topbar) {
+    topbar.style.setProperty('--topbar-blur', blur + 'px');
+    topbar.style.setProperty('--topbar-saturate', saturate + '%');
+    topbar.style.setProperty('--topbar-alpha', alpha);
+  }
+}
+
+function onScrollTopbar() {
+  if (topbarRaf) return;
+  topbarRaf = requestAnimationFrame(function () {
+    topbarRaf = null;
+    updateTopbarGlass();
+  });
+}
+
 async function initApp() {
   await loadState();
   await syncMissingGroupOrders();
@@ -2273,6 +2298,8 @@ async function initApp() {
   syncDateDisplay(elements.itemDateHidden.value);
   renderAll();
   syncFileSummaries();
+  window.addEventListener('scroll', onScrollTopbar, { passive: true });
+  updateTopbarGlass();
 }
 
 cacheElements();
