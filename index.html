@@ -79,7 +79,13 @@
               <div class="form-grid three-columns add-row-grid add-row-grid-bottom">
                 <label>
                   <span>日期</span>
-                  <input name="date" type="date" value="1998-03-25" />
+                  <div class="date-picker-field">
+                    <input type="hidden" name="date" value="1998-03-25" id="itemDateHidden" />
+                    <button type="button" class="date-display-button" id="itemDateDisplay">
+                      <span class="date-display-text">1998/3/25</span>
+                      <svg class="date-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                  </div>
                 </label>
                 <label class="status-field">
                   <span>状态</span>
@@ -292,6 +298,40 @@
         <div class="modal-actions-col item-actions-list">
           <button id="itemActionManageBtn" class="primary-button center-btn" type="button">图片管理</button>
           <button id="itemActionDeleteBtn" class="danger-button center-btn" type="button">删除</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="datePickerModal" class="modal-overlay" hidden>
+      <div class="modal-content date-picker-modal-content">
+        <h3 class="modal-title">选择日期</h3>
+        <div class="date-picker-columns">
+          <div class="date-picker-col">
+            <div class="date-col-label">年</div>
+            <div class="date-col-scroll" data-col="year">
+              <div class="date-col-spacer"></div>
+              <div class="date-col-spacer"></div>
+            </div>
+          </div>
+          <div class="date-picker-col">
+            <div class="date-col-label">月</div>
+            <div class="date-col-scroll" data-col="month">
+              <div class="date-col-spacer"></div>
+              <div class="date-col-spacer"></div>
+            </div>
+          </div>
+          <div class="date-picker-col">
+            <div class="date-col-label">日</div>
+            <div class="date-col-scroll" data-col="day">
+              <div class="date-col-spacer"></div>
+              <div class="date-col-spacer"></div>
+            </div>
+          </div>
+          <div class="date-picker-selection-bar"></div>
+        </div>
+        <div class="modal-actions date-picker-actions">
+          <button type="button" id="datePickerCancelBtn" class="mini-button">取消</button>
+          <button type="button" id="datePickerConfirmBtn" class="primary-button">确定</button>
         </div>
       </div>
     </div>

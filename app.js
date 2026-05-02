@@ -19,6 +19,8 @@ let activeItemAction = null;
 let photoManageState = { itemId: null, mode: null, replaceIndex: null };
 const formLocks = { person: false, group: false, category: false, item: false };
 
+const datePickerState = { year: 1998, month: 3, day: 25, scrollTimer: null };
+
 async function withFormLock(form, lockName, fn) {
   if (formLocks[lockName]) return;
   formLocks[lockName] = true;
@@ -258,6 +260,15 @@ function cacheElements() {
     cropImage: document.querySelector('#cropImage'),
     cropConfirmBtn: document.querySelector('#cropConfirmBtn'),
     cropSkipBtn: document.querySelector('#cropSkipBtn'),
+
+    itemDateHidden: document.querySelector('#itemDateHidden'),
+    itemDateDisplay: document.querySelector('#itemDateDisplay'),
+    datePickerModal: document.querySelector('#datePickerModal'),
+    datePickerCancelBtn: document.querySelector('#datePickerCancelBtn'),
+    datePickerConfirmBtn: document.querySelector('#datePickerConfirmBtn'),
+    dateYearScroll: document.querySelector('[data-col="year"]'),
+    dateMonthScroll: document.querySelector('[data-col="month"]'),
+    dateDayScroll: document.querySelector('[data-col="day"]'),
   });
 
   // Templates
@@ -362,6 +373,200 @@ function formatDate(dateStr) {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-');
   return `${parseInt(y, 10)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
+}
+
+function daysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+
+function toDateDisplay(dateStr) {
+  if (!dateStr) return '1998/3/25';
+  const [y, m, d] = dateStr.split('-');
+  return `${parseInt(y, 10)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
+}
+
+// ═══════════════════════════════════════════════
+// Date picker
+// ═══════════════════════════════════════════════
+function syncDateDisplay(dateStr) {
+  var formatted;
+  if (dateStr) {
+    formatted = dateStr;
+  } else {
+    var y = String(datePickerState.year);
+    var m = String(datePickerState.month).padStart(2, '0');
+    var d = String(datePickerState.day).padStart(2, '0');
+    formatted = y + '-' + m + '-' + d;
+  }
+  elements.itemDateHidden.value = formatted;
+  elements.itemDateDisplay.querySelector('.date-display-text').textContent = toDateDisplay(formatted);
+}
+
+function renderColumnItems(scrollEl, items, selectedValue, colType) {
+  var existing = scrollEl.querySelectorAll('.date-col-item');
+  for (var i = 0; i < existing.length; i++) { existing[i].remove(); }
+
+  var spacerBottom = scrollEl.querySelector('.date-col-spacer:last-child');
+  var fragment = document.createDocumentFragment();
+  for (var j = 0; j < items.length; j++) {
+    var item = document.createElement('div');
+    item.className = 'date-col-item';
+    item.textContent = String(items[j]);
+    item.dataset.value = String(items[j]);
+    item.dataset.col = colType;
+    item.addEventListener('click', function(e) {
+      handleDateItemClick(colType, parseInt(e.currentTarget.dataset.value, 10));
+    });
+    fragment.appendChild(item);
+  }
+  scrollEl.insertBefore(fragment, spacerBottom);
+}
+
+function renderYearColumn(scrollEl, selectedYear) {
+  var currentYear = new Date().getFullYear();
+  var items = [];
+  for (var y = currentYear; y >= 1950; y--) { items.push(y); }
+  renderColumnItems(scrollEl, items, selectedYear, 'year');
+}
+
+function renderMonthColumn(scrollEl, selectedMonth) {
+  var items = [];
+  for (var m = 1; m <= 12; m++) { items.push(m); }
+  renderColumnItems(scrollEl, items, selectedMonth, 'month');
+}
+
+function renderDayColumn(scrollEl, selectedDay, year, month) {
+  var maxDay = daysInMonth(year, month);
+  var items = [];
+  for (var d = 1; d <= maxDay; d++) { items.push(d); }
+  renderColumnItems(scrollEl, items, selectedDay, 'day');
+}
+
+function handleDateItemClick(colType, value) {
+  if (colType === 'year') datePickerState.year = value;
+  else if (colType === 'month') datePickerState.month = value;
+  else if (colType === 'day') datePickerState.day = value;
+
+  if (colType === 'year' || colType === 'month') {
+    refreshDayColumn();
+  }
+  updateColumnSelection(getScrollEl(colType), value);
+}
+
+function getScrollEl(colType) {
+  if (colType === 'year') return elements.dateYearScroll;
+  if (colType === 'month') return elements.dateMonthScroll;
+  return elements.dateDayScroll;
+}
+
+function onColumnScroll(e) {
+  var scrollEl = e.target;
+  if (!scrollEl.classList.contains('date-col-scroll')) return;
+
+  clearTimeout(datePickerState.scrollTimer);
+  datePickerState.scrollTimer = setTimeout(function() {
+    var selectedValue = getClosestSnapItem(scrollEl);
+    if (selectedValue === null) return;
+
+    var colType = scrollEl.dataset.col;
+    if (colType === 'year') datePickerState.year = selectedValue;
+    else if (colType === 'month') datePickerState.month = selectedValue;
+    else if (colType === 'day') datePickerState.day = selectedValue;
+
+    updateColumnSelection(scrollEl, selectedValue);
+
+    if (colType === 'year' || colType === 'month') {
+      refreshDayColumn();
+    }
+  }, 150);
+}
+
+function getClosestSnapItem(scrollEl) {
+  var items = scrollEl.querySelectorAll('.date-col-item');
+  var centerY = scrollEl.scrollTop + scrollEl.clientHeight / 2;
+  var closest = null;
+  var minDist = Infinity;
+  for (var i = 0; i < items.length; i++) {
+    var itemCenter = items[i].offsetTop + items[i].offsetHeight / 2;
+    var dist = Math.abs(itemCenter - centerY);
+    if (dist < minDist) {
+      minDist = dist;
+      closest = parseInt(items[i].dataset.value, 10);
+    }
+  }
+  return closest;
+}
+
+function updateColumnSelection(scrollEl, value) {
+  var items = scrollEl.querySelectorAll('.date-col-item');
+  for (var i = 0; i < items.length; i++) {
+    if (parseInt(items[i].dataset.value, 10) === value) {
+      items[i].classList.add('selected');
+    } else {
+      items[i].classList.remove('selected');
+    }
+  }
+}
+
+function scrollToSelectedItem(scrollEl, value) {
+  var items = scrollEl.querySelectorAll('.date-col-item');
+  for (var i = 0; i < items.length; i++) {
+    if (parseInt(items[i].dataset.value, 10) === value) {
+      var itemTop = items[i].offsetTop;
+      var scrollTarget = itemTop - (scrollEl.clientHeight / 2) + (items[i].offsetHeight / 2);
+      scrollEl.scrollTo({ top: scrollTarget, behavior: 'instant' });
+      break;
+    }
+  }
+}
+
+function refreshDayColumn() {
+  var maxDay = daysInMonth(datePickerState.year, datePickerState.month);
+  if (datePickerState.day > maxDay) {
+    datePickerState.day = maxDay;
+  }
+  renderDayColumn(elements.dateDayScroll, datePickerState.day, datePickerState.year, datePickerState.month);
+  requestAnimationFrame(function() {
+    scrollToSelectedItem(elements.dateDayScroll, datePickerState.day);
+    updateColumnSelection(elements.dateDayScroll, datePickerState.day);
+  });
+}
+
+function openDatePicker(dateStr) {
+  var parts = dateStr.split('-');
+  datePickerState.year = parseInt(parts[0], 10) || 1998;
+  datePickerState.month = parseInt(parts[1], 10) || 3;
+  datePickerState.day = parseInt(parts[2], 10) || 25;
+
+  renderYearColumn(elements.dateYearScroll, datePickerState.year);
+  renderMonthColumn(elements.dateMonthScroll, datePickerState.month);
+  renderDayColumn(elements.dateDayScroll, datePickerState.day, datePickerState.year, datePickerState.month);
+
+  requestAnimationFrame(function() {
+    scrollToSelectedItem(elements.dateYearScroll, datePickerState.year);
+    updateColumnSelection(elements.dateYearScroll, datePickerState.year);
+    scrollToSelectedItem(elements.dateMonthScroll, datePickerState.month);
+    updateColumnSelection(elements.dateMonthScroll, datePickerState.month);
+  });
+  requestAnimationFrame(function() {
+    scrollToSelectedItem(elements.dateDayScroll, datePickerState.day);
+    updateColumnSelection(elements.dateDayScroll, datePickerState.day);
+  });
+
+  elements.dateYearScroll.addEventListener('scroll', onColumnScroll, { passive: true });
+  elements.dateMonthScroll.addEventListener('scroll', onColumnScroll, { passive: true });
+  elements.dateDayScroll.addEventListener('scroll', onColumnScroll, { passive: true });
+
+  elements.datePickerModal.hidden = false;
+}
+
+function confirmDatePicker() {
+  syncDateDisplay();
+  elements.datePickerModal.hidden = true;
+}
+
+function cancelDatePicker() {
+  elements.datePickerModal.hidden = true;
 }
 
 function formatItemLabel(item) {
@@ -1669,6 +1874,17 @@ function bindEvents() {
     });
   });
 
+  // Date picker
+  elements.itemDateDisplay.addEventListener('click', function() {
+    openDatePicker(elements.itemDateHidden.value);
+  });
+
+  elements.datePickerConfirmBtn.addEventListener('click', confirmDatePicker);
+  elements.datePickerCancelBtn.addEventListener('click', cancelDatePicker);
+  elements.datePickerModal.addEventListener('click', function(e) {
+    if (e.target === elements.datePickerModal) cancelDatePicker();
+  });
+
   // Group form
   elements.groupForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -1737,6 +1953,7 @@ function bindEvents() {
       elements.itemForm.reset();
       elements.itemOwnedNowInput.checked = true;
       elements.itemGiftInput.checked = false;
+      syncDateDisplay('1998-03-25');
       // 确保文件 input 彻底清空
       elements.itemPhotosInput.value = '';
       elements.itemPersonSelect.value = personId;
@@ -1880,6 +2097,7 @@ async function initApp() {
   }
   bindEvents();
   bindCropModalEvents();
+  syncDateDisplay(elements.itemDateHidden.value);
   renderAll();
   syncFileSummaries();
 }

@@ -1073,6 +1073,156 @@ select:focus {
 }
 
 
+/* ── Date picker display button ── */
+.date-picker-field {
+  display: grid;
+  gap: 8px;
+}
+
+.date-display-button {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 0 40px 0 16px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: var(--text-base);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, border-color 0.22s ease;
+}
+
+.date-display-button:active {
+  transform: translateY(0);
+  opacity: 0.9;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.date-display-button:focus-visible {
+  border-color: rgba(17, 17, 17, 0.24);
+  background-color: #ffffff;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05), 0 0 0 4px rgba(17, 17, 17, 0.05);
+  outline: none;
+}
+
+.date-display-text {
+  font-variant-numeric: tabular-nums;
+  flex: 1;
+  text-align: left;
+}
+
+.date-chevron {
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: transform 0.22s ease;
+  position: absolute;
+  right: 14px;
+  pointer-events: none;
+}
+
+/* ── Date picker modal ── */
+.date-picker-modal-content {
+  width: min(420px, 94vw);
+  display: grid;
+  gap: 20px;
+}
+
+.date-picker-columns {
+  display: flex;
+  gap: 0;
+  position: relative;
+  height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.03);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.date-picker-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.date-col-label {
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 8px 0 4px;
+  letter-spacing: 0.04em;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.date-col-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0;
+}
+
+.date-col-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.date-col-item {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease, font-weight 0.15s ease;
+}
+
+.date-col-item.selected {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.date-col-spacer {
+  height: calc(110px - 22px);
+  flex-shrink: 0;
+}
+
+.date-picker-selection-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 44px;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  background: rgba(15, 23, 42, 0.02);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.date-picker-actions {
+  gap: 12px;
+}
+
+.date-picker-actions button {
+  flex: 1;
+}
+
 .checkbox-label {
   display: inline-flex;
   align-items: center;
@@ -1396,6 +1546,15 @@ select:focus {
   .modal-overlay {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+
+  .date-picker-modal-content {
+    width: min(380px, 94vw);
+    padding: 24px 20px;
+  }
+
+  .date-picker-columns {
+    height: 200px;
   }
 }
 
@@ -1826,6 +1985,43 @@ select:focus {
   .overview-group-card.drag-over,
   .overview-category-row.drag-over {
     outline-color: rgba(255, 255, 255, 0.25);
+  }
+
+  /* Date picker */
+  .date-display-button {
+    background-color: #2c2c2e;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  }
+
+  .date-display-button:active {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .date-display-button:focus-visible {
+    border-color: rgba(255, 255, 255, 0.32);
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18), 0 0 0 4px rgba(255, 255, 255, 0.06);
+  }
+
+  .date-picker-columns {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .date-picker-selection-bar {
+    border-top-color: rgba(255, 255, 255, 0.08);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .date-col-item {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .date-col-item.selected {
+    color: var(--text);
   }
 
   /* Glass form */
