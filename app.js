@@ -369,10 +369,14 @@ function syncFileSummaries() {
   elements.personDetailPhotoSummary.textContent = describeFiles(elements.personDetailPhotoInput.files, false);
 }
 
+function shortYear(y) {
+  return String(parseInt(y, 10) % 100).padStart(2, '0');
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-');
-  return `${parseInt(y, 10)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
+  return `${shortYear(y)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
 }
 
 function daysInMonth(year, month) {
@@ -380,9 +384,9 @@ function daysInMonth(year, month) {
 }
 
 function toDateDisplay(dateStr) {
-  if (!dateStr) return '1998/3/25';
+  if (!dateStr) return '98/3/25';
   const [y, m, d] = dateStr.split('-');
-  return `${parseInt(y, 10)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
+  return `${shortYear(y)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
 }
 
 // ═══════════════════════════════════════════════
@@ -566,7 +570,31 @@ function cancelDatePicker() {
 }
 
 function formatItemLabel(item) {
-  return item.label + (item.isGift ? ' · 赠送' : '') + (item.isOwnedNow ? ' · 现存' : ' · 非现存');
+  return item.label;
+}
+
+function populateStatusTags(container, item) {
+  container.innerHTML = '';
+  if (item.isGift) {
+    var giftTag = document.createElement('span');
+    giftTag.className = 'status-tag gift-tag';
+    giftTag.textContent = '赠送';
+    container.appendChild(giftTag);
+  }
+  var ownedTag = document.createElement('span');
+  ownedTag.className = 'status-tag ' + (item.isOwnedNow ? 'owned-tag' : 'gone-tag');
+  ownedTag.textContent = item.isOwnedNow ? '现存' : '非现存';
+  container.appendChild(ownedTag);
+}
+
+function setAccentColor(el, item) {
+  if (item.isGift) {
+    el.style.backgroundColor = '#e8a838';
+  } else if (item.isOwnedNow) {
+    el.style.backgroundColor = '#34c759';
+  } else {
+    el.style.backgroundColor = '#8e8e93';
+  }
 }
 
 function hasGroupContent(personId, groupId) {
@@ -1241,11 +1269,13 @@ function appendImageItemCard(container, item) {
   const image = fragment.querySelector('.yw-card-image');
   const imageWrap = fragment.querySelector('.yw-card-image-wrap');
   const title = fragment.querySelector('.yw-title');
+  const statusTags = fragment.querySelector('.yw-status-tags');
   const dateEl = fragment.querySelector('.yw-date');
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '1998/3/25';
+  populateStatusTags(statusTags, item);
+  dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'image'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1275,12 +1305,16 @@ function appendImageItemCard(container, item) {
 function appendTextItemCard(container, item) {
   const fragment = elements.templates.textItem.content.cloneNode(true);
   const card = fragment.querySelector('.rail-card');
+  const accent = fragment.querySelector('.text-item-accent');
   const title = fragment.querySelector('.text-item-title');
+  const statusTags = fragment.querySelector('.yw-status-tags');
   const dateEl = fragment.querySelector('.text-item-date');
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '1998/3/25';
+  populateStatusTags(statusTags, item);
+  setAccentColor(accent, item);
+  dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'text'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1308,10 +1342,12 @@ function openItemActionsModal(itemId, type) {
       if (currentItem) {
         currentItem[key] = active;
         await saveState();
-        const card = document.querySelector(`[data-item-id="${itemId}"]`);
+        var card = document.querySelector('[data-item-id="' + itemId + '"]');
         if (card) {
-          const title = card.querySelector('.yw-title, .text-item-title');
-          if (title) title.textContent = formatItemLabel(currentItem);
+          var statusTags = card.querySelector('.yw-status-tags');
+          if (statusTags) populateStatusTags(statusTags, currentItem);
+          var accent = card.querySelector('.text-item-accent');
+          if (accent) setAccentColor(accent, currentItem);
         }
       }
     };
