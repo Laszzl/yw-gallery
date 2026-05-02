@@ -594,7 +594,8 @@ button:active,
 .category-section-header,
 .subcategory-header,
 .manager-row,
-.overview-group-header {
+.overview-group-header,
+.card-topline {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -750,11 +751,7 @@ button:active,
 }
 
 .yw-card-body {
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
+  padding: 18px 18px 20px;
 }
 
 .yw-title,
@@ -762,6 +759,17 @@ button:active,
   margin: 0;
   font-size: var(--text-lg);
   font-weight: 600;
+  line-height: 1.32;
+  overflow-wrap: anywhere;
+}
+
+.card-topline {
+  align-items: center;
+}
+
+.card-topline > div:first-child,
+.text-item-copy {
+  min-width: 0;
 }
 
 .text-item-row {
@@ -1464,7 +1472,7 @@ select:focus {
   }
 
   .upload-card,
-  .yw-card-body,
+  .card-topline,
   .overview-group-header {
     flex-direction: column;
     align-items: stretch;
@@ -2031,4 +2039,3 @@ select:focus {
     background: rgba(44, 44, 46, 0.66);
   }
 }
-
