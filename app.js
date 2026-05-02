@@ -544,7 +544,7 @@ async function createItem(itemData) {
     label: itemData.label,
     quantity: itemData.quantity,
     unit: itemData.unit,
-    date: itemData.date || '1995-03-28',
+    date: itemData.date || '1998-03-25',
     isGift: itemData.isGift,
     isOwnedNow: itemData.isOwnedNow,
     photoUrls: itemData.photoUrls || [],
@@ -1044,7 +1044,7 @@ function appendImageItemCard(container, item) {
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '';
+  dateEl.textContent = formatDate(item.date) || item.notes || '1998年3月25日';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'image'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1079,7 +1079,7 @@ function appendTextItemCard(container, item) {
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '';
+  dateEl.textContent = formatDate(item.date) || item.notes || '1998年3月25日';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'text'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1718,7 +1718,7 @@ function bindEvents() {
       const label = String(formData.get('label')).trim();
       const quantity = Number(formData.get('quantity'));
       const unit = String(formData.get('unit')).trim();
-      const date = String(formData.get('date')).trim() || '1995-03-28';
+      const date = String(formData.get('date')).trim() || '1998-03-25';
       const isGift = formData.has('isGift');
       const isOwnedNow = formData.has('isOwnedNow');
       const rawFiles = formData.getAll('photos').filter((f) => f instanceof File && f.size > 0);
