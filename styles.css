@@ -594,8 +594,7 @@ button:active,
 .category-section-header,
 .subcategory-header,
 .manager-row,
-.overview-group-header,
-.card-topline {
+.overview-group-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -763,10 +762,6 @@ button:active,
   margin: 0;
   font-size: var(--text-lg);
   font-weight: 600;
-}
-
-.card-topline {
-  display: contents;
 }
 
 .text-item-row {
@@ -1469,7 +1464,7 @@ select:focus {
   }
 
   .upload-card,
-  .card-topline,
+  .yw-card-body,
   .overview-group-header {
     flex-direction: column;
     align-items: stretch;
