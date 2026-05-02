@@ -1253,7 +1253,7 @@ select:focus {
   width: 48px;
   height: 28px;
   border-radius: 28px;
-  background: rgba(15, 23, 42, 0.16);
+  background: rgba(0, 0, 0, 0.2);
   border: none;
   cursor: pointer;
   transition: background-color 0.25s ease;
