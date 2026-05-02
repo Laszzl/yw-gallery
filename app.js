@@ -305,6 +305,7 @@ const elements = {};
 
 function cacheElements() {
   Object.assign(elements, {
+    topbar: document.querySelector('.topbar'),
     homeButton: document.querySelector('#homeButton'),
     addButton: document.querySelector('#addButton'),
     settingsButton: document.querySelector('#settingsButton'),
@@ -314,6 +315,7 @@ function cacheElements() {
     athleteView: document.querySelector('#athleteView'),
     addView: document.querySelector('#addView'),
     settingsView: document.querySelector('#settingsView'),
+    appMain: document.querySelector('.app-main'),
 
     athleteSwitcher: document.querySelector('#athleteSwitcher'),
     switcherScrollArea: document.querySelector('.switcher-scroll-area'),
@@ -1023,6 +1025,7 @@ function renderAll() {
   syncFormOptions();
   renderSwitcher();
   renderCurrentView();
+  requestAnimationFrame(updateTopbarMask);
 }
 
 function renderCurrentView() {
@@ -2258,33 +2261,55 @@ function setupRailMasks() {
 }
 
 // ═══════════════════════════════════════════════
-// Init
+// 导航栏垂直遮罩
 // ═══════════════════════════════════════════════
-// Progressive topbar blur — iOS 26 Liquid Glass style
-let topbarRaf = null;
+var _topbarMaskResizeObserver = null;
+var _topbarMaskSetup = false;
 
-function updateTopbarGlass() {
-  var scrollY = window.scrollY;
-  var t = Math.min(scrollY / 120, 1);
-  var blur = 8 + t * 12;
-  var saturate = 100 + t * 80;
-  var alpha = 0.40 + t * 0.32;
-  var topbar = document.querySelector('.topbar');
-  if (topbar) {
-    topbar.style.setProperty('--topbar-blur', blur + 'px');
-    topbar.style.setProperty('--topbar-saturate', saturate + '%');
-    topbar.style.setProperty('--topbar-alpha', alpha);
+function updateTopbarMask() {
+  if (!elements.topbar || !elements.appMain) return;
+  var topbarRect = elements.topbar.getBoundingClientRect();
+  var appMainRect = elements.appMain.getBoundingClientRect();
+  var maskBottom = Math.ceil(topbarRect.bottom - appMainRect.top);
+
+  if (maskBottom <= 0) {
+    elements.appMain.style.setProperty('--app-main-mask-image', 'none');
+    return;
   }
+
+  var fadeHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--topbar-mask-fade-height')) || 32;
+  var fadeStart = Math.max(0, maskBottom - fadeHeight);
+  var maskImage = 'linear-gradient(to bottom, transparent 0px, transparent ' + fadeStart + 'px, black ' + maskBottom + 'px, black 100%)';
+  elements.appMain.style.setProperty('--app-main-mask-image', maskImage);
 }
 
-function onScrollTopbar() {
-  if (topbarRaf) return;
-  topbarRaf = requestAnimationFrame(function () {
-    topbarRaf = null;
-    updateTopbarGlass();
+var _topbarMaskRafId = 0;
+
+function updateTopbarMaskThrottled() {
+  if (_topbarMaskRafId) return;
+  _topbarMaskRafId = requestAnimationFrame(function () {
+    _topbarMaskRafId = 0;
+    updateTopbarMask();
   });
 }
 
+function setupTopbarMask() {
+  updateTopbarMask();
+  if (_topbarMaskSetup) return;
+  _topbarMaskSetup = true;
+
+  window.addEventListener('scroll', updateTopbarMaskThrottled, { passive: true });
+  window.addEventListener('resize', updateTopbarMask);
+
+  if (typeof ResizeObserver !== 'undefined' && elements.topbar) {
+    _topbarMaskResizeObserver = new ResizeObserver(updateTopbarMask);
+    _topbarMaskResizeObserver.observe(elements.topbar);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════════
 async function initApp() {
   await loadState();
   await syncMissingGroupOrders();
@@ -2296,10 +2321,9 @@ async function initApp() {
   bindEvents();
   bindCropModalEvents();
   syncDateDisplay(elements.itemDateHidden.value);
+  setupTopbarMask();
   renderAll();
   syncFileSummaries();
-  window.addEventListener('scroll', onScrollTopbar, { passive: true });
-  updateTopbarGlass();
 }
 
 cacheElements();
