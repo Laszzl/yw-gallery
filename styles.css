@@ -1239,8 +1239,8 @@ select:focus {
 .status-toggle-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 8px 0;
+  justify-content: space-between;
+  padding: 8px 28px;
 }
 
 .status-toggle-label {
