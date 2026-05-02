@@ -8,7 +8,7 @@
 - 中文 UI，Apple 风格设计
 
 ## 数据模型
-people → groups（大品类）→ categories（小品类）→ items（YW），每层支持按人拖拽排序
+people → groups（大品类）→ categories（小品类）→ items（YW）
 
 ## 开发
 - 修改代码后刷新浏览器即可生效
