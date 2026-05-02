@@ -752,9 +752,6 @@ button:active,
 
 .yw-card-body {
   padding: 18px 18px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .yw-title,
@@ -765,7 +762,10 @@ button:active,
 }
 
 .card-topline {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  gap: 16px;
 }
 
 .text-item-row {
