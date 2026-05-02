@@ -27,6 +27,7 @@
   --text-lg: 1.15rem;
   --text-base: 1rem;
   --text-sm: 0.92rem;
+  --topbar-sticky-offset: 24px;
 }
 
 * {
@@ -49,6 +50,18 @@ body {
   color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-sticky-offset);
+  z-index: 90;
+  pointer-events: none;
+  background: var(--bg-accent);
 }
 
 .visually-hidden-input {
@@ -97,7 +110,7 @@ button:active,
   align-items: center;
   gap: 20px;
   position: sticky;
-  top: 0;
+  top: var(--topbar-sticky-offset);
   z-index: 100;
   margin-bottom: 12px;
   padding: 18px 22px;
@@ -1500,13 +1513,16 @@ select:focus {
 }
 
 @media (max-width: 720px) {
+  :root {
+    --topbar-sticky-offset: 16px;
+  }
+
   .page-shell {
     width: min(100% - 24px, 1000px);
     padding-top: 16px;
   }
 
   .topbar {
-    top: 0;
     padding: 18px;
     border-radius: 28px;
   }
