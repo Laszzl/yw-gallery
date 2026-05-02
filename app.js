@@ -1025,7 +1025,6 @@ function renderAll() {
   syncFormOptions();
   renderSwitcher();
   renderCurrentView();
-  requestAnimationFrame(updateTopbarMask);
 }
 
 function renderCurrentView() {
@@ -2261,53 +2260,6 @@ function setupRailMasks() {
 }
 
 // ═══════════════════════════════════════════════
-// 导航栏垂直遮罩
-// ═══════════════════════════════════════════════
-var _topbarMaskResizeObserver = null;
-var _topbarMaskSetup = false;
-
-function updateTopbarMask() {
-  if (!elements.topbar || !elements.appMain) return;
-  var topbarRect = elements.topbar.getBoundingClientRect();
-  var appMainRect = elements.appMain.getBoundingClientRect();
-  var maskBottom = Math.ceil(topbarRect.bottom - appMainRect.top);
-
-  if (maskBottom <= 0) {
-    elements.appMain.style.setProperty('--app-main-mask-image', 'none');
-    return;
-  }
-
-  var fadeHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--topbar-mask-fade-height')) || 32;
-  var fadeStart = Math.max(0, maskBottom - fadeHeight);
-  var maskImage = 'linear-gradient(to bottom, transparent 0px, transparent ' + fadeStart + 'px, black ' + maskBottom + 'px, black 100%)';
-  elements.appMain.style.setProperty('--app-main-mask-image', maskImage);
-}
-
-var _topbarMaskRafId = 0;
-
-function updateTopbarMaskThrottled() {
-  if (_topbarMaskRafId) return;
-  _topbarMaskRafId = requestAnimationFrame(function () {
-    _topbarMaskRafId = 0;
-    updateTopbarMask();
-  });
-}
-
-function setupTopbarMask() {
-  updateTopbarMask();
-  if (_topbarMaskSetup) return;
-  _topbarMaskSetup = true;
-
-  window.addEventListener('scroll', updateTopbarMaskThrottled, { passive: true });
-  window.addEventListener('resize', updateTopbarMask);
-
-  if (typeof ResizeObserver !== 'undefined' && elements.topbar) {
-    _topbarMaskResizeObserver = new ResizeObserver(updateTopbarMask);
-    _topbarMaskResizeObserver.observe(elements.topbar);
-  }
-}
-
-// ═══════════════════════════════════════════════
 // Init
 // ═══════════════════════════════════════════════
 async function initApp() {
@@ -2321,7 +2273,6 @@ async function initApp() {
   bindEvents();
   bindCropModalEvents();
   syncDateDisplay(elements.itemDateHidden.value);
-  setupTopbarMask();
   renderAll();
   syncFileSummaries();
 }
