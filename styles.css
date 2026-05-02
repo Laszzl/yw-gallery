@@ -751,13 +751,9 @@ button:active,
 }
 
 .yw-card-body {
-  padding: 18px 18px;
+  padding: 16px 18px;
   display: flex;
   align-items: center;
-}
-
-.yw-card-body .card-topline {
-  flex: 1;
 }
 
 .yw-title,
