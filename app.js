@@ -380,9 +380,9 @@ function daysInMonth(year, month) {
 }
 
 function toDateDisplay(dateStr) {
-  if (!dateStr) return '98/3/25';
+  if (!dateStr) return '1998/3/25';
   const [y, m, d] = dateStr.split('-');
-  return `${String(y).slice(-2)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
+  return `${parseInt(y, 10)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
 }
 
 // ═══════════════════════════════════════════════
