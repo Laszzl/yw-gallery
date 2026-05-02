@@ -409,15 +409,16 @@ function renderColumnItems(scrollEl, items, selectedValue, colType) {
   var spacerBottom = scrollEl.querySelector('.date-col-spacer:last-child');
   var fragment = document.createDocumentFragment();
   for (var j = 0; j < items.length; j++) {
-    var item = document.createElement('div');
-    item.className = 'date-col-item';
-    item.textContent = String(items[j]);
-    item.dataset.value = String(items[j]);
-    item.dataset.col = colType;
-    item.addEventListener('click', function(e) {
-      handleDateItemClick(colType, parseInt(e.currentTarget.dataset.value, 10));
+    var itemEl = document.createElement('div');
+    itemEl.className = 'date-col-item';
+    itemEl.textContent = String(items[j]);
+    itemEl.dataset.value = String(items[j]);
+    itemEl.dataset.col = colType;
+    itemEl.addEventListener('click', function(e) {
+      var val = parseInt(e.currentTarget.dataset.value, 10);
+      handleDateItemClick(colType, val, scrollEl);
     });
-    fragment.appendChild(item);
+    fragment.appendChild(itemEl);
   }
   scrollEl.insertBefore(fragment, spacerBottom);
 }
@@ -442,7 +443,7 @@ function renderDayColumn(scrollEl, selectedDay, year, month) {
   renderColumnItems(scrollEl, items, selectedDay, 'day');
 }
 
-function handleDateItemClick(colType, value) {
+function handleDateItemClick(colType, value, scrollEl) {
   if (colType === 'year') datePickerState.year = value;
   else if (colType === 'month') datePickerState.month = value;
   else if (colType === 'day') datePickerState.day = value;
@@ -450,7 +451,8 @@ function handleDateItemClick(colType, value) {
   if (colType === 'year' || colType === 'month') {
     refreshDayColumn();
   }
-  updateColumnSelection(getScrollEl(colType), value);
+  scrollToSelectedItem(scrollEl, value);
+  updateColumnSelection(scrollEl, value);
 }
 
 function getScrollEl(colType) {
@@ -483,12 +485,12 @@ function onColumnScroll(e) {
 
 function getClosestSnapItem(scrollEl) {
   var items = scrollEl.querySelectorAll('.date-col-item');
-  var centerY = scrollEl.scrollTop + scrollEl.clientHeight / 2;
+  var viewCenter = scrollEl.scrollTop + scrollEl.clientHeight / 2;
   var closest = null;
   var minDist = Infinity;
   for (var i = 0; i < items.length; i++) {
     var itemCenter = items[i].offsetTop + items[i].offsetHeight / 2;
-    var dist = Math.abs(itemCenter - centerY);
+    var dist = Math.abs(itemCenter - viewCenter);
     if (dist < minDist) {
       minDist = dist;
       closest = parseInt(items[i].dataset.value, 10);
@@ -514,7 +516,7 @@ function scrollToSelectedItem(scrollEl, value) {
     if (parseInt(items[i].dataset.value, 10) === value) {
       var itemTop = items[i].offsetTop;
       var scrollTarget = itemTop - (scrollEl.clientHeight / 2) + (items[i].offsetHeight / 2);
-      scrollEl.scrollTo({ top: scrollTarget, behavior: 'instant' });
+      scrollEl.scrollTop = scrollTarget;
       break;
     }
   }
@@ -547,15 +549,9 @@ function openDatePicker(dateStr) {
     updateColumnSelection(elements.dateYearScroll, datePickerState.year);
     scrollToSelectedItem(elements.dateMonthScroll, datePickerState.month);
     updateColumnSelection(elements.dateMonthScroll, datePickerState.month);
-  });
-  requestAnimationFrame(function() {
     scrollToSelectedItem(elements.dateDayScroll, datePickerState.day);
     updateColumnSelection(elements.dateDayScroll, datePickerState.day);
   });
-
-  elements.dateYearScroll.addEventListener('scroll', onColumnScroll, { passive: true });
-  elements.dateMonthScroll.addEventListener('scroll', onColumnScroll, { passive: true });
-  elements.dateDayScroll.addEventListener('scroll', onColumnScroll, { passive: true });
 
   elements.datePickerModal.hidden = false;
 }
@@ -1884,6 +1880,10 @@ function bindEvents() {
   elements.datePickerModal.addEventListener('click', function(e) {
     if (e.target === elements.datePickerModal) cancelDatePicker();
   });
+
+  elements.dateYearScroll.addEventListener('scroll', onColumnScroll, { passive: true });
+  elements.dateMonthScroll.addEventListener('scroll', onColumnScroll, { passive: true });
+  elements.dateDayScroll.addEventListener('scroll', onColumnScroll, { passive: true });
 
   // Group form
   elements.groupForm.addEventListener('submit', (event) => {
