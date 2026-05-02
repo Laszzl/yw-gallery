@@ -14,8 +14,6 @@
   --danger: #c0362c;
   --danger-bg: rgba(192, 54, 44, 0.10);
   --accent-soft: rgba(17, 17, 17, 0.04);
-  --toggle-accent: #34c759;
-  --toggle-track-off: rgba(15, 23, 42, 0.12);
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
   --shadow-elevated: 0 20px 42px rgba(15, 23, 42, 0.1);
   --shadow-floating: 0 16px 32px rgba(15, 23, 42, 0.07);
@@ -1235,28 +1233,19 @@ select:focus {
 .item-status-toggles {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  background: var(--accent-soft);
-  border-radius: var(--radius-lg);
-  padding: 4px;
-  margin-bottom: 16px;
+  gap: 12px;
 }
 
 .status-toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  transition: background 0.2s ease;
+  padding: 8px 0;
 }
 
 .status-toggle-label {
   font-size: var(--text-base);
   font-weight: 500;
-  color: var(--text);
-  letter-spacing: -0.01em;
 }
 
 .toggle-switch {
@@ -1264,41 +1253,34 @@ select:focus {
   width: 48px;
   height: 28px;
   border-radius: 28px;
-  background: var(--toggle-track-off);
+  background: rgba(15, 23, 42, 0.16);
   border: none;
   cursor: pointer;
-  transition: background-color 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: background-color 0.25s ease;
   flex-shrink: 0;
   padding: 0;
   min-height: unset;
   box-shadow: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .toggle-switch.active {
-  background: var(--toggle-accent);
+  background: var(--primary);
 }
 
 .toggle-knob {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 24px;
-  height: 24px;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
-  transition: left 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16), 0 1px 1px rgba(0, 0, 0, 0.06);
+  transition: left 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .toggle-switch.active .toggle-knob {
-  left: calc(100% - 26px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.08);
-}
-
-.toggle-switch:focus-visible {
-  outline: 2px solid var(--toggle-accent);
-  outline-offset: 2px;
+  left: calc(100% - 25px);
 }
 
 
@@ -1594,8 +1576,6 @@ select:focus {
     --danger: #ff6961;
     --danger-bg: rgba(255, 105, 97, 0.12);
     --accent-soft: rgba(255, 255, 255, 0.06);
-    --toggle-accent: #30d158;
-    --toggle-track-off: rgba(255, 255, 255, 0.18);
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
     --shadow-elevated: 0 20px 42px rgba(0, 0, 0, 0.4);
     --shadow-floating: 0 16px 32px rgba(0, 0, 0, 0.3);
@@ -1638,6 +1618,11 @@ select:focus {
 
   .switcher-chip.active {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Status toggle — inactive track more visible on dark bg */
+  .toggle-switch:not(.active) {
+    background: rgba(255, 255, 255, 0.2);
   }
 
   /* Panels */
@@ -1846,15 +1831,6 @@ select:focus {
   /* Glass form */
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
-  }
-
-  /* Toggle switch — knob shadow needs more depth on dark backgrounds */
-  .toggle-knob {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(255, 255, 255, 0.1);
-  }
-
-  .toggle-switch.active .toggle-knob {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(0, 0, 0, 0.12);
   }
 }
 
