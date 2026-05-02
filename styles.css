@@ -17,6 +17,11 @@
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
   --shadow-elevated: 0 20px 42px rgba(15, 23, 42, 0.1);
   --shadow-floating: 0 16px 32px rgba(15, 23, 42, 0.07);
+  --topbar-offset: 24px;
+  --topbar-surface: rgba(255, 255, 255, 0.98);
+  --topbar-cover: rgba(245, 245, 247, 0.94);
+  --topbar-feather: rgba(245, 245, 247, 0.88);
+  --topbar-feather-clear: rgba(245, 245, 247, 0);
   --radius-2xl: 36px;
   --radius-xl: 28px;
   --radius-lg: 20px;
@@ -49,6 +54,16 @@ body {
   color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: var(--topbar-offset);
+  z-index: 90;
+  pointer-events: none;
+  background: var(--topbar-cover);
 }
 
 .visually-hidden-input {
@@ -97,28 +112,34 @@ button:active,
   align-items: center;
   gap: 20px;
   position: sticky;
-  top: 24px;
+  top: var(--topbar-offset);
   z-index: 100;
   margin-bottom: 12px;
   padding: 18px 22px;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: var(--radius-2xl);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--topbar-surface);
   box-shadow: var(--shadow-soft), 0 8px 16px rgba(15, 23, 42, 0.04);
 }
 
 .topbar::after {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 12px;
-  right: 12px;
-  height: 40px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
+  left: 10px;
+  right: 10px;
+  top: calc(100% - 1px);
+  height: 26px;
+  z-index: 1;
   pointer-events: none;
+  background: linear-gradient(180deg, var(--topbar-feather), var(--topbar-feather-clear));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+}
+
+.topbar > * {
+  position: relative;
+  z-index: 2;
 }
 
 .topbar-branding {
@@ -1512,13 +1533,16 @@ select:focus {
 }
 
 @media (max-width: 720px) {
+  :root {
+    --topbar-offset: 16px;
+  }
+
   .page-shell {
     width: min(100% - 24px, 1000px);
     padding-top: 16px;
   }
 
   .topbar {
-    top: 16px;
     padding: 18px;
     border-radius: 28px;
   }
@@ -1574,7 +1598,6 @@ select:focus {
   }
 
   .topbar,
-  .topbar::after,
   .view-panel,
   .modal-overlay {
     backdrop-filter: none;
@@ -1768,11 +1791,15 @@ select:focus {
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
     --shadow-elevated: 0 20px 42px rgba(0, 0, 0, 0.4);
     --shadow-floating: 0 16px 32px rgba(0, 0, 0, 0.3);
+    --topbar-surface: rgba(44, 44, 46, 0.98);
+    --topbar-cover: rgba(28, 28, 30, 0.94);
+    --topbar-feather: rgba(28, 28, 30, 0.88);
+    --topbar-feather-clear: rgba(28, 28, 30, 0);
   }
 
   /* Topbar */
   .topbar {
-    background: rgba(44, 44, 46, 0.88);
+    background: var(--topbar-surface);
     border-color: rgba(255, 255, 255, 0.08);
   }
 
