@@ -569,6 +569,17 @@ function formatItemLabel(item) {
   return item.label + (item.isGift ? ' · 赠送' : '') + (item.isOwnedNow ? ' · 现存' : ' · 非现存');
 }
 
+function formatStatusText(item) {
+  var parts = [];
+  if (item.isGift) parts.push('赠送');
+  if (item.isOwnedNow) {
+    parts.push('现存');
+  } else {
+    parts.push('非现存');
+  }
+  return parts.join(' · ');
+}
+
 function hasGroupContent(personId, groupId) {
   return state.categories.some(
     (c) => c.groupId === groupId && state.items.some((item) => item.personId === personId && item.categoryId === c.id)
@@ -1244,8 +1255,8 @@ function appendImageItemCard(container, item) {
   const dateEl = fragment.querySelector('.yw-date');
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
-  title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
+  title.textContent = item.label + ' · ' + item.quantity + item.unit;
+  dateEl.textContent = formatStatusText(item) + ' · ' + (formatDate(item.date) || '98/3/25');
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'image'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1279,8 +1290,8 @@ function appendTextItemCard(container, item) {
   const dateEl = fragment.querySelector('.text-item-date');
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
-  title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
+  title.textContent = item.label + ' · ' + item.quantity + item.unit;
+  dateEl.textContent = formatStatusText(item) + ' · ' + (formatDate(item.date) || '98/3/25');
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'text'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1310,8 +1321,10 @@ function openItemActionsModal(itemId, type) {
         await saveState();
         const card = document.querySelector(`[data-item-id="${itemId}"]`);
         if (card) {
-          const title = card.querySelector('.yw-title, .text-item-title');
-          if (title) title.textContent = formatItemLabel(currentItem);
+          const dateEl = card.querySelector('.yw-date, .text-item-date');
+          if (dateEl) {
+            dateEl.textContent = formatStatusText(currentItem) + ' · ' + (formatDate(currentItem.date) || '98/3/25');
+          }
         }
       }
     };
