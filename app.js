@@ -358,6 +358,12 @@ function syncFileSummaries() {
   elements.personDetailPhotoSummary.textContent = describeFiles(elements.personDetailPhotoInput.files, false);
 }
 
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${parseInt(y, 10)}年${parseInt(m, 10)}月${parseInt(d, 10)}日`;
+}
+
 function formatItemLabel(item) {
   return item.label + (item.isGift ? ' · 赠送' : '') + (item.isOwnedNow ? ' · 现存' : ' · 非现存');
 }
@@ -538,7 +544,7 @@ async function createItem(itemData) {
     label: itemData.label,
     quantity: itemData.quantity,
     unit: itemData.unit,
-    notes: itemData.notes,
+    date: itemData.date || '1995-03-28',
     isGift: itemData.isGift,
     isOwnedNow: itemData.isOwnedNow,
     photoUrls: itemData.photoUrls || [],
@@ -1034,11 +1040,11 @@ function appendImageItemCard(container, item) {
   const image = fragment.querySelector('.yw-card-image');
   const imageWrap = fragment.querySelector('.yw-card-image-wrap');
   const title = fragment.querySelector('.yw-title');
-  const notes = fragment.querySelector('.yw-notes');
+  const dateEl = fragment.querySelector('.yw-date');
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
-  notes.textContent = item.notes || `${item.quantity}${item.unit}`;
+  dateEl.textContent = formatDate(item.date) || item.notes || '';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'image'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1069,11 +1075,11 @@ function appendTextItemCard(container, item) {
   const fragment = elements.templates.textItem.content.cloneNode(true);
   const card = fragment.querySelector('.rail-card');
   const title = fragment.querySelector('.text-item-title');
-  const notes = fragment.querySelector('.text-item-notes');
+  const dateEl = fragment.querySelector('.text-item-date');
   const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
-  notes.textContent = item.notes || `${item.quantity}${item.unit}`;
+  dateEl.textContent = formatDate(item.date) || item.notes || '';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'text'));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1712,7 +1718,7 @@ function bindEvents() {
       const label = String(formData.get('label')).trim();
       const quantity = Number(formData.get('quantity'));
       const unit = String(formData.get('unit')).trim();
-      const notes = String(formData.get('notes')).trim();
+      const date = String(formData.get('date')).trim() || '1995-03-28';
       const isGift = formData.has('isGift');
       const isOwnedNow = formData.has('isOwnedNow');
       const rawFiles = formData.getAll('photos').filter((f) => f instanceof File && f.size > 0);
@@ -1726,7 +1732,7 @@ function bindEvents() {
         photoUrls.push(await readFileAsDataURL(file));
       }
 
-      await createItem({ personId, categoryId, label, quantity, unit, notes, isGift, isOwnedNow, photoUrls });
+      await createItem({ personId, categoryId, label, quantity, unit, date, isGift, isOwnedNow, photoUrls });
 
       elements.itemForm.reset();
       elements.itemOwnedNowInput.checked = true;
@@ -1876,14 +1882,6 @@ async function initApp() {
   bindCropModalEvents();
   renderAll();
   syncFileSummaries();
-  updateTopbarScrollState();
-  window.addEventListener('scroll', updateTopbarScrollState, { passive: true });
-}
-
-function updateTopbarScrollState() {
-  var topbar = document.querySelector('.topbar');
-  if (!topbar) return;
-  topbar.classList.toggle('scrolled', window.scrollY > 10);
 }
 
 cacheElements();
