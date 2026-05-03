@@ -2259,17 +2259,6 @@ function setupRailMasks() {
   }
 }
 
-// ═══════════════════════════════════════════════
-// 导航栏垂直遮罩
-// ═══════════════════════════════════════════════
-// Topbar curtain
-// ═══════════════════════════════════════════════
-function setupTopbarCurtain() {
-  if (!elements.topbar) return;
-  new ResizeObserver(function (entries) {
-    document.documentElement.style.setProperty('--topbar-height', entries[0].contentRect.height + 'px');
-  }).observe(elements.topbar);
-}
 
 // ═══════════════════════════════════════════════
 // Init
@@ -2285,7 +2274,6 @@ async function initApp() {
   bindEvents();
   bindCropModalEvents();
   syncDateDisplay(elements.itemDateHidden.value);
-  setupTopbarCurtain();
   renderAll();
   syncFileSummaries();
 }
