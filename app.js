@@ -990,21 +990,23 @@ const pointerDragState = {
   isTouch: false,
   elements: new Map(),
   dragJustEnded: false,
+  _pressTimer: null,
+  pendingStartX: 0,
+  pendingStartY: 0,
 };
 
 function getElementId(el) {
   return el.dataset.itemId || el.dataset.groupId || el.dataset.categoryId || null;
 }
 
-function startPointerDrag(e, id) {
+function startPointerDrag(startCoords, pointerType, id) {
   const el = pointerDragState.elements.get(id);
   if (!el) return;
-  const coords = eventCoords(e);
   pointerDragState.active = true;
   pointerDragState.draggedId = id;
-  pointerDragState.startX = coords.x;
-  pointerDragState.startY = coords.y;
-  pointerDragState.isTouch = e.pointerType === 'touch';
+  pointerDragState.startX = startCoords.x;
+  pointerDragState.startY = startCoords.y;
+  pointerDragState.isTouch = pointerType === 'touch';
 
   const ghost = el.cloneNode(true);
   ghost.classList.add('drag-ghost');
@@ -1137,20 +1139,31 @@ function createPointerDragHandler(_ref) {
 
     element.addEventListener('pointerdown', function (e) {
       if (e.button !== undefined && e.button !== 0) return;
-      pointerDragState.onDrop = onDrop;
-      pointerDragState.dragOverClass = dragOverClass;
-      pointerDragState.scrollContainerSelector = scrollContainerSelector || null;
-      if (e.pointerType === 'touch') {
-        var coords = eventCoords(e);
-        pointerDragState.pendingStartX = coords.x;
-        pointerDragState.pendingStartY = coords.y;
-        var pendingId = id;
+      // Clear any pending drag from another element
+      if (pointerDragState._pressTimer) {
+        clearTimeout(pointerDragState._pressTimer);
+        pointerDragState._pressTimer = null;
+      }
+      // Capture values before any async delay — PointerEvent is recycled by the browser
+      var startCoords = eventCoords(e);
+      var startPointerType = e.pointerType;
+      var pendingId = id;
+      if (startPointerType === 'touch') {
+        pointerDragState.pendingStartX = startCoords.x;
+        pointerDragState.pendingStartY = startCoords.y;
         pointerDragState._pressTimer = setTimeout(function () {
           pointerDragState._pressTimer = null;
-          startPointerDrag(e, pendingId);
+          // Set config atomically with drag start to avoid race with another element's pointerdown
+          pointerDragState.onDrop = onDrop;
+          pointerDragState.dragOverClass = dragOverClass;
+          pointerDragState.scrollContainerSelector = scrollContainerSelector || null;
+          startPointerDrag(startCoords, startPointerType, pendingId);
         }, 400);
       } else {
-        startPointerDrag(e, id);
+        pointerDragState.onDrop = onDrop;
+        pointerDragState.dragOverClass = dragOverClass;
+        pointerDragState.scrollContainerSelector = scrollContainerSelector || null;
+        startPointerDrag(startCoords, startPointerType, id);
       }
     });
 
