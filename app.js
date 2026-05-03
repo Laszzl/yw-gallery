@@ -67,8 +67,8 @@ function openDB() {
   });
 }
 
-async function saveState() {
-  const data = {
+function serializeState() {
+  return {
     people: state.people,
     groups: state.groups,
     categories: state.categories,
@@ -78,6 +78,10 @@ async function saveState() {
     groupOrderByPerson: state.groupOrderByPerson,
     categoryOrderByPerson: state.categoryOrderByPerson,
   };
+}
+
+async function saveState() {
+  const data = serializeState();
   try {
     const db = await openDB();
     const tx = db.transaction(DB_STORE, 'readwrite');
@@ -240,16 +244,7 @@ async function loadState() {
 }
 
 function exportData() {
-  const data = {
-    people: state.people,
-    groups: state.groups,
-    categories: state.categories,
-    items: state.items,
-    collapsedSubcategories: state.collapsedSubcategories,
-    collapsedSettingsGroups: state.collapsedSettingsGroups,
-    groupOrderByPerson: state.groupOrderByPerson,
-    categoryOrderByPerson: state.categoryOrderByPerson,
-  };
+  const data = serializeState();
   const dateStr = new Date().toISOString().slice(0, 10);
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -1071,72 +1066,53 @@ function renderSwitcher() {
   }
 }
 
+function syncSelectOptions(select, records, emptyLabel, preferredValue = select.value) {
+  const hasRecords = records.length > 0;
+  select.innerHTML = hasRecords
+    ? records.map((record) => `<option value="${record.id}">${escapeHtml(record.name)}</option>`).join('')
+    : `<option value="">${escapeHtml(emptyLabel)}</option>`;
+  select.disabled = !hasRecords;
+  if (!hasRecords) return null;
+
+  const selectedValue = records.some((record) => record.id === preferredValue) ? preferredValue : records[0].id;
+  select.value = selectedValue;
+  return selectedValue;
+}
+
 function syncFormOptions() {
-  const peopleOptions = state.people.map((p) => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
-  const currentPersonValue = elements.itemPersonSelect.value;
-  elements.itemPersonSelect.innerHTML = peopleOptions || '<option value="">请先添加体育生</option>';
-  elements.itemPersonSelect.disabled = state.people.length === 0;
-  if (state.people.length) {
-    elements.itemPersonSelect.value = state.people.some((p) => p.id === currentPersonValue) ? currentPersonValue : state.people[0].id;
-  }
+  syncSelectOptions(elements.itemPersonSelect, state.people, '请先添加体育生');
 
   syncGroupOptions();
 
-  elements.settingsPersonSelect.innerHTML = peopleOptions || '<option value="">请先添加体育生</option>';
-  elements.settingsPersonSelect.disabled = state.people.length === 0;
-  if (state.people.length) {
-    if (!viewState.settingsActivePersonId || !state.people.find((p) => p.id === viewState.settingsActivePersonId)) {
-      viewState.settingsActivePersonId = state.people[0].id;
-    }
-    elements.settingsPersonSelect.value = viewState.settingsActivePersonId;
-  } else {
-    viewState.settingsActivePersonId = null;
-  }
+  viewState.settingsActivePersonId = syncSelectOptions(
+    elements.settingsPersonSelect,
+    state.people,
+    '请先添加体育生',
+    viewState.settingsActivePersonId
+  );
   elements.settingsDeletePersonBtn.hidden = state.people.length === 0;
 
-  elements.overviewPersonSelect.innerHTML = peopleOptions || '<option value="">请先添加体育生</option>';
-  elements.overviewPersonSelect.disabled = state.people.length === 0;
-  if (state.people.length) {
-    if (!viewState.overviewPersonId || !state.people.find((p) => p.id === viewState.overviewPersonId)) {
-      viewState.overviewPersonId = state.people[0].id;
-    }
-    elements.overviewPersonSelect.value = viewState.overviewPersonId;
-  } else {
-    viewState.overviewPersonId = null;
-  }
+  viewState.overviewPersonId = syncSelectOptions(
+    elements.overviewPersonSelect,
+    state.people,
+    '请先添加体育生',
+    viewState.overviewPersonId
+  );
 }
 
 function syncGroupOptions() {
   const activePersonForGroups = elements.itemPersonSelect.value || state.people[0]?.id || null;
   const nextGroups = getOrderedGroupsForPerson(activePersonForGroups);
-  const nextGroupOptions = nextGroups.map((g) => `<option value="${g.id}">${escapeHtml(g.name)}</option>`).join('');
-  const currentCategoryGroupValue = elements.categoryGroupSelect.value;
-  const currentItemGroupValue = elements.itemGroupSelect.value;
 
-  elements.categoryGroupSelect.innerHTML = nextGroupOptions || '<option value="">请先添加大品类</option>';
-  elements.itemGroupSelect.innerHTML = nextGroupOptions || '<option value="">请先添加大品类</option>';
-  elements.categoryGroupSelect.disabled = state.groups.length === 0;
-  elements.itemGroupSelect.disabled = state.groups.length === 0;
-
-  if (nextGroups.length) {
-    const fallback = nextGroups[0].id;
-    elements.categoryGroupSelect.value = nextGroups.some((g) => g.id === currentCategoryGroupValue) ? currentCategoryGroupValue : fallback;
-    elements.itemGroupSelect.value = nextGroups.some((g) => g.id === currentItemGroupValue) ? currentItemGroupValue : fallback;
-  }
-  syncCategoryOptions(elements.itemGroupSelect.value);
+  syncSelectOptions(elements.categoryGroupSelect, nextGroups, '请先添加大品类');
+  const itemGroupId = syncSelectOptions(elements.itemGroupSelect, nextGroups, '请先添加大品类');
+  syncCategoryOptions(itemGroupId);
 }
 
 function syncCategoryOptions(groupId) {
   const personId = elements.itemPersonSelect.value || state.people[0]?.id || null;
   const categories = getOrderedCategoriesForPersonGroup(personId, groupId);
-  const currentValue = elements.itemCategorySelect.value;
-  elements.itemCategorySelect.innerHTML = categories.length
-    ? categories.map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('')
-    : '<option value="">当前大品类暂无小品类</option>';
-  elements.itemCategorySelect.disabled = categories.length === 0;
-  if (categories.length) {
-    elements.itemCategorySelect.value = categories.some((c) => c.id === currentValue) ? currentValue : categories[0].id;
-  }
+  syncSelectOptions(elements.itemCategorySelect, categories, '当前大品类暂无小品类');
 }
 
 function renderHomeView() {
@@ -1322,20 +1298,25 @@ function renderGroupSection(personId, group) {
   return fragment;
 }
 
+function hydrateItemCard(card, item, type, { titleSelector, dateSelector }) {
+  const title = card.querySelector(titleSelector);
+  const dateEl = card.querySelector(dateSelector);
+  const menuToggle = card.querySelector('[data-item-menu-toggle]');
+
+  title.textContent = formatItemLabel(item);
+  dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
+  menuToggle.addEventListener('click', () => openItemActionsModal(item.id, type));
+  card.dataset.itemId = item.id;
+  attachItemDrag(card, item.id);
+}
+
 function buildImageItemCard(item) {
   const fragment = elements.templates.ywCard.content.cloneNode(true);
   const card = fragment.querySelector('.rail-card');
   const image = fragment.querySelector('.yw-card-image');
   const imageWrap = fragment.querySelector('.yw-card-image-wrap');
-  const title = fragment.querySelector('.yw-title');
-  const dateEl = fragment.querySelector('.yw-date');
-  const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
-  title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
-  menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'image'));
-  card.dataset.itemId = item.id;
-  attachItemDrag(card, item.id);
+  hydrateItemCard(card, item, 'image', { titleSelector: '.yw-title', dateSelector: '.yw-date' });
 
   const urls = item.photoUrls || [];
   if (urls.length > 0) {
@@ -1366,15 +1347,8 @@ function appendImageItemCard(container, item) {
 function buildTextItemCard(item) {
   const fragment = elements.templates.textItem.content.cloneNode(true);
   const card = fragment.querySelector('.rail-card');
-  const title = fragment.querySelector('.text-item-title');
-  const dateEl = fragment.querySelector('.text-item-date');
-  const menuToggle = fragment.querySelector('[data-item-menu-toggle]');
 
-  title.textContent = formatItemLabel(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
-  menuToggle.addEventListener('click', () => openItemActionsModal(item.id, 'text'));
-  card.dataset.itemId = item.id;
-  attachItemDrag(card, item.id);
+  hydrateItemCard(card, item, 'text', { titleSelector: '.text-item-title', dateSelector: '.text-item-date' });
   return card;
 }
 
@@ -1535,6 +1509,18 @@ async function handleDeleteItem(itemId) {
   await showModal('YW 已删除');
 }
 
+async function applyPhotoUpdate(itemId, item, photoUrls) {
+  if (!photoUrls.length) return;
+  if (photoManageState.mode === 'replace') {
+    const current = [...(item.photoUrls || [])];
+    current[photoManageState.replaceIndex] = photoUrls[0];
+    await updateItemPhotos(itemId, current);
+  } else {
+    await updateItemPhotos(itemId, [...(item.photoUrls || []), ...photoUrls]);
+  }
+  refreshItemCard(itemId);
+}
+
 function openPhotoManageModal(itemId) {
   const modal = document.getElementById('photoManageModal');
   const thumbGrid = document.getElementById('photoThumbGrid');
@@ -1594,14 +1580,7 @@ function openPhotoManageModal(itemId) {
       const finalFile = resolveCroppedFile(file, cropResult);
       if (!finalFile) {
         if (photoUrls.length) {
-          if (photoManageState.mode === 'replace') {
-            const current = [...item.photoUrls];
-            current[photoManageState.replaceIndex] = photoUrls[0];
-            await updateItemPhotos(itemId, current);
-          } else {
-            await updateItemPhotos(itemId, [...item.photoUrls, ...photoUrls]);
-          }
-          refreshItemCard(itemId);
+          await applyPhotoUpdate(itemId, item, photoUrls);
           await showModal(`已更新 ${photoUrls.length} 张，剩余已取消`);
         } else {
           await showModal('已取消本次图片更新');
@@ -1613,14 +1592,7 @@ function openPhotoManageModal(itemId) {
       photoUrls.push(await readFileAsDataURL(finalFile));
     }
 
-    if (photoManageState.mode === 'replace') {
-      const current = [...item.photoUrls];
-      current[photoManageState.replaceIndex] = photoUrls[0];
-      await updateItemPhotos(itemId, current);
-    } else {
-      await updateItemPhotos(itemId, [...item.photoUrls, ...photoUrls]);
-    }
-    refreshItemCard(itemId);
+    await applyPhotoUpdate(itemId, item, photoUrls);
     await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${photoUrls.length} 张图片`);
     renderThumbGrid();
     modal.hidden = false;
@@ -1924,6 +1896,26 @@ function handleCornerDrag(clientX, clientY) {
   cropState.ch = newH;
 }
 
+function bindSettingsPhotoInput(input, { field, aspectRatio, successMsg, errorMsg }) {
+  input.addEventListener('change', async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !viewState.settingsActivePersonId) return;
+    const cropResult = await showCropModal(file, aspectRatio);
+    const finalFile = resolveCroppedFile(file, cropResult);
+    if (!finalFile) { event.target.value = ''; return; }
+    try {
+      await updatePersonPhoto(viewState.settingsActivePersonId, field, finalFile);
+      renderAll();
+      await showModal(successMsg);
+    } catch (err) {
+      console.error(err);
+      await showModal(errorMsg);
+    } finally {
+      event.target.value = '';
+    }
+  });
+}
+
 // ═══════════════════════════════════════════════
 // Event bindings
 // ═══════════════════════════════════════════════
@@ -1962,40 +1954,17 @@ function bindEvents() {
     renderCategoryOverview();
   });
 
-  elements.settingsPersonHomePhotoInput.addEventListener('change', async (event) => {
-    const file = event.target.files?.[0];
-    if (!file || !viewState.settingsActivePersonId) return;
-    const cropResult = await showCropModal(file, 4 / 5);
-    const finalFile = resolveCroppedFile(file, cropResult);
-    if (!finalFile) { event.target.value = ''; return; }
-    try {
-      await updatePersonPhoto(viewState.settingsActivePersonId, 'homePhotoUrl', finalFile);
-      renderAll();
-      await showModal('主页图片已更新');
-    } catch (err) {
-      console.error(err);
-      await showModal('主页图片更新失败，请重试');
-    } finally {
-      event.target.value = '';
-    }
+  bindSettingsPhotoInput(elements.settingsPersonHomePhotoInput, {
+    field: 'homePhotoUrl',
+    aspectRatio: 4 / 5,
+    successMsg: '主页图片已更新',
+    errorMsg: '主页图片更新失败，请重试',
   });
-
-  elements.settingsPersonDetailPhotoInput.addEventListener('change', async (event) => {
-    const file = event.target.files?.[0];
-    if (!file || !viewState.settingsActivePersonId) return;
-    const cropResult = await showCropModal(file, 1);
-    const finalFile = resolveCroppedFile(file, cropResult);
-    if (!finalFile) { event.target.value = ''; return; }
-    try {
-      await updatePersonPhoto(viewState.settingsActivePersonId, 'detailPhotoUrl', finalFile);
-      renderAll();
-      await showModal('个人页图片已更新');
-    } catch (err) {
-      console.error(err);
-      await showModal('个人页图片更新失败，请重试');
-    } finally {
-      event.target.value = '';
-    }
+  bindSettingsPhotoInput(elements.settingsPersonDetailPhotoInput, {
+    field: 'detailPhotoUrl',
+    aspectRatio: 1,
+    successMsg: '个人页图片已更新',
+    errorMsg: '个人页图片更新失败，请重试',
   });
 
   elements.settingsDeletePersonBtn.addEventListener('click', () => handleDeleteCurrentPerson());
@@ -2105,7 +2074,7 @@ function bindEvents() {
       const formData = new FormData(elements.itemForm);
       const personId = String(formData.get('personId'));
       const groupId = String(formData.get('groupId'));
-      const categoryId = String(formData.get('categoryId'));
+      let categoryId = String(formData.get('categoryId'));
       const label = String(formData.get('label')).trim();
       const quantityRaw = String(formData.get('quantity')).trim();
       const quantity = Number(quantityRaw);

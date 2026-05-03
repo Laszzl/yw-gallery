@@ -391,9 +391,6 @@ select:active,
   border-radius: var(--radius-xl);
   cursor: pointer;
   transition: transform 0.28s ease, box-shadow 0.28s ease;
-  background: var(--panel-strong);
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: var(--shadow-soft);
 }
 
 .selector-image-wrap,
@@ -765,10 +762,6 @@ body.dragging-active {
   border-radius: var(--radius-lg);
   overflow: hidden;
   transition: transform 0.28s ease, box-shadow 0.28s ease;
-}
-
-.yw-card,
-.text-item-row {
   border: 1px solid rgba(15, 23, 42, 0.04);
   box-shadow: none;
 }
