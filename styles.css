@@ -1450,11 +1450,40 @@ select:focus {
 }
 
 /* ═══════════════════════════════════════════════
-   三端适配：iPad (≤1024px) · iPhone (≤768px) · 小屏 iPhone (≤430px)
-   Mac 端使用上方默认样式，不做修改
+   三端适配：iPad 横版 (≤1366px) · iPad 竖版 (≤1024px) · iPhone (≤768px)
+   Mac 端（>1366px）使用上方默认样式，不做修改
    ═══════════════════════════════════════════════ */
 
-/* ── iPad 端（横版 + 竖版）── */
+/* ── iPad 横版（仅触控微调，布局保持 Mac 原样）── */
+@media (max-width: 1366px) {
+  /* 按钮间距适配触控 */
+  .topbar-actions,
+  .person-photo-actions,
+  .person-create-actions,
+  .inline-actions,
+  .overview-group-actions,
+  .subcategory-actions,
+  .form-footer-actions {
+    gap: 16px;
+  }
+
+  /* 弹窗加宽，触摸更友好 */
+  .modal-content {
+    width: min(480px, 94vw);
+  }
+
+  /* 详情页头像略缩小，给触控滚动留空间 */
+  .detail-hero-image-wrap {
+    width: min(300px, 65vw);
+  }
+
+  /* 横向卡片：触控滚动空间 */
+  .rail-card {
+    flex-basis: 280px;
+  }
+}
+
+/* ── iPad 竖版 ── */
 @media (max-width: 1024px) {
   /* Topbar：3 列 → 单列 */
   .topbar {
