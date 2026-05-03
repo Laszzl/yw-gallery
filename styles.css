@@ -28,6 +28,7 @@
   --text-base: 1rem;
   --text-sm: 0.92rem;
   --topbar-sticky-top: 24px;
+  --topbar-curtain-fade-size: 32px;
 }
 
 * {
@@ -98,7 +99,7 @@ button:active,
   align-items: center;
   gap: 20px;
   position: sticky;
-  top: 24px;
+  top: var(--topbar-sticky-top);
   z-index: 100;
   margin-bottom: 12px;
   padding: 18px 22px;
@@ -288,18 +289,27 @@ button:active,
 }
 
 /* ── Topbar curtain ── */
+/*
+  渐变幕布定位在导航栏垂直中线：
+  - 纯色遮罩从视口顶部延伸到导航栏垂直中线
+  - 从中线开始向下渐变消失（渐变距离 = --topbar-curtain-fade-size）
+*/
 .topbar-curtain {
   position: fixed;
-  top: var(--topbar-sticky-top);
+  top: 0;
   left: 0;
   right: 0;
   z-index: 99;
   pointer-events: none;
   width: min(1440px, calc(100% - 48px));
   margin: 0 auto;
-  height: calc(var(--topbar-height, 80px) + 32px);
-  border-radius: var(--radius-2xl);
-  background: linear-gradient(to bottom, var(--bg) 0px, var(--bg) calc(100% - 32px), transparent 100%);
+  height: calc(var(--topbar-sticky-top) + (var(--topbar-height, 80px) / 2) + var(--topbar-curtain-fade-size));
+  background: linear-gradient(
+    to bottom,
+    var(--bg) 0px,
+    var(--bg) calc(var(--topbar-sticky-top) + var(--topbar-height, 80px) / 2),
+    transparent calc(var(--topbar-sticky-top) + var(--topbar-height, 80px) / 2 + var(--topbar-curtain-fade-size))
+  );
 }
 
 .view-panel {
