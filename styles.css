@@ -27,8 +27,7 @@
   --text-lg: 1.15rem;
   --text-base: 1rem;
   --text-sm: 0.92rem;
-  --app-main-mask-image: none;
-  --topbar-mask-fade-height: 32px;
+  --topbar-sticky-top: 24px;
 }
 
 * {
@@ -283,36 +282,23 @@ button:active,
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
-@property --mask-amount {
-  syntax: '<length>';
-  initial-value: 0px;
-  inherits: false;
-}
-
 .app-main {
   display: grid;
   gap: 28px;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent var(--mask-amount),
-    black calc(var(--mask-amount) + 32px),
-    black 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent var(--mask-amount),
-    black calc(var(--mask-amount) + 32px),
-    black 100%
-  );
-  animation: topbar-mask linear both;
-  animation-timeline: scroll();
 }
 
-@keyframes topbar-mask {
-  from { --mask-amount: 0px; }
-  to   { --mask-amount: 150px; }
+/* ── Topbar curtain ── */
+.topbar-curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  pointer-events: none;
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  height: calc(var(--topbar-sticky-top) + var(--topbar-height, 80px) + 32px);
+  background: linear-gradient(to bottom, var(--bg) 0px, var(--bg) calc(100% - 32px), transparent 100%);
 }
 
 .view-panel {
@@ -1527,6 +1513,10 @@ select:focus {
 }
 
 @media (max-width: 720px) {
+  :root {
+    --topbar-sticky-top: 16px;
+  }
+
   .page-shell {
     width: min(100% - 24px, 1000px);
     padding-top: 16px;
