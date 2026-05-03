@@ -1,6 +1,8 @@
 // ═══════════════════════════════════════════════
 // State
 // ═══════════════════════════════════════════════
+const isMacDevice = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
 function createEmptyState() {
   return {
     people: [],
@@ -973,246 +975,48 @@ function reorderRailCardsByItemList(itemsInOrder) {
   }
 }
 
-// ═══════════════════════════════════════════════
-// Pointer drag state & helpers
-// ═══════════════════════════════════════════════
-const pointerDragState = {
-  active: false,
-  draggedId: null,
-  dragOverClass: null,
-  onDrop: null,
-  ghostEl: null,
-  startX: 0,
-  startY: 0,
-  scrollContainerSelector: null,
-  scrollContainer: null,
-  scrollTimer: null,
-  isTouch: false,
-  elements: new Map(),
-  dragJustEnded: false,
-  _pressTimer: null,
-  pendingStartX: 0,
-  pendingStartY: 0,
-};
-
-function getElementId(el) {
-  return el.dataset.itemId || el.dataset.groupId || el.dataset.categoryId || null;
-}
-
-function startPointerDrag(startCoords, pointerType, id) {
-  const el = pointerDragState.elements.get(id);
-  if (!el) return;
-  pointerDragState.active = true;
-  pointerDragState.draggedId = id;
-  pointerDragState.startX = startCoords.x;
-  pointerDragState.startY = startCoords.y;
-  pointerDragState.isTouch = pointerType === 'touch';
-
-  const ghost = el.cloneNode(true);
-  ghost.classList.add('drag-ghost');
-  const rect = el.getBoundingClientRect();
-  ghost.style.position = 'fixed';
-  ghost.style.left = rect.left + 'px';
-  ghost.style.top = rect.top + 'px';
-  ghost.style.width = rect.width + 'px';
-  ghost.style.height = rect.height + 'px';
-  ghost.style.zIndex = '10000';
-  ghost.style.pointerEvents = 'none';
-  document.body.appendChild(ghost);
-  pointerDragState.ghostEl = ghost;
-
-  el.classList.add('dragging');
-
-  if (pointerDragState.scrollContainerSelector) {
-    pointerDragState.scrollContainer = el.closest(pointerDragState.scrollContainerSelector);
-  }
-
-  if (pointerDragState.isTouch) {
-    document.body.style.overflow = 'hidden';
-    document.body.classList.add('dragging-active');
-  }
-}
-
-function highlightDropTarget(targetEl) {
-  document.querySelectorAll('.' + pointerDragState.dragOverClass + '.drag-over').forEach(function (n) { n.classList.remove('drag-over'); });
-  if (!targetEl) return;
-  const dropTarget = targetEl.closest('.' + pointerDragState.dragOverClass);
-  if (!dropTarget) return;
-  const targetId = getElementId(dropTarget);
-  if (!targetId || targetId === pointerDragState.draggedId) return;
-  dropTarget.classList.add('drag-over');
-}
-
-let _autoScrollRaf = null;
-function autoScrollIfNeeded(coords, container) {
-  if (!container) return;
-  const containerRect = container.getBoundingClientRect();
-  const edgeThreshold = 60;
-  let speed = 0;
-  if (coords.x - containerRect.left < edgeThreshold) {
-    speed = -1 * (edgeThreshold - (coords.x - containerRect.left)) / edgeThreshold * 8;
-  } else if (containerRect.right - coords.x < edgeThreshold) {
-    speed = (edgeThreshold - (containerRect.right - coords.x)) / edgeThreshold * 8;
-  }
-  if (speed !== 0) {
-    if (!_autoScrollRaf) {
-      function step() {
-        if (!pointerDragState.active) { _autoScrollRaf = null; return; }
-        if (pointerDragState.scrollContainer) {
-          pointerDragState.scrollContainer.scrollLeft += speed;
-        }
-        _autoScrollRaf = requestAnimationFrame(step);
-      }
-      _autoScrollRaf = requestAnimationFrame(step);
-    }
-  } else {
-    if (_autoScrollRaf) { cancelAnimationFrame(_autoScrollRaf); _autoScrollRaf = null; }
-  }
-}
-
-function stopAutoScroll() {
-  if (_autoScrollRaf) { cancelAnimationFrame(_autoScrollRaf); _autoScrollRaf = null; }
-}
-
-function movePointerDrag(e) {
-  if (!pointerDragState.active) return;
-  e.preventDefault();
-  const coords = eventCoords(e);
-
-  if (pointerDragState.ghostEl) {
-    const dx = coords.x - pointerDragState.startX;
-    const dy = coords.y - pointerDragState.startY;
-    pointerDragState.ghostEl.style.transform = 'translate(' + dx + 'px, ' + dy + 'px)';
-  }
-
-  const targetEl = document.elementFromPoint(coords.x, coords.y);
-  highlightDropTarget(targetEl);
-  autoScrollIfNeeded(coords, pointerDragState.scrollContainer);
-}
-
-function endPointerDrag(e) {
-  if (!pointerDragState.active) return;
-  const coords = eventCoords(e);
-
-  const targetEl = document.elementFromPoint(coords.x, coords.y);
-  let dropTargetId = null;
-  if (targetEl) {
-    const dropTarget = targetEl.closest('.' + pointerDragState.dragOverClass);
-    if (dropTarget) dropTargetId = getElementId(dropTarget);
-  }
-
-  if (pointerDragState.ghostEl) {
-    pointerDragState.ghostEl.remove();
-    pointerDragState.ghostEl = null;
-  }
-
-  document.querySelectorAll('.' + pointerDragState.dragOverClass + '.drag-over').forEach(function (n) { n.classList.remove('drag-over'); });
-
-  var draggedEl = pointerDragState.elements.get(pointerDragState.draggedId);
-  if (draggedEl) draggedEl.classList.remove('dragging');
-
-  if (dropTargetId && pointerDragState.draggedId && dropTargetId !== pointerDragState.draggedId) {
-    pointerDragState.onDrop(pointerDragState.draggedId, dropTargetId);
-  }
-
-  if (pointerDragState.isTouch) {
-    document.body.style.overflow = '';
-    document.body.classList.remove('dragging-active');
-  }
-
-  pointerDragState.dragJustEnded = true;
-  setTimeout(function () { pointerDragState.dragJustEnded = false; }, 150);
-
-  stopAutoScroll();
-  pointerDragState.active = false;
-  pointerDragState.draggedId = null;
-  pointerDragState.isTouch = false;
-  pointerDragState.scrollContainer = null;
-}
-
-function createPointerDragHandler(_ref) {
-  var dragOverClass = _ref.dragOverClass,
-    onDrop = _ref.onDrop,
-    scrollContainerSelector = _ref.scrollContainerSelector;
+function createDragHandler({ dragOverClass, onDrop }) {
   return function attachDrag(element, id) {
-    pointerDragState.elements.set(id, element);
-
-    element.addEventListener('pointerdown', function (e) {
-      if (e.button !== undefined && e.button !== 0) return;
-      // Clear any pending drag from another element
-      if (pointerDragState._pressTimer) {
-        clearTimeout(pointerDragState._pressTimer);
-        pointerDragState._pressTimer = null;
-      }
-      // Capture values before any async delay — PointerEvent is recycled by the browser
-      var startCoords = eventCoords(e);
-      var startPointerType = e.pointerType;
-      var pendingId = id;
-      if (startPointerType === 'touch') {
-        pointerDragState.pendingStartX = startCoords.x;
-        pointerDragState.pendingStartY = startCoords.y;
-        pointerDragState._pressTimer = setTimeout(function () {
-          pointerDragState._pressTimer = null;
-          // Set config atomically with drag start to avoid race with another element's pointerdown
-          pointerDragState.onDrop = onDrop;
-          pointerDragState.dragOverClass = dragOverClass;
-          pointerDragState.scrollContainerSelector = scrollContainerSelector || null;
-          startPointerDrag(startCoords, startPointerType, pendingId);
-        }, 400);
-      } else {
-        pointerDragState.onDrop = onDrop;
-        pointerDragState.dragOverClass = dragOverClass;
-        pointerDragState.scrollContainerSelector = scrollContainerSelector || null;
-        startPointerDrag(startCoords, startPointerType, id);
-      }
+    if (!isMacDevice) return;
+    element.draggable = true;
+    element.addEventListener('dragstart', (event) => {
+      event.stopPropagation();
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', id);
+      element.classList.add('dragging');
     });
-
-    element.addEventListener('pointermove', function (e) {
-      if (pointerDragState._pressTimer) {
-        var coords = eventCoords(e);
-        var dx = coords.x - pointerDragState.pendingStartX;
-        var dy = coords.y - pointerDragState.pendingStartY;
-        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-          clearTimeout(pointerDragState._pressTimer);
-          pointerDragState._pressTimer = null;
-        }
-      }
+    element.addEventListener('dragend', () => {
+      element.classList.remove('dragging');
+      document.querySelectorAll('.' + dragOverClass + '.drag-over').forEach((n) => n.classList.remove('drag-over'));
     });
-
-    element.addEventListener('pointerup', function (e) {
-      if (pointerDragState._pressTimer) {
-        clearTimeout(pointerDragState._pressTimer);
-        pointerDragState._pressTimer = null;
-      }
+    element.addEventListener('dragenter', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (element.classList.contains('dragging')) return;
+      element.classList.add('drag-over');
     });
-
-    element.addEventListener('pointercancel', function () {
-      if (pointerDragState._pressTimer) {
-        clearTimeout(pointerDragState._pressTimer);
-        pointerDragState._pressTimer = null;
-      }
+    element.addEventListener('dragover', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (element.classList.contains('dragging')) return;
+      event.dataTransfer.dropEffect = 'move';
+      element.classList.add('drag-over');
     });
-
-    element.addEventListener('click', function (e) {
-      if (pointerDragState.dragJustEnded) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    }, true);
+    element.addEventListener('dragleave', () => { element.classList.remove('drag-over'); });
+    element.addEventListener('drop', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      element.classList.remove('drag-over');
+      const draggedId = event.dataTransfer.getData('text/plain');
+      if (!draggedId || draggedId === id) return;
+      onDrop(draggedId, id);
+    });
   };
 }
 
-document.addEventListener('pointermove', movePointerDrag, { passive: false });
-document.addEventListener('pointerup', endPointerDrag);
-document.addEventListener('pointercancel', endPointerDrag);
-document.addEventListener('selectstart', function (e) {
-  if (pointerDragState.active) e.preventDefault();
-});
-
-const attachItemDrag = createPointerDragHandler({
+const attachItemDrag = createDragHandler({
   dragOverClass: 'rail-card',
-  onDrop: function (draggedId, targetId) { reorderItemsByDrag(draggedId, targetId); },
-  scrollContainerSelector: '.rail-list',
+  onDrop: (draggedId, targetId) => reorderItemsByDrag(draggedId, targetId),
 });
 
 // ═══════════════════════════════════════════════
@@ -1400,6 +1204,7 @@ function renderCategoryOverview() {
     const content = fragment.querySelector('.overview-group-content');
     const groupToggle = fragment.querySelector('[data-group-toggle]');
     const remove = fragment.querySelector('[data-group-delete]');
+    if (isMacDevice) card.draggable = true;
     card.dataset.groupId = group.id;
     const categories = getOrderedCategoriesForPersonGroup(personId, group.id);
     const isCollapsed = Boolean(state.collapsedSettingsGroups[group.id]);
@@ -1407,7 +1212,7 @@ function renderCategoryOverview() {
     title.textContent = group.name;
     meta.textContent = categories.length ? `${categories.length} 个小品类` : '暂无小品类';
     if (isCollapsed) card.classList.add('collapsed');
-    const attachGroupDrag = createPointerDragHandler({
+    const attachGroupDrag = createDragHandler({
       dragOverClass: 'overview-group-card',
       onDrop: (draggedId, targetId) => reorderGroupsByDrag(personId, draggedId, targetId),
     });
@@ -1434,9 +1239,10 @@ function renderCategoryOverview() {
       const row = catFragment.querySelector('.overview-category-row');
       const name = catFragment.querySelector('.manager-row-title');
       const catDelete = catFragment.querySelector('[data-category-delete]');
+      if (isMacDevice) row.draggable = true;
       row.dataset.categoryId = category.id;
       name.textContent = category.name;
-      const attachCategoryDrag = createPointerDragHandler({
+      const attachCategoryDrag = createDragHandler({
         dragOverClass: 'overview-category-row',
         onDrop: (draggedId, targetId) => reorderCategoriesByDrag(personId, group.id, draggedId, targetId),
       });
@@ -2309,7 +2115,9 @@ function bindEvents() {
       const isOwnedNow = formData.has('isOwnedNow');
       const rawFiles = formData.getAll('photos').filter((f) => f instanceof File && f.size > 0);
 
-      if (!personId || !groupId || !categoryId || !label || !quantityRaw || !unit) {
+      const groupHasCategories = getOrderedCategoriesForPersonGroup(personId, groupId).length > 0;
+      if (!groupHasCategories) categoryId = '';
+      if (!personId || !groupId || (groupHasCategories && !categoryId) || !label || !quantityRaw || !unit) {
         await showModal('请把 YW 信息填写完整'); return;
       }
       if (!Number.isInteger(quantity) || quantity < 1) {
