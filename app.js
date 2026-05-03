@@ -306,6 +306,7 @@ const elements = {};
 function cacheElements() {
   Object.assign(elements, {
     topbar: document.querySelector('.topbar'),
+    topbarCurtain: document.querySelector('.topbar-curtain'),
     homeButton: document.querySelector('#homeButton'),
     addButton: document.querySelector('#addButton'),
     settingsButton: document.querySelector('#settingsButton'),
@@ -2260,6 +2261,41 @@ function setupRailMasks() {
 }
 
 // ═══════════════════════════════════════════════
+// 导航栏垂直遮罩
+// ═══════════════════════════════════════════════
+// Topbar curtain
+// ═══════════════════════════════════════════════
+var _topbarCurtainTicking = false;
+var _topbarCurtainVisible = false;
+
+function _updateTopbarCurtainVisibility() {
+  var topbarBottom = elements.topbar.getBoundingClientRect().bottom;
+  var visiblePanel = document.querySelector('.app-main > .view-panel:not([hidden])');
+  var shouldShow = visiblePanel ? visiblePanel.getBoundingClientRect().top < topbarBottom : false;
+  if (shouldShow !== _topbarCurtainVisible) {
+    _topbarCurtainVisible = shouldShow;
+    elements.topbarCurtain.classList.toggle('visible', shouldShow);
+  }
+  _topbarCurtainTicking = false;
+}
+
+function setupTopbarCurtain() {
+  if (!elements.topbar) return;
+  new ResizeObserver(function (entries) {
+    document.documentElement.style.setProperty('--topbar-height', entries[0].contentRect.height + 'px');
+  }).observe(elements.topbar);
+
+  window.addEventListener('scroll', function () {
+    if (!_topbarCurtainTicking) {
+      requestAnimationFrame(_updateTopbarCurtainVisibility);
+      _topbarCurtainTicking = true;
+    }
+  }, { passive: true });
+
+  _updateTopbarCurtainVisibility();
+}
+
+// ═══════════════════════════════════════════════
 // Init
 // ═══════════════════════════════════════════════
 async function initApp() {
@@ -2273,6 +2309,7 @@ async function initApp() {
   bindEvents();
   bindCropModalEvents();
   syncDateDisplay(elements.itemDateHidden.value);
+  setupTopbarCurtain();
   renderAll();
   syncFileSummaries();
 }
