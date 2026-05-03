@@ -974,40 +974,120 @@ function reorderRailCardsByItemList(itemsInOrder) {
 }
 
 function createDragHandler({ dragOverClass, onDrop }) {
+  var LONG_PRESS_MS = 400;
+  var MOVE_THRESHOLD = 8;
+
   return function attachDrag(element, id) {
-    element.draggable = true;
-    element.addEventListener('dragstart', (event) => {
-      event.stopPropagation();
-      event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.setData('text/plain', id);
-      element.classList.add('dragging');
-    });
-    element.addEventListener('dragend', () => {
+    element.classList.add('is-draggable');
+
+    var pressTimer = null;
+    var isDragging = false;
+    var ghost = null;
+    var currentDropTarget = null;
+    var pointerId = null;
+    var startX = 0;
+    var startY = 0;
+    var cleanedUp = false;
+
+    function cleanup() {
+      if (cleanedUp) return;
+      cleanedUp = true;
+      clearTimeout(pressTimer);
+      pressTimer = null;
+      isDragging = false;
       element.classList.remove('dragging');
-      document.querySelectorAll('.' + dragOverClass + '.drag-over').forEach((n) => n.classList.remove('drag-over'));
+      element.style.touchAction = '';
+      if (currentDropTarget) {
+        currentDropTarget.classList.remove('drag-over');
+        currentDropTarget = null;
+      }
+      if (ghost) {
+        ghost.remove();
+        ghost = null;
+      }
+      if (pointerId != null) {
+        try { element.releasePointerCapture(pointerId); } catch (e) { /* ignore */ }
+        pointerId = null;
+      }
+    }
+
+    function getDropTargetId(target) {
+      return target.dataset.itemId ||
+             target.dataset.groupId ||
+             target.dataset.categoryId || null;
+    }
+
+    element.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (isDragging) return;
+
+      cleanedUp = false;
+      startX = e.clientX;
+      startY = e.clientY;
+      pointerId = e.pointerId;
+      element.setPointerCapture(e.pointerId);
+
+      pressTimer = setTimeout(function () {
+        isDragging = true;
+        element.classList.add('dragging');
+        element.style.touchAction = 'none';
+
+        ghost = element.cloneNode(true);
+        ghost.classList.add('drag-ghost');
+        ghost.style.width = element.offsetWidth + 'px';
+        ghost.style.left = e.clientX + 'px';
+        ghost.style.top = e.clientY + 'px';
+        document.body.appendChild(ghost);
+      }, LONG_PRESS_MS);
     });
-    element.addEventListener('dragenter', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if (element.classList.contains('dragging')) return;
-      element.classList.add('drag-over');
+
+    element.addEventListener('pointermove', function (e) {
+      if (e.pointerId !== pointerId) return;
+
+      if (!isDragging) {
+        var dx = Math.abs(e.clientX - startX);
+        var dy = Math.abs(e.clientY - startY);
+        if (dx > MOVE_THRESHOLD || dy > MOVE_THRESHOLD) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+          try { element.releasePointerCapture(pointerId); } catch (err) { /* ignore */ }
+        }
+        return;
+      }
+
+      ghost.style.left = e.clientX + 'px';
+      ghost.style.top = e.clientY + 'px';
+
+      ghost.style.display = 'none';
+      var elBelow = document.elementFromPoint(e.clientX, e.clientY);
+      ghost.style.display = '';
+
+      var target = elBelow ? elBelow.closest('.' + dragOverClass) : null;
+      if (target && target !== element && target !== currentDropTarget) {
+        if (currentDropTarget) currentDropTarget.classList.remove('drag-over');
+        currentDropTarget = target;
+        currentDropTarget.classList.add('drag-over');
+      } else if (!target && currentDropTarget) {
+        currentDropTarget.classList.remove('drag-over');
+        currentDropTarget = null;
+      }
     });
-    element.addEventListener('dragover', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if (element.classList.contains('dragging')) return;
-      event.dataTransfer.dropEffect = 'move';
-      element.classList.add('drag-over');
+
+    element.addEventListener('pointerup', function (e) {
+      if (e.pointerId !== pointerId) return;
+
+      if (isDragging && currentDropTarget && currentDropTarget !== element) {
+        var targetId = getDropTargetId(currentDropTarget);
+        if (targetId && targetId !== id) {
+          onDrop(id, targetId);
+        }
+      }
+
+      cleanup();
     });
-    element.addEventListener('dragleave', () => { element.classList.remove('drag-over'); });
-    element.addEventListener('drop', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      element.classList.remove('drag-over');
-      const draggedId = event.dataTransfer.getData('text/plain');
-      if (!draggedId || draggedId === id) return;
-      onDrop(draggedId, id);
-    });
+
+    element.addEventListener('pointercancel', cleanup);
+    element.addEventListener('lostpointercapture', cleanup);
   };
 }
 
