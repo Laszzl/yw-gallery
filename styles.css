@@ -301,6 +301,7 @@ button:active,
   margin: 0 auto;
   height: calc(var(--topbar-sticky-top) + (var(--topbar-height, 80px) / 2) + (var(--topbar-curtain-fade-size) / 2));
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.96) 0px, rgba(255, 255, 255, 0.96) calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
+  border-radius: var(--radius-2xl);
 }
 
 
