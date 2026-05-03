@@ -15,9 +15,8 @@
   --danger-bg: rgba(192, 54, 44, 0.10);
   --accent-soft: rgba(17, 17, 17, 0.04);
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
-  --shadow-elevated: 0 20px 42px rgba(15, 23, 42, 0.1);
-  --shadow-floating: 0 16px 32px rgba(15, 23, 42, 0.07);
   --shadow-control: 0 8px 20px rgba(15, 23, 42, 0.05);
+  --shadow-topbar: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 8px rgba(15, 23, 42, 0.04);
   --radius-xl: 28px;
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -112,7 +111,7 @@ select:active,
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: var(--radius-xl);
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: var(--shadow-soft), 0 8px 16px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--shadow-topbar);
 }
 
 .topbar-branding {
@@ -394,7 +393,7 @@ select:active,
   transition: transform 0.28s ease, box-shadow 0.28s ease;
   background: var(--panel-strong);
   border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: var(--shadow-floating);
+  box-shadow: var(--shadow-soft);
 }
 
 .selector-image-wrap,
@@ -1450,7 +1449,14 @@ select:focus {
   min-height: 48px;
 }
 
-@media (max-width: 1180px) {
+/* ═══════════════════════════════════════════════
+   三端适配：iPad (≤1024px) · iPhone (≤768px) · 小屏 iPhone (≤430px)
+   Mac 端使用上方默认样式，不做修改
+   ═══════════════════════════════════════════════ */
+
+/* ── iPad 端（横版 + 竖版）── */
+@media (max-width: 1024px) {
+  /* Topbar：3 列 → 单列 */
   .topbar {
     grid-template-columns: 1fr;
     justify-items: stretch;
@@ -1461,20 +1467,45 @@ select:focus {
     justify-content: space-between;
   }
 
+  .athlete-switcher {
+    justify-content: flex-start;
+  }
+
+  /* 表单：3/4 列 → 2 列 */
   .form-grid.four-columns,
-  .form-grid.three-columns,
-  .person-form-layout {
+  .form-grid.three-columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
 
-@media (max-width: 860px) {
+  .person-form-layout,
+  .person-manager-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* 2 列 → 1 列 */
   .dual-upload-grid,
-  .form-grid.two-columns,
-  .person-form-layout {
+  .form-grid.two-columns {
     grid-template-columns: 1fr;
   }
 
+  /* 设置页：双列 → 单列 */
+  .settings-stack-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .category-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* 防止横向溢出 */
+  .view-panel,
+  .category-section,
+  .settings-block,
+  .glass-form {
+    overflow-x: hidden;
+  }
+
+  /* Flex 布局堆叠 */
   .upload-card,
   .overview-group-header {
     flex-direction: column;
@@ -1488,29 +1519,84 @@ select:focus {
     width: 100%;
   }
 
-  .athlete-switcher {
-    justify-content: flex-start;
+  .manager-row .order-actions,
+  .order-row .order-actions {
+    margin-left: 0 !important;
+    margin-top: 12px;
+  }
+
+  /* 页面宽度 */
+  .page-shell {
+    width: min(100% - 32px, 1024px);
+  }
+
+  /* 卡片 */
+  .rail-card {
+    flex-basis: 260px;
+  }
+
+  .athlete-selector-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .detail-hero-image-wrap {
+    width: min(280px, 60vw);
+  }
+
+  /* 图片缩略图 3 → 2 列 */
+  .photo-thumb-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* 日期选择器 */
+  .date-picker-modal-content {
+    width: min(380px, 94vw);
+    padding: 24px 20px;
+  }
+
+  .date-picker-columns {
+    height: 200px;
   }
 }
 
-@media (max-width: 720px) {
+/* ── iPhone 端 ── */
+@media (max-width: 768px) {
   :root {
-    --topbar-sticky-top: 16px;
+    --topbar-sticky-top: calc(16px + env(safe-area-inset-top, 0px));
   }
 
   .page-shell {
-    width: min(100% - 24px, 1000px);
+    width: min(100% - 24px, 768px);
     padding-top: 16px;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   }
 
   .topbar {
-    top: 16px;
-    padding: 18px;
-    border-radius: var(--radius-xl);
+    padding: 16px;
   }
 
-  .topbar-branding,
-  .topbar,
+  /* 全部表单单列 */
+  .form-grid.four-columns,
+  .form-grid.three-columns,
+  .form-grid.two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .person-form-layout,
+  .person-manager-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .person-create-actions,
+  .person-photo-actions {
+    flex-direction: column;
+  }
+
+  .action-button-wide {
+    width: 100%;
+  }
+
+  /* Flex 布局堆叠 */
   .category-section-header,
   .subcategory-header,
   .manager-row,
@@ -1520,20 +1606,7 @@ select:focus {
     align-items: stretch;
   }
 
-  .topbar-branding {
-    gap: 12px;
-  }
-
-  .topbar-copy {
-    gap: 4px;
-  }
-
-  .manager-row .order-actions,
-  .order-row .order-actions {
-    margin-left: 0 !important;
-    margin-top: 12px;
-  }
-
+  /* 面板内边距 */
   .view-panel,
   .category-section,
   .settings-block,
@@ -1545,33 +1618,118 @@ select:focus {
     padding: 20px;
   }
 
+  /* 详情页头像 */
   .detail-hero-image-wrap {
-    width: min(248px, 70vw);
+    width: min(200px, 60vw);
   }
 
-  .form-grid.four-columns,
-  .form-grid.three-columns,
-  .form-grid.two-columns {
+  /* 卡片 */
+  .rail-card {
+    flex-basis: 240px;
+  }
+
+  .athlete-selector-grid {
     grid-template-columns: 1fr;
   }
 
-  .rail-card {
-    flex-basis: 260px;
+  /* 弹窗：底部弹出，适配安全区 */
+  .modal-overlay {
+    padding: 16px;
+    align-items: flex-end;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
 
+  .modal-content {
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .crop-modal-content {
+    width: 100%;
+    padding: 24px 16px;
+  }
+
+  .crop-preview-container {
+    max-width: 100%;
+  }
+
+  .date-picker-modal-content {
+    width: 100%;
+    padding: 24px 16px;
+  }
+
+  .date-picker-columns {
+    height: 180px;
+  }
+
+  /* 性能优化 */
   .view-panel,
   .modal-overlay {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
 
-  .date-picker-modal-content {
-    width: min(380px, 94vw);
-    padding: 24px 20px;
+  /* 数据管理 */
+  .data-manage-actions {
+    flex-direction: column;
   }
 
-  .date-picker-columns {
-    height: 200px;
+  .data-manage-actions .primary-button,
+  .data-manage-actions .file-picker {
+    width: 100%;
+  }
+
+  /* 品类查看 */
+  .overview-person-filter {
+    width: 100%;
+  }
+
+  .overview-group-header {
+    padding: 16px 20px;
+  }
+
+  .overview-group-content {
+    padding: 0 16px 20px;
+  }
+
+  /* 切换器 */
+  .switcher-chip {
+    font-size: 0.95rem;
+    padding: 0 16px;
+  }
+}
+
+/* ── 小屏 iPhone（SE / 12 mini / 13 mini）── */
+@media (max-width: 430px) {
+  .page-shell {
+    width: min(100% - 16px, 430px);
+  }
+
+  .topbar {
+    padding: 12px 16px;
+  }
+
+  .switcher-chip {
+    min-width: 56px;
+    padding: 0 12px;
+    font-size: 0.88rem;
+  }
+
+  .rail-card {
+    flex-basis: 200px;
+  }
+
+  .detail-hero-image-wrap {
+    width: min(160px, 56vw);
+  }
+
+  .detail-hero-name {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+
+  .modal-content {
+    padding: 20px 16px;
   }
 }
 
@@ -1750,9 +1908,8 @@ select:focus {
     --danger-bg: rgba(255, 105, 97, 0.12);
     --accent-soft: rgba(255, 255, 255, 0.06);
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
-    --shadow-elevated: 0 20px 42px rgba(0, 0, 0, 0.4);
-    --shadow-floating: 0 16px 32px rgba(0, 0, 0, 0.3);
     --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
+    --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
   }
 
   /* Topbar */
