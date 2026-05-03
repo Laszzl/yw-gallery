@@ -2269,9 +2269,9 @@ var _topbarCurtainTicking = false;
 var _topbarCurtainVisible = false;
 
 function _updateTopbarCurtainVisibility() {
-  var topbarBottom = elements.topbar.getBoundingClientRect().bottom;
+  var topbarTop = elements.topbar.getBoundingClientRect().top;
   var visiblePanel = document.querySelector('.app-main > .view-panel:not([hidden])');
-  var shouldShow = visiblePanel ? visiblePanel.getBoundingClientRect().top < topbarBottom : false;
+  var shouldShow = visiblePanel ? visiblePanel.getBoundingClientRect().top < topbarTop : false;
   if (shouldShow !== _topbarCurtainVisible) {
     _topbarCurtainVisible = shouldShow;
     elements.topbarCurtain.classList.toggle('visible', shouldShow);
