@@ -290,14 +290,15 @@ button:active,
 /* ── Topbar curtain ── */
 .topbar-curtain {
   position: fixed;
-  top: 0;
+  top: var(--topbar-sticky-top);
   left: 0;
   right: 0;
   z-index: 99;
   pointer-events: none;
   width: min(1440px, calc(100% - 48px));
   margin: 0 auto;
-  height: calc(var(--topbar-sticky-top) + var(--topbar-height, 80px) + 32px);
+  height: calc(var(--topbar-height, 80px) + 32px);
+  border-radius: var(--radius-2xl);
   background: linear-gradient(to bottom, var(--bg) 0px, var(--bg) calc(100% - 32px), transparent 100%);
 }
 
