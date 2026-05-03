@@ -2266,16 +2266,15 @@ function setupRailMasks() {
 // Topbar curtain
 // ═══════════════════════════════════════════════
 var _topbarCurtainTicking = false;
-var _topbarCurtainVisible = false;
-
 function _updateTopbarCurtainVisibility() {
   var topbarTop = elements.topbar.getBoundingClientRect().top;
   var visiblePanel = document.querySelector('.app-main > .view-panel:not([hidden])');
-  var shouldShow = visiblePanel ? visiblePanel.getBoundingClientRect().top < topbarTop : false;
-  if (shouldShow !== _topbarCurtainVisible) {
-    _topbarCurtainVisible = shouldShow;
-    elements.topbarCurtain.classList.toggle('visible', shouldShow);
+  var opacity = 0;
+  if (visiblePanel) {
+    var overlap = topbarTop - visiblePanel.getBoundingClientRect().top;
+    opacity = Math.max(0, Math.min(1, overlap / 48));
   }
+  elements.topbarCurtain.style.opacity = String(opacity);
   _topbarCurtainTicking = false;
 }
 
