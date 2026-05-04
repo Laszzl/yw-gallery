@@ -773,7 +773,6 @@ select:active,
   padding: 18px 18px 20px;
   flex: 1;
   display: flex;
-  align-items: center;
 }
 
 .yw-title,
@@ -790,7 +789,14 @@ select:active,
   width: 100%;
 }
 
-.card-topline > div:first-child,
+.card-topline > div:first-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+}
+
 .text-item-copy {
   min-width: 0;
 }
