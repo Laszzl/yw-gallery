@@ -17,15 +17,15 @@
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
   --shadow-control: 0 8px 20px rgba(15, 23, 42, 0.05);
   --shadow-topbar: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 8px rgba(15, 23, 42, 0.04);
-  --hover-control-bg: rgba(255, 255, 255, 0.98);
-  --hover-control-border: rgba(15, 23, 42, 0.16);
-  --hover-control-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
-  --hover-primary-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
-  --hover-field-bg: #ffffff;
-  --hover-field-border: rgba(17, 17, 17, 0.22);
-  --hover-panel-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
-  --hover-date-item-bg: rgba(17, 17, 17, 0.05);
-  --hover-danger-bg: rgba(192, 54, 44, 0.14);
+  --hover-control-bg: rgba(255, 255, 255, 0.94);
+  --hover-control-border: rgba(15, 23, 42, 0.13);
+  --hover-control-shadow: 0 8px 18px rgba(15, 23, 42, 0.07);
+  --hover-primary-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+  --hover-field-bg: rgba(255, 255, 255, 0.96);
+  --hover-field-border: rgba(17, 17, 17, 0.16);
+  --hover-panel-shadow: 0 14px 30px rgba(15, 23, 42, 0.09);
+  --hover-date-item-bg: rgba(17, 17, 17, 0.04);
+  --hover-danger-bg: rgba(192, 54, 44, 0.12);
   --radius-xl: 28px;
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -1885,12 +1885,24 @@ select:focus {
    Mac Desktop Only — hover (触摸设备不生效)
    ═══════════════════════════════════════════════ */
 @media (hover: hover) and (pointer: fine) {
+  .rail-card[draggable="true"],
+  .overview-group-card[draggable="true"],
+  .overview-category-row[draggable="true"] {
+    cursor: grab;
+  }
+
+  .rail-card[draggable="true"].dragging,
+  .overview-group-card[draggable="true"].dragging,
+  .overview-category-row[draggable="true"].dragging {
+    cursor: grabbing;
+  }
+
   .brand-button:hover,
   .primary-button:hover,
   .secondary-button:hover,
   .file-picker.primary-button:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.08);
+    transform: translateY(-0.5px);
+    background: linear-gradient(180deg, #242426 0%, #151517 100%);
     box-shadow: var(--hover-primary-shadow);
   }
 
@@ -1899,22 +1911,22 @@ select:focus {
   .subtle-icon-btn:hover,
   .file-picker:not(.primary-button):hover,
   .switcher-chip:hover {
-    transform: translateY(-1px);
+    transform: translateY(-0.5px);
     background: var(--hover-control-bg);
     border-color: var(--hover-control-border);
     box-shadow: var(--hover-control-shadow);
   }
 
   .switcher-chip.active:hover {
-    filter: brightness(1.08);
+    background: linear-gradient(180deg, #242426 0%, #151517 100%);
     box-shadow: var(--hover-primary-shadow);
   }
 
   .danger-button:hover,
   .danger-lite-button:hover {
-    transform: translateY(-1px);
+    transform: translateY(-0.5px);
     background: var(--hover-danger-bg);
-    border-color: rgba(192, 54, 44, 0.24);
+    border-color: rgba(192, 54, 44, 0.18);
     box-shadow: var(--hover-control-shadow);
   }
 
@@ -1923,7 +1935,6 @@ select:focus {
   input[type="date"]:hover,
   select:hover,
   .date-display-button:hover {
-    transform: translateY(-1px);
     background-color: var(--hover-field-bg);
     border-color: var(--hover-field-border);
     box-shadow: var(--hover-control-shadow);
@@ -1934,7 +1945,6 @@ select:focus {
   }
 
   .checkbox-panel:hover {
-    transform: translateY(-1px);
     border-color: var(--hover-field-border);
     box-shadow: var(--hover-control-shadow);
   }
@@ -1949,7 +1959,7 @@ select:focus {
   }
 
   .toggle-switch.active:hover {
-    filter: brightness(1.08);
+    filter: brightness(1.03);
   }
 
   .date-col-item:hover {
@@ -1959,13 +1969,13 @@ select:focus {
   }
 
   .selector-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-1.5px);
     border-color: var(--hover-control-border);
     box-shadow: var(--hover-panel-shadow);
   }
 
   .selector-card:hover .selector-image {
-    transform: scale(1.035);
+    transform: scale(1.018);
   }
 
   .photo-thumb-item:hover .photo-thumb-replace {
@@ -1973,7 +1983,7 @@ select:focus {
   }
 
   .photo-thumb-item:hover {
-    transform: translateY(-1px);
+    transform: translateY(-0.5px);
     box-shadow: var(--hover-control-shadow);
   }
 
@@ -1983,12 +1993,12 @@ select:focus {
 
   .crop-rect:hover {
     border-color: #9ed0f5;
-    box-shadow: 0 0 0 4px rgba(124, 184, 228, 0.18);
+    box-shadow: 0 0 0 3px rgba(124, 184, 228, 0.14);
   }
 
   .crop-handle:hover {
-    transform: scale(1.08);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.36);
+    transform: scale(1.04);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.32);
   }
 }
 
@@ -2014,15 +2024,15 @@ select:focus {
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
     --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
     --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
-    --hover-control-bg: rgba(255, 255, 255, 0.12);
-    --hover-control-border: rgba(255, 255, 255, 0.18);
-    --hover-control-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
-    --hover-primary-shadow: 0 14px 30px rgba(0, 0, 0, 0.34);
-    --hover-field-bg: rgba(255, 255, 255, 0.12);
-    --hover-field-border: rgba(255, 255, 255, 0.24);
-    --hover-panel-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
-    --hover-date-item-bg: rgba(255, 255, 255, 0.08);
-    --hover-danger-bg: rgba(255, 105, 97, 0.18);
+    --hover-control-bg: rgba(255, 255, 255, 0.10);
+    --hover-control-border: rgba(255, 255, 255, 0.14);
+    --hover-control-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+    --hover-primary-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    --hover-field-bg: rgba(255, 255, 255, 0.10);
+    --hover-field-border: rgba(255, 255, 255, 0.18);
+    --hover-panel-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
+    --hover-date-item-bg: rgba(255, 255, 255, 0.06);
+    --hover-danger-bg: rgba(255, 105, 97, 0.15);
   }
 
   /* Topbar */
