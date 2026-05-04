@@ -17,6 +17,15 @@
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
   --shadow-control: 0 8px 20px rgba(15, 23, 42, 0.05);
   --shadow-topbar: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 8px rgba(15, 23, 42, 0.04);
+  --hover-control-bg: rgba(255, 255, 255, 0.98);
+  --hover-control-border: rgba(15, 23, 42, 0.16);
+  --hover-control-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+  --hover-primary-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+  --hover-field-bg: #ffffff;
+  --hover-field-border: rgba(17, 17, 17, 0.22);
+  --hover-panel-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
+  --hover-date-item-bg: rgba(17, 17, 17, 0.05);
+  --hover-danger-bg: rgba(192, 54, 44, 0.14);
   --radius-xl: 28px;
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -1762,6 +1771,7 @@ select:focus {
   position: absolute;
   border: 2px solid #7cb8e4;
   box-sizing: border-box;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .crop-handle {
@@ -1773,6 +1783,7 @@ select:focus {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   z-index: 10;
   pointer-events: auto;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .crop-handle-tl { top: -12px; left: -12px; }
@@ -1807,6 +1818,7 @@ select:focus {
   border-radius: var(--radius-md);
   overflow: hidden;
   background: rgba(15, 23, 42, 0.04);
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
 }
 
 .photo-thumb-img {
@@ -1870,44 +1882,113 @@ select:focus {
 }
 
 /* ═══════════════════════════════════════════════
-   Mac Desktop Only — cursor / hover (触摸设备不生效)
+   Mac Desktop Only — hover (触摸设备不生效)
    ═══════════════════════════════════════════════ */
 @media (hover: hover) and (pointer: fine) {
-  /* Cursor */
-  button,
-  .mini-file-button,
-  .file-picker,
-  .selector-card,
-  select,
-  .date-display-button,
-  .date-col-item,
-  .checkbox-label,
-  .toggle-switch {
-    cursor: pointer;
+  .brand-button:hover,
+  .primary-button:hover,
+  .secondary-button:hover,
+  .file-picker.primary-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+    box-shadow: var(--hover-primary-shadow);
   }
 
-  .rail-card[draggable="true"],
-  .overview-group-card[draggable="true"],
-  .overview-category-row[draggable="true"] {
-    cursor: grab;
+  .mini-button:hover,
+  .mini-file-button:hover,
+  .subtle-icon-btn:hover,
+  .file-picker:not(.primary-button):hover,
+  .switcher-chip:hover {
+    transform: translateY(-1px);
+    background: var(--hover-control-bg);
+    border-color: var(--hover-control-border);
+    box-shadow: var(--hover-control-shadow);
   }
 
-  .crop-rect {
-    cursor: move;
+  .switcher-chip.active:hover {
+    filter: brightness(1.08);
+    box-shadow: var(--hover-primary-shadow);
   }
 
-  .crop-handle-tl,
-  .crop-handle-br {
-    cursor: nwse-resize;
+  .danger-button:hover,
+  .danger-lite-button:hover {
+    transform: translateY(-1px);
+    background: var(--hover-danger-bg);
+    border-color: rgba(192, 54, 44, 0.24);
+    box-shadow: var(--hover-control-shadow);
   }
 
-  .crop-handle-tr,
-  .crop-handle-bl {
-    cursor: nesw-resize;
+  input[type="text"]:hover,
+  input[type="number"]:hover,
+  input[type="date"]:hover,
+  select:hover,
+  .date-display-button:hover {
+    transform: translateY(-1px);
+    background-color: var(--hover-field-bg);
+    border-color: var(--hover-field-border);
+    box-shadow: var(--hover-control-shadow);
   }
 
-  .yw-card-image-wrap.has-multi-photos {
-    cursor: pointer;
+  .date-display-button:hover .date-chevron {
+    transform: translateY(1px);
+  }
+
+  .checkbox-panel:hover {
+    transform: translateY(-1px);
+    border-color: var(--hover-field-border);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  .checkbox-label:hover .checkbox-ui {
+    border-color: var(--hover-field-border);
+    box-shadow: 0 0 0 4px var(--hover-date-item-bg);
+  }
+
+  .toggle-switch:hover {
+    box-shadow: 0 0 0 4px var(--hover-date-item-bg);
+  }
+
+  .toggle-switch.active:hover {
+    filter: brightness(1.08);
+  }
+
+  .date-col-item:hover {
+    color: var(--text);
+    background: var(--hover-date-item-bg);
+    font-weight: 500;
+  }
+
+  .selector-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--hover-control-border);
+    box-shadow: var(--hover-panel-shadow);
+  }
+
+  .selector-card:hover .selector-image {
+    transform: scale(1.035);
+  }
+
+  .photo-thumb-item:hover .photo-thumb-replace {
+    opacity: 1;
+  }
+
+  .photo-thumb-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  .photo-thumb-replace:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .crop-rect:hover {
+    border-color: #9ed0f5;
+    box-shadow: 0 0 0 4px rgba(124, 184, 228, 0.18);
+  }
+
+  .crop-handle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.36);
   }
 }
 
@@ -1933,6 +2014,15 @@ select:focus {
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
     --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
     --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
+    --hover-control-bg: rgba(255, 255, 255, 0.12);
+    --hover-control-border: rgba(255, 255, 255, 0.18);
+    --hover-control-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+    --hover-primary-shadow: 0 14px 30px rgba(0, 0, 0, 0.34);
+    --hover-field-bg: rgba(255, 255, 255, 0.12);
+    --hover-field-border: rgba(255, 255, 255, 0.24);
+    --hover-panel-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
+    --hover-date-item-bg: rgba(255, 255, 255, 0.08);
+    --hover-danger-bg: rgba(255, 105, 97, 0.18);
   }
 
   /* Topbar */
