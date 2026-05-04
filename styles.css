@@ -72,7 +72,6 @@ select {
 button,
 .mini-file-button,
 .file-picker {
-  cursor: pointer;
   border: 0;
   border-radius: 999px;
   transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease, background-color 0.22s ease, border-color 0.22s ease;
@@ -389,7 +388,6 @@ select:active,
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-xl);
-  cursor: pointer;
   transition: transform 0.28s ease, box-shadow 0.28s ease;
 }
 
@@ -730,9 +728,6 @@ select:active,
   flex: 0 0 296px;
 }
 
-.rail-card {
-  cursor: grab;
-}
 
 .rail-card.dragging {
   opacity: 0.45;
@@ -741,20 +736,6 @@ select:active,
 .rail-card.drag-over {
   outline: 2px dashed rgba(17, 17, 17, 0.35);
   outline-offset: 4px;
-}
-
-.drag-ghost {
-  opacity: 0.88;
-  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  transition: none;
-  transform-origin: top left;
-}
-
-body.dragging-active {
-  user-select: none;
-  -webkit-user-select: none;
 }
 
 .yw-card,
@@ -975,11 +956,6 @@ body.dragging-active {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(250, 250, 252, 0.98));
 }
 
-.overview-group-card,
-.overview-category-row {
-  cursor: grab;
-}
-
 .overview-group-card.dragging,
 .overview-category-row.dragging {
   opacity: 0.45;
@@ -1085,7 +1061,6 @@ select {
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 14px;
-  cursor: pointer;
 }
 
 .add-item-form select {
@@ -1116,7 +1091,6 @@ select:focus {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  cursor: pointer;
   font-weight: 500;
   font-size: var(--text-base);
 }
@@ -1205,7 +1179,6 @@ select:focus {
   font-size: 1.05rem;
   font-weight: 400;
   color: var(--muted);
-  cursor: pointer;
   user-select: none;
   transition: color 0.15s ease, font-weight 0.15s ease;
 }
@@ -1246,7 +1219,6 @@ select:focus {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  cursor: pointer;
   font-weight: 500;
   user-select: none;
 }
@@ -1422,7 +1394,6 @@ select:focus {
   border-radius: 28px;
   background: rgba(0, 0, 0, 0.2);
   border: none;
-  cursor: pointer;
   transition: background-color 0.25s ease;
   flex-shrink: 0;
   padding: 0;
@@ -1611,13 +1582,13 @@ select:focus {
   }
 
   .page-shell {
-    width: min(100% - 20px, 768px);
-    padding-top: 12px;
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    width: min(100% - 24px, 768px);
+    padding-top: 16px;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   }
 
   .topbar {
-    padding: 12px 14px;
+    padding: 16px;
   }
 
   /* 全部表单单列 */
@@ -1665,38 +1636,16 @@ select:focus {
 
   /* 详情页头像 */
   .detail-hero-image-wrap {
-    width: min(160px, 55vw);
-    border-width: 5px;
+    width: min(200px, 60vw);
   }
 
   /* 卡片 */
   .rail-card {
-    flex-basis: 180px;
-  }
-
-  .rail-list {
-    gap: 12px;
-  }
-
-  .yw-card-body {
-    padding: 12px 12px 14px;
-  }
-
-  .yw-title,
-  .text-item-title {
-    font-size: 1rem;
-  }
-
-  .yw-date,
-  .text-item-date {
-    font-size: 0.82rem;
+    flex-basis: 240px;
   }
 
   .athlete-selector-grid {
     grid-template-columns: 1fr;
-    max-width: 280px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   /* 弹窗：底部弹出，适配安全区 */
@@ -1812,7 +1761,6 @@ select:focus {
 .crop-rect {
   position: absolute;
   border: 2px solid #7cb8e4;
-  cursor: move;
   box-sizing: border-box;
 }
 
@@ -1827,10 +1775,10 @@ select:focus {
   pointer-events: auto;
 }
 
-.crop-handle-tl { top: -12px; left: -12px; cursor: nwse-resize; }
-.crop-handle-tr { top: -12px; right: -12px; cursor: nesw-resize; }
-.crop-handle-bl { bottom: -12px; left: -12px; cursor: nesw-resize; }
-.crop-handle-br { bottom: -12px; right: -12px; cursor: nwse-resize; }
+.crop-handle-tl { top: -12px; left: -12px; }
+.crop-handle-tr { top: -12px; right: -12px; }
+.crop-handle-bl { bottom: -12px; left: -12px; }
+.crop-handle-br { bottom: -12px; right: -12px; }
 
 .crop-modal-actions {
   display: flex;
@@ -1905,7 +1853,6 @@ select:focus {
 }
 
 .yw-card-image-wrap.has-multi-photos {
-  cursor: pointer;
 }
 
 /* ── 数据管理 ── */
@@ -1920,6 +1867,48 @@ select:focus {
   color: var(--muted);
   font-size: var(--text-sm);
   line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════
+   Mac Desktop Only — cursor / hover (触摸设备不生效)
+   ═══════════════════════════════════════════════ */
+@media (hover: hover) and (pointer: fine) {
+  /* Cursor */
+  button,
+  .mini-file-button,
+  .file-picker,
+  .selector-card,
+  select,
+  .date-display-button,
+  .date-col-item,
+  .checkbox-label,
+  .toggle-switch {
+    cursor: pointer;
+  }
+
+  .rail-card[draggable="true"],
+  .overview-group-card[draggable="true"],
+  .overview-category-row[draggable="true"] {
+    cursor: grab;
+  }
+
+  .crop-rect {
+    cursor: move;
+  }
+
+  .crop-handle-tl,
+  .crop-handle-br {
+    cursor: nwse-resize;
+  }
+
+  .crop-handle-tr,
+  .crop-handle-bl {
+    cursor: nesw-resize;
+  }
+
+  .yw-card-image-wrap.has-multi-photos {
+    cursor: pointer;
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -2187,10 +2176,6 @@ select:focus {
   .overview-group-card.drag-over,
   .overview-category-row.drag-over {
     outline-color: rgba(255, 255, 255, 0.25);
-  }
-
-  .drag-ghost {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
   }
 
   /* Date picker */

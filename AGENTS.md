@@ -19,11 +19,39 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 - 数据持久化优先使用 IndexedDB，localStorage 作为回退并自动迁移；支持 JSON 导入导出备份。
 
 ## 三端兼容
-- 全局原则：Mac、iPad、iPhone 只做 UI 和交互适配，不改变数据结构、保存格式、业务流程和中文 Apple 风格。
-- Mac：保持当前宽屏布局、顶部导航、多列表单、横向 YW 列表和鼠标拖拽体验。
-- iPad 横版：整体接近 Mac，但控件间距、触控目标、弹窗宽度和横向滚动区域必须适配触摸操作。
-- iPad 竖版：顶部导航与操作区允许换行；表单从多列收敛为一到两列；详情页和设置页不得横向溢出。
-- iPhone：采用单列布局；按钮、输入框和选择器全宽或易点按；弹窗适配小屏与安全区；核心操作不能依赖 hover。
+
+### 全局原则
+不改变数据结构、保存格式、业务流程和中文 Apple 风格。
+
+### Mac 与移动端是完全不同的交互逻辑
+
+这是项目最重要的设计约束。两类设备交互模型完全不同，代码必须按设备分支，不可混用。
+
+**Mac（桌面端）**：
+- 交互：鼠标/键盘，依赖 hover、右键菜单、HTML5 拖拽（`draggable="true"`）
+- 布局：宽屏、顶部导航、多列表单、横向 YW 卡片列表
+- CSS：`cursor: grab/pointer` 等仅在 `@media (hover: hover)` 下生效
+
+**iPhone/iPad（移动端）**：
+- 交互：仅触摸（点按、滑动、长按），不依赖 hover、右键、HTML5 DnD
+- 拖拽：通过长按 400ms 触发 Pointer Events 拖拽（非 HTML5 DnD），iOS Safari 不支持 HTML5 拖拽
+- 所有核心操作基于 click/touch 事件，不得使用 hover 触发的 UI
+
+### iPad 适配
+- **横版 (max-width: 1366px)**：接近 Mac 布局，触控目标加大、弹窗加宽、横向滚动适配触摸。
+- **竖版 (max-width: 1024px)**：顶部导航允许换行；表单收敛为 1-2 列；禁止横向溢出。
+
+### iPhone 适配 (max-width: 768px)
+
+窄屏单列布局，核心原则：**全宽控件、底部弹窗、安全区适配**。
+
+- 页面容器：`width: min(100% - 24px, 768px)`，底部留出 `88px + safe-area-inset-bottom`
+- 卡片：rail-card `flex-basis: 240px`（保证触控目标 ≥ 44px），athlete-grid 单列
+- 表单/布局网格：全部强制单列（`grid-template-columns: 1fr`）
+- 弹窗：底部弹出（`align-items: flex-end`），`max-height: 85vh`，适配安全区
+- flex row 全部换为纵向堆叠（`flex-direction: column`）
+- 头像：`min(200px, 60vw)`
+- 性能：禁用 `backdrop-filter` 避免 iOS 渲染性能问题
 
 ## 开发
 - 修改代码后刷新浏览器即可生效

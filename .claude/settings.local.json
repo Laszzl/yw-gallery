@@ -18,7 +18,15 @@
       "Bash(open *)",
       "Bash(gh repo *)",
       "Bash(gh auth *)",
-      "Bash(gh api *)"
+      "Bash(gh api *)",
+      "WebSearch",
+      "WebFetch(domain:frontendmasters.com)",
+      "WebFetch(domain:therobbiedavis.com)",
+      "Bash(read line *)",
+      "Bash(sed -n '1167,1171p' styles.css)",
+      "Bash(sed -n '1415,1419p' styles.css)",
+      "Bash(sed -n '1508,1512p' styles.css)",
+      "Bash(sed -n '1666,1672p' styles.css)"
     ]
   }
 }
