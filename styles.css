@@ -16,7 +16,8 @@
   --accent-soft: rgba(17, 17, 17, 0.04);
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
   --shadow-control: 0 8px 20px rgba(15, 23, 42, 0.05);
-  --shadow-topbar: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 8px rgba(15, 23, 42, 0.04);
+  --shadow-topbar: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 8px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.05);
+  --shadow-topbar-floating: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06), 0 12px 40px rgba(15, 23, 42, 0.08);
   --hover-control-bg: rgba(255, 255, 255, 0.94);
   --hover-control-border: rgba(15, 23, 42, 0.13);
   --hover-control-shadow: 0 8px 18px rgba(15, 23, 42, 0.07);
@@ -37,7 +38,7 @@
   --text-base: 1rem;
   --text-sm: 0.92rem;
   --topbar-sticky-top: 24px;
-  --topbar-curtain-fade-size: 32px;
+  --topbar-curtain-fade-size: 48px;
 }
 
 * {
@@ -117,10 +118,33 @@ select:active,
   z-index: 100;
   margin-bottom: 20px;
   padding: 18px 22px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: var(--radius-xl);
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
   box-shadow: var(--shadow-topbar);
+}
+
+/* Liquid Glass specular highlight — top inner edge shine */
+.topbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  border-radius: var(--radius-xl);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Floating depth state — activated when curtain fades in */
+.topbar-scrolled {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-topbar-floating);
 }
 
 .topbar-branding {
@@ -314,8 +338,11 @@ select:active,
   width: min(1440px, calc(100% - 48px));
   margin: 0 auto;
   height: calc(var(--topbar-sticky-top) + (var(--topbar-height, 80px) / 2) + (var(--topbar-curtain-fade-size) / 2));
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.96) 0px, rgba(255, 255, 255, 0.96) calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.78) 0px, rgba(255, 255, 255, 0.78) calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
   border-radius: var(--radius-xl);
+  transition: opacity 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 
@@ -1528,6 +1555,13 @@ select:focus {
     justify-content: center;
   }
 
+  /* iPad performance: reduce blur radius */
+  .topbar,
+  .topbar-curtain {
+    backdrop-filter: blur(16px) saturate(1.6);
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  }
+
   /* 表单：3/4 列 → 2 列 */
   .form-grid.four-columns,
   .form-grid.three-columns {
@@ -1719,11 +1753,18 @@ select:focus {
     height: 180px;
   }
 
-  /* 性能优化 */
+  /* 性能优化：禁用 backdrop-filter */
   .view-panel,
-  .modal-overlay {
+  .modal-overlay,
+  .topbar,
+  .topbar-curtain {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+
+  /* 隐藏镜面高光，节省合成层 */
+  .topbar::before {
+    display: none;
   }
 
   /* 数据管理 */
@@ -2054,7 +2095,8 @@ select:focus {
     --accent-soft: rgba(255, 255, 255, 0.06);
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
     --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
-    --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
+    --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.18);
+    --shadow-topbar-floating: 0 1px 2px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.22), 0 12px 40px rgba(0, 0, 0, 0.28);
     --hover-control-bg: rgba(255, 255, 255, 0.10);
     --hover-control-border: rgba(255, 255, 255, 0.14);
     --hover-control-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
@@ -2068,12 +2110,20 @@ select:focus {
 
   /* Topbar */
   .topbar {
-    background: rgba(44, 44, 46, 0.96);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(44, 44, 46, 0.72);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    border-color: rgba(255, 255, 255, 0.15);
   }
 
   .topbar-curtain {
-    background: linear-gradient(to bottom, rgba(44, 44, 46, 0.96) 0px, rgba(44, 44, 46, 0.96) calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
+    background: linear-gradient(to bottom, rgba(44, 44, 46, 0.72) 0px, rgba(44, 44, 46, 0.72) calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  }
+
+  .topbar-scrolled {
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   /* Brand / primary / secondary — have dark gradient bg, text must stay white */

@@ -2269,6 +2269,7 @@ function _updateTopbarCurtainVisibility() {
     opacity = Math.max(0, Math.min(1, overlap / 48));
   }
   elements.topbarCurtain.style.opacity = String(opacity);
+  elements.topbar.classList.toggle('topbar-scrolled', opacity > 0.3);
   _topbarCurtainTicking = false;
 }
 
