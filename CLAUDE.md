@@ -56,3 +56,4 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 ## 开发
 - 修改代码后刷新浏览器即可生效
 - 每次修改代码后，自动提交并推送到 GitHub（git add + commit + push）
+- 代码变更导致 CLAUDE.md 描述不符时，询问用户是否更新 CLAUDE.md
