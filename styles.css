@@ -813,6 +813,18 @@ select:active,
   min-width: 0;
 }
 
+.yw-meta-row,
+.text-item-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.yw-meta-row > .yw-date,
+.text-item-meta-row > .text-item-date {
+  margin-top: 0;
+}
+
 .text-item-row {
   padding: 20px;
   display: flex;
