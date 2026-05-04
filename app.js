@@ -1046,6 +1046,11 @@ function renderCurrentView() {
   if (viewState.currentView === 'home') renderHomeView();
   if (viewState.currentView === 'athlete') renderAthleteView();
   if (viewState.currentView === 'settings') renderCategoryOverview();
+
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  requestAnimationFrame(function () {
+    _updateTopbarCurtainVisibility();
+  });
 }
 
 function showHomeView() { viewState.currentView = 'home'; renderAll(); }

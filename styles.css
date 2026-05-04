@@ -51,6 +51,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--topbar-height, 80px) + var(--topbar-sticky-top, 24px) + 20px);
 }
 
 body {
@@ -329,7 +330,7 @@ select:active,
 @keyframes viewFadeIn {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
