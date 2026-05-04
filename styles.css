@@ -118,15 +118,16 @@ select:active,
   z-index: 100;
   margin-bottom: 20px;
   padding: 18px 22px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: var(--radius-xl);
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(24px) saturate(1.8);
-  -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  box-shadow: var(--shadow-topbar);
+  /* Resting state: thin glass — JS progressively materializes on scroll */
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px) saturate(2.0);
+  -webkit-backdrop-filter: blur(10px) saturate(2.0);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
 }
 
-/* Liquid Glass specular highlight — top inner edge shine */
+/* Liquid Glass specular highlight — top inner edge */
 .topbar::before {
   content: '';
   position: absolute;
@@ -135,16 +136,10 @@ select:active,
   transform: translateX(-50%);
   width: 50%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
   border-radius: var(--radius-xl);
   pointer-events: none;
   z-index: 0;
-}
-
-/* Floating depth state — activated when curtain fades in */
-.topbar-scrolled {
-  border-color: rgba(255, 255, 255, 0.6);
-  box-shadow: var(--shadow-topbar-floating);
 }
 
 .topbar-branding {
@@ -327,6 +322,7 @@ select:active,
 }
 
 /* ── Topbar curtain ── */
+/* Glass extension behind the topbar — bg/blur/opacity driven by JS progressive materialization */
 .topbar-curtain {
   position: fixed;
   top: 0;
@@ -338,9 +334,11 @@ select:active,
   width: min(1440px, calc(100% - 48px));
   margin: 0 auto;
   height: calc(var(--topbar-sticky-top) + (var(--topbar-height, 80px) / 2) + (var(--topbar-curtain-fade-size) / 2));
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.78) 0px, rgba(255, 255, 255, 0.78) calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
-  backdrop-filter: blur(24px) saturate(1.8);
-  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  /* Solid bg matching topbar — alpha updated by JS inline */
+  background: rgba(255, 255, 255, 0.65);
+  /* Graduated fade at bottom edge: blurs and color melt away together */
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
   border-radius: var(--radius-xl);
   transition: opacity 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -1555,11 +1553,11 @@ select:focus {
     justify-content: center;
   }
 
-  /* iPad performance: reduce blur radius */
+  /* iPad: reduced blur range, JS materializes 6px → 16px */
   .topbar,
   .topbar-curtain {
-    backdrop-filter: blur(16px) saturate(1.6);
-    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    backdrop-filter: blur(6px) saturate(1.8);
+    -webkit-backdrop-filter: blur(6px) saturate(1.8);
   }
 
   /* 表单：3/4 列 → 2 列 */
@@ -2108,22 +2106,17 @@ select:focus {
     --hover-danger-bg: rgba(255, 105, 97, 0.15);
   }
 
-  /* Topbar */
+  /* Topbar — resting thin glass, JS materializes progressively */
   .topbar {
-    background: rgba(44, 44, 46, 0.72);
-    backdrop-filter: blur(24px) saturate(1.8);
-    -webkit-backdrop-filter: blur(24px) saturate(1.8);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(44, 44, 46, 0.55);
+    backdrop-filter: blur(10px) saturate(2.0);
+    -webkit-backdrop-filter: blur(10px) saturate(2.0);
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   }
 
   .topbar-curtain {
-    background: linear-gradient(to bottom, rgba(44, 44, 46, 0.72) 0px, rgba(44, 44, 46, 0.72) calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
-    backdrop-filter: blur(24px) saturate(1.8);
-    -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  }
-
-  .topbar-scrolled {
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(44, 44, 46, 0.55);
   }
 
   /* Brand / primary / secondary — have dark gradient bg, text must stay white */
