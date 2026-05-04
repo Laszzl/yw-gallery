@@ -1049,7 +1049,7 @@ function renderCurrentView() {
 
   window.scrollTo({ top: 0, behavior: 'instant' });
   requestAnimationFrame(function () {
-    _updateTopbarCurtainVisibility();
+    _updateTopbarGlassState();
   });
 }
 
@@ -2255,97 +2255,22 @@ function setupRailMasks() {
 }
 
 // ═══════════════════════════════════════════════
-// 导航栏渐进式玻璃物质化 (iOS 26 Liquid Glass)
-// 导航栏和 curtain 是一块连续玻璃表面，blur + 透明度随滚动同步渐进
+// 导航栏 Liquid Glass 渐隐
 // ═══════════════════════════════════════════════
+// Mac/iPad: scroll drives topbar background alpha
+// iPhone: pure CSS, no JS (Safari tab bar is at bottom)
+// ═══════════════════════════════════════════════
+var _topbarGlassTicking = false;
+var _GLASS_RANGE = 60; // px scroll for full transition
 
-// iOS 弹簧阻尼曲线：快速响应、缓慢沉降
-function _iosGlassEase(t) {
-  if (t <= 0) return 0;
-  if (t >= 1) return 1;
-  return 1 - Math.pow(1 - t, 3);
-}
-
-var _topbarCurtainTicking = false;
-function _updateTopbarCurtainVisibility() {
-  var topbarEl = elements.topbar;
-  var curtainEl = elements.topbarCurtain;
-  var topbarTop = topbarEl.getBoundingClientRect().top;
-  var visiblePanel = document.querySelector('.app-main > .view-panel:not([hidden])');
-
-  // 物质化值 m: 0(薄玻璃/静止) → 1(厚霜冻/内容在后方)
-  var m = 0;
-  if (visiblePanel) {
-    var overlap = topbarTop - visiblePanel.getBoundingClientRect().top;
-    var raw = Math.max(0, Math.min(1, overlap / 72));
-    m = _iosGlassEase(raw);
-  }
-
-  var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  var isMobile = window.matchMedia('(max-width: 768px)').matches;
-  var isPad = window.matchMedia('(max-width: 1024px)').matches;
-
-  // 插值玻璃属性
-  var blurPx, bgAlpha, borderAlpha, saturateVal;
-
-  if (isMobile) {
-    blurPx = 0;
-    saturateVal = 1;
-    bgAlpha = isDark ? (0.55 + m * 0.20) : (0.65 + m * 0.20);
-    borderAlpha = isDark ? (0.10 + m * 0.05) : (0.35 + m * 0.20);
-  } else if (isPad) {
-    blurPx = 6 + m * 10;
-    saturateVal = 1.8;
-    bgAlpha = isDark ? (0.55 + m * 0.20) : (0.65 + m * 0.20);
-    borderAlpha = isDark ? (0.10 + m * 0.05) : (0.35 + m * 0.20);
-  } else {
-    blurPx = 10 + m * 18;
-    saturateVal = 2.0 - m * 0.4;
-    bgAlpha = isDark ? (0.55 + m * 0.20) : (0.65 + m * 0.20);
-    borderAlpha = isDark ? (0.10 + m * 0.05) : (0.35 + m * 0.20);
-  }
-
-  blurPx = blurPx.toFixed(1);
-  bgAlpha = bgAlpha.toFixed(2);
-  borderAlpha = borderAlpha.toFixed(2);
-  saturateVal = saturateVal.toFixed(1);
-
-  // —— Topbar ——
-  topbarEl.style.background = isDark
-    ? 'rgba(44,44,46,' + bgAlpha + ')'
-    : 'rgba(255,255,255,' + bgAlpha + ')';
-  topbarEl.style.borderColor = 'rgba(255,255,255,' + borderAlpha + ')';
-
-  if (!isMobile) {
-    topbarEl.style.backdropFilter = 'blur(' + blurPx + 'px) saturate(' + saturateVal + ')';
-    topbarEl.style.webkitBackdropFilter = 'blur(' + blurPx + 'px) saturate(' + saturateVal + ')';
-  }
-
-  // 渐进式阴影：3 层随 m 同步加深
-  if (isDark) {
-    topbarEl.style.boxShadow =
-      '0 1px 2px rgba(0,0,0,' + (0.15 + m * 0.08).toFixed(2) + '), ' +
-      '0 4px 8px rgba(0,0,0,' + (m * 0.12).toFixed(2) + '), ' +
-      '0 8px 24px rgba(0,0,0,' + (m * 0.18).toFixed(2) + ')';
-  } else {
-    topbarEl.style.boxShadow =
-      '0 1px 2px rgba(15,23,42,' + (0.03 + m * 0.03).toFixed(2) + '), ' +
-      '0 4px 8px rgba(15,23,42,' + (m * 0.06).toFixed(2) + '), ' +
-      '0 8px 24px rgba(15,23,42,' + (m * 0.10).toFixed(2) + ')';
-  }
-
-  // —— Curtain ——
-  curtainEl.style.opacity = m.toFixed(3);
-  curtainEl.style.background = isDark
-    ? 'rgba(44,44,46,' + bgAlpha + ')'
-    : 'rgba(255,255,255,' + bgAlpha + ')';
-
-  if (!isMobile) {
-    curtainEl.style.backdropFilter = 'blur(' + blurPx + 'px) saturate(' + saturateVal + ')';
-    curtainEl.style.webkitBackdropFilter = 'blur(' + blurPx + 'px) saturate(' + saturateVal + ')';
-  }
-
-  _topbarCurtainTicking = false;
+function _updateTopbarGlassState() {
+  if (!isMacDevice) return;
+  var alphaRest = 0.15;
+  var alphaScrolled = 0.78;
+  var progress = Math.max(0, Math.min(1, window.scrollY / _GLASS_RANGE));
+  var alpha = alphaRest + progress * (alphaScrolled - alphaRest);
+  document.documentElement.style.setProperty('--tb-glass-alpha', String(alpha));
+  _topbarGlassTicking = false;
 }
 
 function setupTopbarCurtain() {
@@ -2355,13 +2280,13 @@ function setupTopbarCurtain() {
   }).observe(elements.topbar);
 
   window.addEventListener('scroll', function () {
-    if (!_topbarCurtainTicking) {
-      requestAnimationFrame(_updateTopbarCurtainVisibility);
-      _topbarCurtainTicking = true;
+    if (!_topbarGlassTicking) {
+      requestAnimationFrame(_updateTopbarGlassState);
+      _topbarGlassTicking = true;
     }
   }, { passive: true });
 
-  _updateTopbarCurtainVisibility();
+  _updateTopbarGlassState();
 }
 
 // ═══════════════════════════════════════════════

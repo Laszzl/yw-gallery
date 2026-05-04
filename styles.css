@@ -16,8 +16,7 @@
   --accent-soft: rgba(17, 17, 17, 0.04);
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
   --shadow-control: 0 8px 20px rgba(15, 23, 42, 0.05);
-  --shadow-topbar: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 8px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.05);
-  --shadow-topbar-floating: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06), 0 12px 40px rgba(15, 23, 42, 0.08);
+  --shadow-topbar: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 8px rgba(15, 23, 42, 0.04);
   --hover-control-bg: rgba(255, 255, 255, 0.94);
   --hover-control-border: rgba(15, 23, 42, 0.13);
   --hover-control-shadow: 0 8px 18px rgba(15, 23, 42, 0.07);
@@ -38,7 +37,13 @@
   --text-base: 1rem;
   --text-sm: 0.92rem;
   --topbar-sticky-top: 24px;
-  --topbar-curtain-fade-size: 48px;
+  --topbar-curtain-fade-size: 32px;
+  --glass-blur: 12px;
+  --glass-saturate: 180%;
+  --topbar-alpha-rest: 0.15;
+  --topbar-alpha-scrolled: 0.78;
+  --topbar-scroll-range: 60px;
+  --tb-glass-progress: 0;
 }
 
 * {
@@ -118,28 +123,13 @@ select:active,
   z-index: 100;
   margin-bottom: 20px;
   padding: 18px 22px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: var(--radius-xl);
-  /* Resting state: thin glass — JS progressively materializes on scroll */
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(10px) saturate(2.0);
-  -webkit-backdrop-filter: blur(10px) saturate(2.0);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
-}
-
-/* Liquid Glass specular highlight — top inner edge */
-.topbar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  border-radius: var(--radius-xl);
-  pointer-events: none;
-  z-index: 0;
+  background: rgba(255, 255, 255, var(--tb-glass-alpha, 0.78));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--shadow-topbar);
+  overflow: hidden;
 }
 
 .topbar-branding {
@@ -321,8 +311,7 @@ select:active,
   gap: 28px;
 }
 
-/* ── Topbar curtain ── */
-/* Glass extension behind the topbar — bg/blur/opacity driven by JS progressive materialization */
+/* ── Topbar curtain (decorative glass edge highlight) ── */
 .topbar-curtain {
   position: fixed;
   top: 0;
@@ -330,17 +319,13 @@ select:active,
   right: 0;
   z-index: 99;
   pointer-events: none;
-  opacity: 0;
   width: min(1440px, calc(100% - 48px));
   margin: 0 auto;
-  height: calc(var(--topbar-sticky-top) + (var(--topbar-height, 80px) / 2) + (var(--topbar-curtain-fade-size) / 2));
-  /* Solid bg matching topbar — alpha updated by JS inline */
-  background: rgba(255, 255, 255, 0.65);
-  /* Graduated fade at bottom edge: blurs and color melt away together */
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black calc(100% - var(--topbar-curtain-fade-size)), transparent 100%);
+  height: calc(var(--topbar-sticky-top) + var(--topbar-height, 80px));
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 100%);
   border-radius: var(--radius-xl);
-  transition: opacity 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 
@@ -1553,13 +1538,6 @@ select:focus {
     justify-content: center;
   }
 
-  /* iPad: reduced blur range, JS materializes 6px → 16px */
-  .topbar,
-  .topbar-curtain {
-    backdrop-filter: blur(6px) saturate(1.8);
-    -webkit-backdrop-filter: blur(6px) saturate(1.8);
-  }
-
   /* 表单：3/4 列 → 2 列 */
   .form-grid.four-columns,
   .form-grid.three-columns {
@@ -1661,6 +1639,13 @@ select:focus {
 
   .topbar {
     padding: 16px;
+    --glass-blur: 8px;
+    --glass-saturate: 150%;
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  .topbar-curtain {
+    display: none;
   }
 
   /* 全部表单单列 */
@@ -1751,18 +1736,11 @@ select:focus {
     height: 180px;
   }
 
-  /* 性能优化：禁用 backdrop-filter */
+  /* 性能优化 */
   .view-panel,
-  .modal-overlay,
-  .topbar,
-  .topbar-curtain {
+  .modal-overlay {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-  }
-
-  /* 隐藏镜面高光，节省合成层 */
-  .topbar::before {
-    display: none;
   }
 
   /* 数据管理 */
@@ -2093,8 +2071,7 @@ select:focus {
     --accent-soft: rgba(255, 255, 255, 0.06);
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
     --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
-    --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.18);
-    --shadow-topbar-floating: 0 1px 2px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.22), 0 12px 40px rgba(0, 0, 0, 0.28);
+    --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
     --hover-control-bg: rgba(255, 255, 255, 0.10);
     --hover-control-border: rgba(255, 255, 255, 0.14);
     --hover-control-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
@@ -2106,17 +2083,16 @@ select:focus {
     --hover-danger-bg: rgba(255, 105, 97, 0.15);
   }
 
-  /* Topbar — resting thin glass, JS materializes progressively */
+  /* Topbar */
   .topbar {
-    background: rgba(44, 44, 46, 0.55);
-    backdrop-filter: blur(10px) saturate(2.0);
-    -webkit-backdrop-filter: blur(10px) saturate(2.0);
-    border-color: rgba(255, 255, 255, 0.10);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    background: rgba(44, 44, 46, var(--tb-glass-alpha, 0.78));
+    border-color: rgba(255, 255, 255, 0.08);
   }
 
   .topbar-curtain {
-    background: rgba(44, 44, 46, 0.55);
+    background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.03) 0%,
+      transparent 100%);
   }
 
   /* Brand / primary / secondary — have dark gradient bg, text must stay white */
@@ -2381,5 +2357,12 @@ select:focus {
   /* Glass form */
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
+  }
+}
+
+/* Dark mode + iPhone: higher alpha for small-screen readability */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  .topbar {
+    background: rgba(44, 44, 46, 0.88);
   }
 }
