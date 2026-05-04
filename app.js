@@ -666,7 +666,18 @@ function cancelDatePicker() {
 }
 
 function formatItemLabel(item) {
-  return item.label + (item.isGift ? ' · 赠送' : '') + (item.isOwnedNow ? ' · 现存' : ' · 非现存');
+  let text = item.label;
+  if (item.quantity && item.unit) {
+    text += ' · ' + item.quantity + item.unit;
+  }
+  return text;
+}
+
+function formatItemStatus(item) {
+  const parts = [];
+  if (item.isGift) parts.push('赠送');
+  parts.push(item.isOwnedNow ? '现存' : '非现存');
+  return parts.join(' · ');
 }
 
 function hasGroupContent(personId, groupId) {
@@ -1298,12 +1309,14 @@ function renderGroupSection(personId, group) {
   return fragment;
 }
 
-function hydrateItemCard(card, item, type, { titleSelector, dateSelector }) {
+function hydrateItemCard(card, item, type, { titleSelector, dateSelector, statusSelector }) {
   const title = card.querySelector(titleSelector);
   const dateEl = card.querySelector(dateSelector);
+  const statusEl = card.querySelector(statusSelector);
   const menuToggle = card.querySelector('[data-item-menu-toggle]');
 
   title.textContent = formatItemLabel(item);
+  if (statusEl) statusEl.textContent = formatItemStatus(item);
   dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, type));
   card.dataset.itemId = item.id;
@@ -1316,7 +1329,7 @@ function buildImageItemCard(item) {
   const image = fragment.querySelector('.yw-card-image');
   const imageWrap = fragment.querySelector('.yw-card-image-wrap');
 
-  hydrateItemCard(card, item, 'image', { titleSelector: '.yw-title', dateSelector: '.yw-date' });
+  hydrateItemCard(card, item, 'image', { titleSelector: '.yw-title', dateSelector: '.yw-date', statusSelector: '.yw-status' });
 
   const urls = item.photoUrls || [];
   if (urls.length > 0) {
@@ -1348,7 +1361,7 @@ function buildTextItemCard(item) {
   const fragment = elements.templates.textItem.content.cloneNode(true);
   const card = fragment.querySelector('.rail-card');
 
-  hydrateItemCard(card, item, 'text', { titleSelector: '.text-item-title', dateSelector: '.text-item-date' });
+  hydrateItemCard(card, item, 'text', { titleSelector: '.text-item-title', dateSelector: '.text-item-date', statusSelector: '.text-item-status' });
   return card;
 }
 
@@ -1455,6 +1468,8 @@ function openItemActionsModal(itemId, type) {
         if (card) {
           const title = card.querySelector('.yw-title, .text-item-title');
           if (title) title.textContent = formatItemLabel(currentItem);
+          const statusEl = card.querySelector('.yw-status, .text-item-status');
+          if (statusEl) statusEl.textContent = formatItemStatus(currentItem);
         }
         refreshCategoryCounts(currentItem.personId, currentItem.categoryId);
       }
