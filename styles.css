@@ -36,14 +36,6 @@
   --text-lg: 1.15rem;
   --text-base: 1rem;
   --text-sm: 0.92rem;
-  --topbar-sticky-top: 24px;
-  --topbar-curtain-fade-size: 32px;
-  --glass-blur: 12px;
-  --glass-saturate: 180%;
-  --topbar-alpha-rest: 0.15;
-  --topbar-alpha-scrolled: 0.78;
-  --topbar-scroll-range: 60px;
-  --tb-glass-progress: 0;
 }
 
 * {
@@ -57,7 +49,6 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--topbar-height, 80px) + var(--topbar-sticky-top, 24px) + 20px);
 }
 
 body {
@@ -118,18 +109,12 @@ select:active,
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 20px;
-  position: sticky;
-  top: var(--topbar-sticky-top);
-  z-index: 100;
   margin-bottom: 20px;
   padding: 18px 22px;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: var(--radius-xl);
-  background: rgba(255, 255, 255, var(--tb-glass-alpha, 0.78));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  background: rgba(255, 255, 255, 0.96);
   box-shadow: var(--shadow-topbar);
-  overflow: hidden;
 }
 
 .topbar-branding {
@@ -310,24 +295,6 @@ select:active,
   display: grid;
   gap: 28px;
 }
-
-/* ── Topbar curtain (decorative glass edge highlight) ── */
-.topbar-curtain {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 99;
-  pointer-events: none;
-  width: min(1440px, calc(100% - 48px));
-  margin: 0 auto;
-  height: calc(var(--topbar-sticky-top) + var(--topbar-height, 80px));
-  background: linear-gradient(to bottom,
-    rgba(255, 255, 255, 0.06) 0%,
-    transparent 100%);
-  border-radius: var(--radius-xl);
-}
-
 
 .view-panel {
   padding: 36px;
@@ -1627,10 +1594,6 @@ select:focus {
 
 /* ── iPhone 端 ── */
 @media (max-width: 768px) {
-  :root {
-    --topbar-sticky-top: calc(16px + env(safe-area-inset-top, 0px));
-  }
-
   .page-shell {
     width: min(100% - 24px, 768px);
     padding-top: 16px;
@@ -1639,13 +1602,6 @@ select:focus {
 
   .topbar {
     padding: 16px;
-    --glass-blur: 8px;
-    --glass-saturate: 150%;
-    background: rgba(255, 255, 255, 0.85);
-  }
-
-  .topbar-curtain {
-    display: none;
   }
 
   /* 全部表单单列 */
@@ -2085,14 +2041,8 @@ select:focus {
 
   /* Topbar */
   .topbar {
-    background: rgba(44, 44, 46, var(--tb-glass-alpha, 0.78));
+    background: rgba(44, 44, 46, 0.96);
     border-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .topbar-curtain {
-    background: linear-gradient(to bottom,
-      rgba(255, 255, 255, 0.03) 0%,
-      transparent 100%);
   }
 
   /* Brand / primary / secondary — have dark gradient bg, text must stay white */
@@ -2357,12 +2307,5 @@ select:focus {
   /* Glass form */
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
-  }
-}
-
-/* Dark mode + iPhone: higher alpha for small-screen readability */
-@media (prefers-color-scheme: dark) and (max-width: 768px) {
-  .topbar {
-    background: rgba(44, 44, 46, 0.88);
   }
 }

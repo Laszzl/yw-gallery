@@ -302,8 +302,6 @@ const elements = {};
 
 function cacheElements() {
   Object.assign(elements, {
-    topbar: document.querySelector('.topbar'),
-    topbarCurtain: document.querySelector('.topbar-curtain'),
     homeButton: document.querySelector('#homeButton'),
     addButton: document.querySelector('#addButton'),
     settingsButton: document.querySelector('#settingsButton'),
@@ -1048,9 +1046,6 @@ function renderCurrentView() {
   if (viewState.currentView === 'settings') renderCategoryOverview();
 
   window.scrollTo({ top: 0, behavior: 'instant' });
-  requestAnimationFrame(function () {
-    _updateTopbarGlassState();
-  });
 }
 
 function showHomeView() { viewState.currentView = 'home'; renderAll(); }
@@ -2255,41 +2250,6 @@ function setupRailMasks() {
 }
 
 // ═══════════════════════════════════════════════
-// 导航栏 Liquid Glass 渐隐
-// ═══════════════════════════════════════════════
-// Mac/iPad: scroll drives topbar background alpha
-// iPhone: pure CSS, no JS (Safari tab bar is at bottom)
-// ═══════════════════════════════════════════════
-var _topbarGlassTicking = false;
-var _GLASS_RANGE = 60; // px scroll for full transition
-
-function _updateTopbarGlassState() {
-  if (!isMacDevice) return;
-  var alphaRest = 0.15;
-  var alphaScrolled = 0.78;
-  var progress = Math.max(0, Math.min(1, window.scrollY / _GLASS_RANGE));
-  var alpha = alphaRest + progress * (alphaScrolled - alphaRest);
-  document.documentElement.style.setProperty('--tb-glass-alpha', String(alpha));
-  _topbarGlassTicking = false;
-}
-
-function setupTopbarCurtain() {
-  if (!elements.topbar) return;
-  new ResizeObserver(function (entries) {
-    document.documentElement.style.setProperty('--topbar-height', entries[0].contentRect.height + 'px');
-  }).observe(elements.topbar);
-
-  window.addEventListener('scroll', function () {
-    if (!_topbarGlassTicking) {
-      requestAnimationFrame(_updateTopbarGlassState);
-      _topbarGlassTicking = true;
-    }
-  }, { passive: true });
-
-  _updateTopbarGlassState();
-}
-
-// ═══════════════════════════════════════════════
 // Init
 // ═══════════════════════════════════════════════
 async function initApp() {
@@ -2303,7 +2263,6 @@ async function initApp() {
   bindEvents();
   bindCropModalEvents();
   syncDateDisplay(elements.itemDateHidden.value);
-  setupTopbarCurtain();
   renderAll();
   syncFileSummaries();
 }
