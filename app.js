@@ -1025,6 +1025,8 @@ function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
     }
 
     element.style.touchAction = 'none';
+    element.style.webkitUserSelect = 'none';
+    element.style.userSelect = 'none';
 
     var longPressTimer = null;
     var isDragging = false;
@@ -1032,48 +1034,53 @@ function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
     var startX, startY;
     var indicator = null;
     var currentTarget = null;
+    var dragPointerId = -1;
 
-    // document 级拖拽监听器（短按时不注册，减少开销）
-    var docMove = null;
-    var docUp = null;
+    function removeDocListeners() {
+      if (docMove) { document.removeEventListener('pointermove', docMove); docMove = null; }
+      if (docUp) { document.removeEventListener('pointerup', docUp); document.removeEventListener('pointercancel', docUp); docUp = null; }
+    }
 
-    function cleanupTouchDrag(dropHandled) {
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
+    function cleanupTouchDrag() {
+      if (longPressTimer != null) { clearTimeout(longPressTimer); longPressTimer = null; }
       if (isDragging) {
         element.classList.remove('touch-dragging');
-        if (docMove) { document.removeEventListener('pointermove', docMove); docMove = null; }
-        if (docUp) { document.removeEventListener('pointerup', docUp); document.removeEventListener('pointercancel', docUp); docUp = null; }
-        try { element.releasePointerCapture(1); } catch (_) {}
+        removeDocListeners();
+        if (dragPointerId >= 0) { try { element.releasePointerCapture(dragPointerId); } catch (_) {} dragPointerId = -1; }
       }
       isDragging = false;
       if (ghost) { ghost.remove(); ghost = null; }
       if (indicator) { indicator.remove(); indicator = null; }
       currentTarget = null;
-      // dropHandled 为 true 时不恢复焦点/点击
     }
+
+    var docMove = null;
+    var docUp = null;
 
     element.addEventListener('pointerdown', function (e) {
       if (isDragging) return;
-      clearTimeout(longPressTimer);
+      cleanupTouchDrag(); // 防御：重置所有状态
       startX = e.clientX;
       startY = e.clientY;
 
       longPressTimer = setTimeout(function () {
-        if (isDragging) return;
         longPressTimer = null;
+
+        // 二次确认：手指仍在屏上且未移动太远
+        if (isDragging) return;
         isDragging = true;
+        dragPointerId = e.pointerId;
         try { element.setPointerCapture(e.pointerId); } catch (_) {}
         element.classList.add('touch-dragging');
 
-        // 拖拽阶段用 document 级监听，确保不丢事件
         docMove = function (ev) {
           if (!isDragging || !ghost) return;
           ev.preventDefault();
 
-          var ghostW = ghost.getBoundingClientRect().width;
-          ghost.style.left = (ev.clientX - ghostW / 2) + 'px';
-          ghost.style.top = (ev.clientY - ghost.getBoundingClientRect().height / 2) + 'px';
+          // ghost 偏移到手指左上方，避免手指遮挡
+          var ghostRect = ghost.getBoundingClientRect();
+          ghost.style.left = (ev.clientX - ghostRect.width / 2) + 'px';
+          ghost.style.top = (ev.clientY - ghostRect.height - 12) + 'px';
 
           var siblings = getSiblings(element).filter(function (s) { return s !== element; });
           ghost.style.display = 'none';
@@ -1090,36 +1097,34 @@ function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
             }
           }
 
-          if (targetEl && targetEl !== currentTarget) {
-            if (indicator) indicator.remove();
-            currentTarget = targetEl;
+          if (targetEl !== currentTarget) {
+            if (indicator) { indicator.remove(); indicator = null; }
+            currentTarget = targetEl || null;
 
-            var targetRect = targetEl.getBoundingClientRect();
-            indicator = document.createElement('div');
-            indicator.className = 'touch-drop-indicator';
+            if (targetEl) {
+              var targetRect = targetEl.getBoundingClientRect();
+              indicator = document.createElement('div');
+              indicator.className = 'touch-drop-indicator';
 
-            var parent = targetEl.parentElement;
-            var isHorizontal = parent && (parent.classList.contains('rail-list') || parent.classList.contains('image-items-rail') || parent.classList.contains('text-items-rail'));
+              var parent = targetEl.parentElement;
+              var isHorizontal = parent && (parent.classList.contains('rail-list') || parent.classList.contains('image-items-rail') || parent.classList.contains('text-items-rail'));
 
-            if (isHorizontal) {
-              indicator.style.width = '3px';
-              indicator.style.height = targetRect.height + 'px';
-              indicator.style.flexShrink = '0';
-              if (ev.clientX < targetRect.left + targetRect.width / 2) {
-                targetEl.before(indicator);
+              if (isHorizontal) {
+                indicator.style.width = '3px';
+                indicator.style.height = targetRect.height + 'px';
+                if (ev.clientX < targetRect.left + targetRect.width / 2) {
+                  targetEl.before(indicator);
+                } else {
+                  targetEl.after(indicator);
+                }
               } else {
-                targetEl.after(indicator);
-              }
-            } else {
-              if (ev.clientY < targetRect.top + targetRect.height / 2) {
-                targetEl.before(indicator);
-              } else {
-                targetEl.after(indicator);
+                if (ev.clientY < targetRect.top + targetRect.height / 2) {
+                  targetEl.before(indicator);
+                } else {
+                  targetEl.after(indicator);
+                }
               }
             }
-          } else if (!targetEl && currentTarget) {
-            if (indicator) { indicator.remove(); indicator = null; }
-            currentTarget = null;
           }
         };
 
@@ -1129,7 +1134,7 @@ function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
             targetId = currentTarget.dataset.itemId || currentTarget.dataset.groupId || currentTarget.dataset.categoryId;
           }
 
-          cleanupTouchDrag(true);
+          cleanupTouchDrag();
 
           if (targetId && targetId !== id) {
             onDrop(id, targetId);
@@ -1144,32 +1149,31 @@ function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
         var rect = element.getBoundingClientRect();
         ghost.classList.add('touch-drag-ghost');
         ghost.style.width = rect.width + 'px';
+        // ghost 初始位置偏移到手指上方
         ghost.style.left = (e.clientX - rect.width / 2) + 'px';
-        ghost.style.top = (e.clientY - rect.height / 2) + 'px';
+        ghost.style.top = (e.clientY - rect.height - 12) + 'px';
         document.body.appendChild(ghost);
       }, 400);
     });
 
-    // element 级：仅在非拖拽状态下用于判断移动是否要取消长按
+    // element 级 pointermove：仅用于检测是否要取消长按
     element.addEventListener('pointermove', function (e) {
       if (!longPressTimer || isDragging) return;
-      var dx = e.clientX - startX;
-      var dy = e.clientY - startY;
-      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+      if (Math.abs(e.clientX - startX) > 10 || Math.abs(e.clientY - startY) > 10) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
       }
     });
 
     element.addEventListener('pointerup', function () {
-      if (!isDragging) {
+      if (!isDragging && longPressTimer != null) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
       }
     });
 
     element.addEventListener('pointercancel', function () {
-      if (!isDragging) {
+      if (!isDragging && longPressTimer != null) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
       }
