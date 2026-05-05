@@ -1746,9 +1746,9 @@ select:focus {
   .settings-block,
   .glass-form {
     background: transparent;
-    border: 1px solid var(--line);
+    border: none;
     box-shadow: none;
-    border-radius: 12px;
+    border-radius: 0;
     padding: 16px;
   }
 
@@ -1798,16 +1798,16 @@ select:focus {
     margin-top: 12px;
   }
 
-  /* 去容器化：YW 图片卡片紧凑化 */
+  /* 去容器化：YW 图片卡片完全扁平化 */
   .yw-card {
     background: transparent;
-    border: 1px solid var(--line);
+    border: none;
     box-shadow: none;
-    border-radius: 12px;
+    border-radius: 0;
   }
 
   .yw-card-image-wrap {
-    border-radius: 12px 12px 0 0;
+    border-radius: 0;
   }
 
   .yw-card-body {
@@ -2536,23 +2536,15 @@ select:focus {
   .view-panel,
   .category-section,
   .subcategory-block,
-  .empty-state-panel {
-    background: transparent;
-  }
-
-  .yw-card {
-    background: transparent;
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .text-item-row {
-    background: transparent;
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-  }
-
+  .empty-state-panel,
+  .yw-card,
+  .text-item-row,
   .settings-block,
   .glass-form {
     background: transparent;
-    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .text-item-row {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
   }
 }
