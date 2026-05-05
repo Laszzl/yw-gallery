@@ -1511,28 +1511,7 @@ select:focus {
 
 /* ── iPad 竖版 ── */
 @media (max-width: 1024px) {
-  /* Topbar：2 排（branding + actions / switcher 居中） */
-  .topbar {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 10px;
-  }
-
-  .topbar-branding {
-    grid-column: 1;
-    grid-row: 1;
-    justify-self: start;
-  }
-
-  .topbar-actions {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
-  }
-
   .athlete-switcher {
-    grid-column: 1 / -1;
-    grid-row: 2;
     justify-content: center;
   }
 
