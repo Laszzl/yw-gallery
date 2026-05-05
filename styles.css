@@ -1547,7 +1547,7 @@ select:focus {
 
   .person-form-layout,
   .person-manager-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   /* 2 列 → 1 列 */
@@ -1573,10 +1573,9 @@ select:focus {
     overflow-x: hidden;
   }
 
-  /* 添加页/设置页卡片保持横排 */
   .person-create-actions,
+  .overview-group-actions,
   .person-photo-actions {
-    flex-direction: column;
     width: 100%;
   }
 
