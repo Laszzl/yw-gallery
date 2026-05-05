@@ -979,41 +979,187 @@ function reorderRailCardsByItemList(itemsInOrder) {
   }
 }
 
-function createDragHandler({ dragOverClass, onDrop }) {
+function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
   return function attachDrag(element, id) {
-    if (!isMacDevice) return;
-    element.draggable = true;
-    element.addEventListener('dragstart', (event) => {
-      event.stopPropagation();
-      event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.setData('text/plain', id);
-      element.classList.add('dragging');
+    if (isMacDevice) {
+      // ── Mac 桌面端：HTML5 拖拽 ──
+      element.draggable = true;
+      element.addEventListener('dragstart', (event) => {
+        event.stopPropagation();
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', id);
+        element.classList.add('dragging');
+      });
+      element.addEventListener('dragend', () => {
+        element.classList.remove('dragging');
+        document.querySelectorAll('.' + dragOverClass + '.drag-over').forEach((n) => n.classList.remove('drag-over'));
+      });
+      element.addEventListener('dragenter', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        if (element.classList.contains('dragging')) return;
+        element.classList.add('drag-over');
+      });
+      element.addEventListener('dragover', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        if (element.classList.contains('dragging')) return;
+        event.dataTransfer.dropEffect = 'move';
+        element.classList.add('drag-over');
+      });
+      element.addEventListener('dragleave', () => { element.classList.remove('drag-over'); });
+      element.addEventListener('drop', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        element.classList.remove('drag-over');
+        const draggedId = event.dataTransfer.getData('text/plain');
+        if (!draggedId || draggedId === id) return;
+        onDrop(draggedId, id);
+      });
+      return;
+    }
+
+    // ── 移动端：Pointer Events 长按拖拽 ──
+    if (!getSiblings) {
+      getSiblings = function (el) { return Array.from(el.parentElement.querySelectorAll('.' + dragOverClass)); };
+    }
+
+    element.style.touchAction = 'none';
+
+    var longPressTimer = null;
+    var isDragging = false;
+    var ghost = null;
+    var startX, startY;
+    var indicator = null;
+    var currentTarget = null;
+    var capturedPointerId = null;
+
+    function cleanupTouchDrag() {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+      if (isDragging) {
+        element.classList.remove('touch-dragging');
+        try { if (capturedPointerId != null) element.releasePointerCapture(capturedPointerId); } catch (_) {}
+        capturedPointerId = null;
+      }
+      isDragging = false;
+      if (ghost) { ghost.remove(); ghost = null; }
+      if (indicator) { indicator.remove(); indicator = null; }
+      currentTarget = null;
+    }
+
+    element.addEventListener('pointerdown', function (e) {
+      if (isDragging) return;
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+      startX = e.clientX;
+      startY = e.clientY;
+
+      longPressTimer = setTimeout(function () {
+        if (isDragging) return;
+        longPressTimer = null;
+        isDragging = true;
+        capturedPointerId = e.pointerId;
+        try { element.setPointerCapture(e.pointerId); } catch (_) {}
+        element.classList.add('touch-dragging');
+
+        ghost = element.cloneNode(true);
+        var rect = element.getBoundingClientRect();
+        ghost.classList.add('touch-drag-ghost');
+        ghost.style.width = rect.width + 'px';
+        ghost.style.left = (e.clientX - rect.width / 2) + 'px';
+        ghost.style.top = (e.clientY - rect.height / 2) + 'px';
+        document.body.appendChild(ghost);
+      }, 400);
     });
-    element.addEventListener('dragend', () => {
-      element.classList.remove('dragging');
-      document.querySelectorAll('.' + dragOverClass + '.drag-over').forEach((n) => n.classList.remove('drag-over'));
+
+    element.addEventListener('pointermove', function (e) {
+      if (longPressTimer && !isDragging) {
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+        return;
+      }
+      if (!isDragging || !ghost) return;
+
+      e.preventDefault();
+      var ghostW = ghost.getBoundingClientRect().width;
+      ghost.style.left = (e.clientX - ghostW / 2) + 'px';
+      ghost.style.top = (e.clientY - ghost.getBoundingClientRect().height / 2) + 'px';
+
+      var siblings = getSiblings(element).filter(function (s) { return s !== element; });
+      ghost.style.display = 'none';
+      var elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+      ghost.style.display = '';
+
+      var targetEl = null;
+      if (elemBelow) {
+        for (var i = 0; i < siblings.length; i++) {
+          if (siblings[i].contains(elemBelow) || siblings[i] === elemBelow) {
+            targetEl = siblings[i];
+            break;
+          }
+        }
+      }
+
+      if (targetEl && targetEl !== currentTarget) {
+        if (indicator) indicator.remove();
+        currentTarget = targetEl;
+
+        var targetRect = targetEl.getBoundingClientRect();
+        indicator = document.createElement('div');
+        indicator.className = 'touch-drop-indicator';
+
+        var parent = targetEl.parentElement;
+        var isHorizontal = parent && (parent.classList.contains('rail-list') || parent.classList.contains('image-items-rail') || parent.classList.contains('text-items-rail'));
+
+        if (isHorizontal) {
+          indicator.style.width = '3px';
+          indicator.style.height = targetRect.height + 'px';
+          indicator.style.flexShrink = '0';
+          if (e.clientX < targetRect.left + targetRect.width / 2) {
+            targetEl.before(indicator);
+          } else {
+            targetEl.after(indicator);
+          }
+        } else {
+          if (e.clientY < targetRect.top + targetRect.height / 2) {
+            targetEl.before(indicator);
+          } else {
+            targetEl.after(indicator);
+          }
+        }
+      } else if (!targetEl && currentTarget) {
+        if (indicator) { indicator.remove(); indicator = null; }
+        currentTarget = null;
+      }
     });
-    element.addEventListener('dragenter', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if (element.classList.contains('dragging')) return;
-      element.classList.add('drag-over');
+
+    element.addEventListener('pointerup', function (e) {
+      if (!isDragging) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+        return;
+      }
+
+      var targetId = null;
+      if (indicator && currentTarget) {
+        targetId = currentTarget.dataset.itemId || currentTarget.dataset.groupId || currentTarget.dataset.categoryId;
+      }
+
+      cleanupTouchDrag();
+
+      if (targetId && targetId !== id) {
+        onDrop(id, targetId);
+      }
     });
-    element.addEventListener('dragover', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if (element.classList.contains('dragging')) return;
-      event.dataTransfer.dropEffect = 'move';
-      element.classList.add('drag-over');
-    });
-    element.addEventListener('dragleave', () => { element.classList.remove('drag-over'); });
-    element.addEventListener('drop', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      element.classList.remove('drag-over');
-      const draggedId = event.dataTransfer.getData('text/plain');
-      if (!draggedId || draggedId === id) return;
-      onDrop(draggedId, id);
+
+    element.addEventListener('pointercancel', cleanupTouchDrag);
+    element.addEventListener('lostpointercapture', function () {
+      if (isDragging) cleanupTouchDrag();
     });
   };
 }
