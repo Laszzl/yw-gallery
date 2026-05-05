@@ -820,9 +820,6 @@ select:active,
 .item-menu-wrap {
   position: relative;
   flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .settings-layout {
@@ -985,48 +982,6 @@ select:active,
 .overview-category-row.drag-over {
   outline: 2px dashed rgba(17, 17, 17, 0.25);
   outline-offset: 4px;
-}
-
-/* ── 触摸拖拽（Pointer Events，移动端专用）── */
-.touch-drag-handle {
-  display: none;
-}
-
-.touch-drag-ghost {
-  position: fixed;
-  z-index: 10000;
-  pointer-events: none;
-  transform: scale(0.92) rotate(-2deg);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-  opacity: 0.92;
-  transition: none;
-  will-change: transform, left, top;
-}
-
-.rail-card.touch-dragging,
-.overview-group-card.touch-dragging,
-.overview-category-row.touch-dragging {
-  opacity: 0.3;
-}
-
-.touch-drop-indicator {
-  height: 3px;
-  width: 100%;
-  background: var(--accent);
-  border-radius: 2px;
-  margin: 0;
-  flex-shrink: 0;
-  pointer-events: none;
-  transition: none;
-}
-
-.touch-drop-indicator.is-horizontal {
-  width: 3px;
-  align-self: stretch;
-}
-
-.touch-drop-indicator.is-vertical {
-  width: 100%;
 }
 
 .overview-group-header {
@@ -1520,27 +1475,6 @@ select:focus {
   /* 横向卡片：触控滚动空间 */
   .rail-card {
     flex-basis: 280px;
-  }
-}
-
-@media (hover: none), (pointer: coarse) {
-  .touch-drag-handle {
-    display: inline-flex;
-    min-width: 46px;
-    width: 46px;
-    height: 46px;
-    padding: 0;
-    touch-action: none;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  .touch-drag-handle svg {
-    opacity: 0.72;
-  }
-
-  .touch-dragging {
-    touch-action: none;
   }
 }
 
