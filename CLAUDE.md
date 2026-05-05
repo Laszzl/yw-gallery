@@ -43,12 +43,15 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 ### iPhone 适配 (max-width: 768px)
 
-窄屏单列布局，iOS 26 Safari 去容器化设计，核心原则：**去卡片化、紧凑排版、安全区适配**。
+窄屏单列布局，iOS 26 Liquid Glass 悬浮设计，核心原则：**去容器化、背景分层、内容悬浮**。
 
-- 页面容器：`width: min(100% - 16px, 768px)`，底部留出 `80px + safe-area-inset-bottom`
+- 页面底色：`#F2F2F7`（light）/ `#000000`（dark）—— iOS systemGroupedBackground，无渐变
+- 导航栏：两排布局；第一排 添加(左) | 原味(中，17px semibold 标题) | 设置(右)；第二排 体育生 chips 居中；topbar 完全透明无边框
 - 去容器化：`.view-panel`、`.category-section`、`.subcategory-block` 均 `background: transparent`，`border/shadow: none`，通过 section header 的 `border-bottom: 0.5px solid var(--line)` 细线分隔区域
-- YW 卡片：`.yw-card` `background: transparent`，仅保留 `1px solid var(--line)` 边框，`border-radius: 12px`；`.rail-card` `flex-basis: 170px`（触控目标 ≥ 44px）
+- 卡片浮层：`.yw-card`、`.settings-block`、`.glass-form` 使用 `#FFFFFF`（light）/ `#1C1C1E`（dark）背景 + `0 1px 3px rgba(0,0,0,0.04)` 微阴影，悬浮于页面底色之上，无边框
+- YW 卡片：`border-radius: 12px`；`.rail-card` `flex-basis: 170px`（触控目标 ≥ 44px）
 - 文本条目：`.text-item-row` 完全扁平，`border-bottom: 0.5px solid var(--line)` 分隔
+- 页面容器：`width: min(100% - 16px, 768px)`，底部留出 `80px + safe-area-inset-bottom`
 - 表单/布局网格：全部强制单列（`grid-template-columns: 1fr`）
 - 弹窗：底部弹出（`align-items: flex-end`），`max-height: 85vh`，适配安全区
 - flex row 全部换为纵向堆叠（`flex-direction: column`）
