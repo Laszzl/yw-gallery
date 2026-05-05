@@ -1601,13 +1601,15 @@ select:focus {
 /* ── iPhone 端 ── */
 @media (max-width: 768px) {
   .page-shell {
-    width: min(100% - 24px, 768px);
-    padding-top: 16px;
-    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+    width: min(100% - 16px, 768px);
+    padding-top: 12px;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   }
 
   .topbar {
-    padding: 16px;
+    padding: 12px 16px;
+    border-radius: 20px;
+    margin-bottom: 12px;
   }
 
   /* 全部表单单列 */
@@ -1641,16 +1643,141 @@ select:focus {
     align-items: stretch;
   }
 
-  /* 面板内边距 */
-  .view-panel,
-  .category-section,
+  /* 去容器化：面板内边距 */
+  .view-panel {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .category-section {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .category-section + .category-section {
+    border-top: 0.5px solid var(--line);
+    padding-top: 20px;
+  }
+
+  .subcategory-block {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .empty-state-panel {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 48px 12px;
+  }
+
   .settings-block,
-  .glass-form,
-  .empty-state-panel,
-  .subcategory-block,
+  .glass-form {
+    background: transparent;
+    border: 1px solid var(--line);
+    box-shadow: none;
+    border-radius: 12px;
+    padding: 16px;
+  }
+
   .upload-card,
   .modal-content {
     padding: 20px;
+  }
+
+  /* 去容器化：section header 细线分隔 */
+  .category-section-header {
+    border-bottom: 0.5px solid var(--line);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+
+  .category-section-title {
+    font-size: 1.125rem;
+  }
+
+  .subcategory-header {
+    border-bottom: 0.5px solid var(--line);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .subcategory-title {
+    font-size: 1rem;
+  }
+
+  .subcategory-counts {
+    font-size: 0.78rem;
+  }
+
+  /* 去容器化：间距压缩 */
+  .grouped-content {
+    gap: 24px;
+    margin-top: 28px;
+  }
+
+  .subcategory-sections {
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .subcategory-content {
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  /* 去容器化：YW 图片卡片紧凑化 */
+  .yw-card {
+    background: transparent;
+    border: 1px solid var(--line);
+    box-shadow: none;
+    border-radius: 12px;
+  }
+
+  .yw-card-image-wrap {
+    border-radius: 12px 12px 0 0;
+  }
+
+  .yw-card-body {
+    padding: 10px 12px 12px;
+  }
+
+  .yw-title {
+    font-size: 0.92rem;
+  }
+
+  .yw-status,
+  .yw-date {
+    font-size: 0.8rem;
+  }
+
+  /* 去容器化：文本条目完全扁平化 */
+  .text-item-row {
+    background: transparent;
+    border: none;
+    border-bottom: 0.5px solid var(--line);
+    box-shadow: none;
+    border-radius: 0;
+    padding: 10px 0;
+  }
+
+  .text-item-title {
+    font-size: 0.95rem;
+  }
+
+  .text-item-status,
+  .text-item-date {
+    font-size: 0.8rem;
   }
 
   /* 详情页头像 */
@@ -1658,9 +1785,27 @@ select:focus {
     width: min(200px, 60vw);
   }
 
-  /* 卡片 */
+  /* 卡片尺寸缩小 */
   .rail-card {
-    flex-basis: 240px;
+    flex-basis: 170px;
+  }
+
+  .rail-list {
+    gap: 12px;
+    --rail-fade-width: 24px;
+  }
+
+  .text-items-rail .rail-card {
+    flex-basis: auto;
+    min-width: 140px;
+  }
+
+  /* 图片计数器微调 */
+  .photo-counter {
+    bottom: 4px;
+    right: 4px;
+    font-size: 0.7rem;
+    padding: 1px 6px;
   }
 
   .athlete-selector-grid {
@@ -2315,5 +2460,31 @@ select:focus {
   /* Glass form */
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
+  }
+}
+
+/* ── iPhone 去容器化暗色模式 ── */
+@media (max-width: 768px) and (prefers-color-scheme: dark) {
+  .view-panel,
+  .category-section,
+  .subcategory-block,
+  .empty-state-panel {
+    background: transparent;
+  }
+
+  .yw-card {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .text-item-row {
+    background: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .settings-block,
+  .glass-form {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.08);
   }
 }

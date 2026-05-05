@@ -34,7 +34,7 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 **iPhone/iPad（移动端）**：
 - 交互：仅触摸（点按、滑动、长按），不依赖 hover、右键、HTML5 DnD
-- 拖拽排序仅在 Mac 上生效，移动端不提供拖拽排序功能（iOS Safari 不支持 HTML5 拖拽，Pointer Events 拖拽已移除）
+- 拖拽排序：Mac 端使用 HTML5 原生拖拽（`draggable="true"`）；移动端使用 Pointer Events 长按拖拽（400ms 长按触发 ghost 元素跟随），支持 YW 卡片、设置页大小品类重排
 - 所有核心操作基于 click/touch 事件，不得使用 hover 触发的 UI
 
 ### iPad 适配
@@ -43,15 +43,17 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 ### iPhone 适配 (max-width: 768px)
 
-窄屏单列布局，核心原则：**全宽控件、底部弹窗、安全区适配**。
+窄屏单列布局，iOS 26 Safari 去容器化设计，核心原则：**去卡片化、紧凑排版、安全区适配**。
 
-- 页面容器：`width: min(100% - 24px, 768px)`，底部留出 `88px + safe-area-inset-bottom`
-- 卡片：rail-card `flex-basis: 240px`（保证触控目标 ≥ 44px），athlete-grid 单列
+- 页面容器：`width: min(100% - 16px, 768px)`，底部留出 `80px + safe-area-inset-bottom`
+- 去容器化：`.view-panel`、`.category-section`、`.subcategory-block` 均 `background: transparent`，`border/shadow: none`，通过 section header 的 `border-bottom: 0.5px solid var(--line)` 细线分隔区域
+- YW 卡片：`.yw-card` `background: transparent`，仅保留 `1px solid var(--line)` 边框，`border-radius: 12px`；`.rail-card` `flex-basis: 170px`（触控目标 ≥ 44px）
+- 文本条目：`.text-item-row` 完全扁平，`border-bottom: 0.5px solid var(--line)` 分隔
 - 表单/布局网格：全部强制单列（`grid-template-columns: 1fr`）
 - 弹窗：底部弹出（`align-items: flex-end`），`max-height: 85vh`，适配安全区
 - flex row 全部换为纵向堆叠（`flex-direction: column`）
 - 头像：`min(200px, 60vw)`
-- 性能：禁用 `backdrop-filter` 避免 iOS 渲染性能问题
+- 性能：禁用 `backdrop-filter`；rail 淡化遮罩缩短为 24px（CSS 变量 `--rail-fade-width`）
 
 ## 开发
 - 修改代码后刷新浏览器即可生效
