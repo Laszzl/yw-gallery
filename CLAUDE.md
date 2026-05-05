@@ -34,7 +34,7 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 **iPhone/iPad（移动端）**：
 - 交互：仅触摸（点按、滑动、长按），不依赖 hover、右键、HTML5 DnD
-- 拖拽排序：Mac 端使用 HTML5 原生拖拽（`draggable="true"`）；移动端使用 Pointer Events 长按拖拽（400ms 长按触发 ghost 元素跟随），支持 YW 卡片、设置页大小品类重排
+- 拖拽排序仅在 Mac 上生效，移动端不提供拖拽排序功能（iOS Safari 不支持 HTML5 拖拽，Pointer Events 拖拽已移除）
 - 所有核心操作基于 click/touch 事件，不得使用 hover 触发的 UI
 
 ### iPad 适配
@@ -58,4 +58,4 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 ## 开发
 - 修改代码后刷新浏览器即可生效
 - 每次修改代码后，自动提交并推送到 GitHub（git add + commit + push）
-- 代码变更导致 CLAUDE.md 描述不符时，询问用户是否更新 CLAUDE.md
+- 用户要求与 CLAUDE.md 描述不符时，询问用户是否更新 CLAUDE.md
