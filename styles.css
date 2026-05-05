@@ -1023,17 +1023,6 @@ button,
   align-items: flex-start;
 }
 
-.overview-group-header > div:first-child {
-  min-width: 0;
-  overflow: hidden;
-}
-
-.overview-group-title,
-.overview-group-meta {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .overview-group-actions {
   align-items: center;
@@ -1586,7 +1575,6 @@ select:focus {
   }
 
   .person-create-actions,
-  .overview-group-actions,
   .person-photo-actions {
     width: 100%;
   }
