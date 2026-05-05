@@ -1023,6 +1023,18 @@ button,
   align-items: flex-start;
 }
 
+.overview-group-header > div:first-child {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.overview-group-title,
+.overview-group-meta {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .overview-group-actions {
   align-items: center;
   justify-content: flex-end;
@@ -1547,7 +1559,7 @@ select:focus {
 
   .person-form-layout,
   .person-manager-layout {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   /* 2 列 → 1 列 */

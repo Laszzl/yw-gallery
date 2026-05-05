@@ -1024,8 +1024,6 @@ function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
       getSiblings = function (el) { return Array.from(el.parentElement.querySelectorAll('.' + dragOverClass)); };
     }
 
-    element.style.touchAction = 'none';
-
     var longPressTimer = null;
     var isDragging = false;
     var ghost = null;
@@ -1043,6 +1041,7 @@ function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
         capturedPointerId = null;
       }
       isDragging = false;
+      element.style.touchAction = '';
       if (ghost) { ghost.remove(); ghost = null; }
       if (indicator) { indicator.remove(); indicator = null; }
       currentTarget = null;
@@ -1059,6 +1058,7 @@ function createDragHandler({ dragOverClass, onDrop, getSiblings }) {
         if (isDragging) return;
         longPressTimer = null;
         isDragging = true;
+        element.style.touchAction = 'none';
         capturedPointerId = e.pointerId;
         try { element.setPointerCapture(e.pointerId); } catch (_) {}
         element.classList.add('touch-dragging');
