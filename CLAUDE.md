@@ -34,7 +34,7 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 **iPhone/iPad（移动端）**：
 - 交互：仅触摸（点按、滑动、长按），不依赖 hover、右键、HTML5 DnD
-- 拖拽：通过长按 400ms 触发 Pointer Events 拖拽（非 HTML5 DnD），iOS Safari 不支持 HTML5 拖拽
+- 拖拽排序仅在 Mac 上生效，移动端不提供拖拽排序功能（iOS Safari 不支持 HTML5 拖拽，Pointer Events 拖拽已移除）
 - 所有核心操作基于 click/touch 事件，不得使用 hover 触发的 UI
 
 ### iPad 适配
