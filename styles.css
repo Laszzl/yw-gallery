@@ -1606,12 +1606,19 @@ select:focus {
     display: block;
   }
 
-  /* 导航栏两排布局 */
+  /* 导航栏两排布局 + 透明化 */
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     grid-template-areas:
       "add brand settings"
       "switcher switcher switcher";
+    background: transparent;
+    border: none;
+    border-bottom: 0.5px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 12px 16px;
+    margin-bottom: 0;
   }
 
   .topbar-branding {
@@ -1646,6 +1653,59 @@ select:focus {
     border: none;
     border-radius: 0;
     box-shadow: none;
+  }
+
+  /* 去除内容区块容器视觉层 — 文字直接落在页面背景上 */
+  .category-section,
+  .settings-block,
+  .subcategory-block,
+  .empty-state-panel,
+  .overview-group-card,
+  .glass-form,
+  .selector-card,
+  .upload-card,
+  .small-upload {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* 区块间距 + 细线分割替代容器边界 */
+  .category-section {
+    padding: 24px 0;
+  }
+  .category-section + .category-section {
+    border-top: 0.5px solid var(--line);
+  }
+
+  .settings-block {
+    padding: 24px 0;
+  }
+  .settings-block + .settings-block {
+    border-top: 0.5px solid var(--line);
+  }
+
+  .subcategory-block {
+    padding: 16px 0;
+  }
+  .subcategory-block + .subcategory-block {
+    border-top: 0.5px solid var(--line);
+  }
+
+  .empty-state-panel {
+    padding: 48px 16px;
+  }
+
+  .glass-form {
+    padding: 20px 0;
+  }
+
+  .overview-group-card {
+    padding: 16px 0;
+  }
+  .overview-group-card + .overview-group-card {
+    border-top: 0.5px solid var(--line);
   }
 
   /* 弹窗底部对齐 + 全宽 */
@@ -2273,6 +2333,14 @@ select:focus {
   /* Glass form */
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
+  }
+
+  /* iPhone 透明 topbar 暗色适配 */
+  @media (max-width: 768px) {
+    .topbar {
+      background: transparent;
+      border-color: var(--line);
+    }
   }
 
 }
