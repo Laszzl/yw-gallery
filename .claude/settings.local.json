@@ -30,7 +30,8 @@
       "WebFetch(domain:dev.to)",
       "WebFetch(domain:github.com)",
       "Bash(\" /Users/liaozhenghai/Desktop/yw/app.js | head -20)",
-      "Bash(awk -F: 'NR>30')"
+      "Bash(awk -F: 'NR>30')",
+      "Bash(awk '/@media \\\\\\(max-width: 768px\\\\\\)/,/^}/' /Users/liaozhenghai/Desktop/yw/styles.css)"
     ]
   }
 }

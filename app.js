@@ -2251,59 +2251,6 @@ function setupRailMasks() {
 }
 
 // ═══════════════════════════════════════════════
-// Scroll-driven topbar materialization (iPhone)
-// ═══════════════════════════════════════════════
-function setupTopbarMaterialization() {
-  if (isMacDevice) return;
-
-  const topbar = document.querySelector('.topbar');
-  if (!topbar) return;
-
-  let isDark = matchMedia('(prefers-color-scheme: dark)').matches;
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
-    isDark = e.matches;
-    updateTopbarMaterialization();
-  });
-
-  let ticking = false;
-  let lastProgress = -1;
-
-  function updateTopbarMaterialization() {
-    const scrollY = window.scrollY;
-    const progress = Math.min(scrollY / 100, 1);
-    if (Math.abs(progress - lastProgress) < 0.02) return;
-    lastProgress = progress;
-
-    if (isDark) {
-      const alpha = 0.58 + progress * 0.32;
-      const blurPx = 22 - progress * 14;
-      topbar.style.background = `rgba(44, 44, 46, ${alpha})`;
-      topbar.style.backdropFilter = `blur(${blurPx}px) saturate(1.45)`;
-      topbar.style.webkitBackdropFilter = `blur(${blurPx}px) saturate(1.45)`;
-    } else {
-      const alpha = 0.58 + progress * 0.36;
-      const blurPx = 22 - progress * 14;
-      topbar.style.background = `rgba(255, 255, 255, ${alpha})`;
-      topbar.style.backdropFilter = `blur(${blurPx}px) saturate(1.45)`;
-      topbar.style.webkitBackdropFilter = `blur(${blurPx}px) saturate(1.45)`;
-    }
-  }
-
-  window.addEventListener('scroll', function () {
-    if (!ticking) {
-      requestAnimationFrame(function () {
-        updateTopbarMaterialization();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
-
-  // Initial state
-  updateTopbarMaterialization();
-}
-
-// ═══════════════════════════════════════════════
 // Init
 // ═══════════════════════════════════════════════
 async function initApp() {
@@ -2318,7 +2265,6 @@ async function initApp() {
   bindCropModalEvents();
   syncDateDisplay(elements.itemDateHidden.value);
   renderAll();
-  setupTopbarMaterialization();
   syncFileSummaries();
 }
 
