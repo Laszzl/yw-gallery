@@ -1594,8 +1594,84 @@ select:focus {
   }
 }
 
+/* ── iPad 竖版设置页细化 ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .person-manager-layout .person-photo-actions,
+  .person-card-form .person-create-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .person-manager-layout .person-photo-actions .danger-button,
+  .person-card-form .person-create-actions .primary-button {
+    grid-column: 1 / -1;
+  }
+
+  .person-upload-summary-grid,
+  .category-form-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* ── 小屏弹窗 ── */
 @media (max-width: 768px) {
+  .topbar {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas:
+      "add brand settings"
+      "switcher switcher switcher";
+    gap: 14px 10px;
+    padding: 16px;
+  }
+
+  .topbar-branding {
+    grid-area: brand;
+    justify-content: center;
+  }
+
+  .topbar-actions {
+    display: contents;
+  }
+
+  #addButton {
+    grid-area: add;
+    justify-self: start;
+  }
+
+  #settingsButton {
+    grid-area: settings;
+    justify-self: end;
+  }
+
+  .topbar .brand-button,
+  .topbar .primary-button,
+  .topbar .secondary-button {
+    min-width: 68px;
+    height: 44px;
+    padding: 0 18px;
+  }
+
+  .athlete-switcher {
+    grid-area: switcher;
+    width: min(100%, 340px);
+    justify-self: center;
+    justify-content: center;
+  }
+
+  .athlete-switcher.scrollable {
+    width: min(100%, 340px);
+    max-width: 340px;
+  }
+
+  .athlete-switcher.scrollable .switcher-scroll-area {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .athlete-switcher.scrollable .switcher-chip {
+    flex: 0 0 calc((100% - 20px) / 3);
+  }
+
   .modal-overlay {
     padding: 16px;
     align-items: flex-end;
