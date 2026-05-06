@@ -1594,8 +1594,7 @@ select:focus {
   }
 
   body {
-    background:
-      radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.96), rgba(245, 245, 247, 0.88) 34%, rgba(235, 236, 241, 0.96) 100%);
+    background: var(--bg);
   }
 
   .page-shell {
@@ -1647,6 +1646,23 @@ select:focus {
     border: none;
     border-radius: 0;
     box-shadow: none;
+  }
+
+  /* 结构容器透明化 — 统一页面背景色 */
+  .category-section,
+  .subcategory-block,
+  .settings-block,
+  .empty-state-panel,
+  .glass-form,
+  .upload-card,
+  .overview-group-card,
+  .manager-row,
+  .empty-inline,
+  .checkbox-panel {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
   }
 
   /* 弹窗底部对齐 + 全宽 */
@@ -2274,12 +2290,5 @@ select:focus {
   /* Glass form */
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
-  }
-
-  /* iPhone 暗色 body 背景 */
-  @media (max-width: 768px) {
-    body {
-      background: radial-gradient(circle at 50% -10%, rgba(44, 44, 46, 0.96), rgba(28, 28, 30, 0.88) 34%, rgba(20, 20, 22, 0.96) 100%);
-    }
   }
 }
