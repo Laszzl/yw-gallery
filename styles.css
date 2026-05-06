@@ -1593,15 +1593,15 @@ select:focus {
     overflow-x: hidden;
   }
 
-  /* iOS 系统分组背景 + mobile 专用 CSS 变量 */
+  /* iOS 26 Liquid Glass — warmer tones + translucent surfaces */
   body {
-    --ios-grouped-bg: #f2f2f7;
-    --ios-card-bg: #ffffff;
+    --ios-grouped-bg: #efedf0;
+    --ios-card-bg: rgba(255, 255, 255, 0.94);
     --ios-section-header: rgba(60, 60, 67, 0.6);
-    --ios-separator: rgba(60, 60, 67, 0.12);
-    --ios-topbar-bg: rgba(242, 242, 247, 0.85);
-    --ios-topbar-border: rgba(0, 0, 0, 0.08);
-    --ios-rail-card-bg: #ffffff;
+    --ios-separator: rgba(60, 60, 67, 0.10);
+    --ios-topbar-bg: rgba(242, 242, 247, 0.30);
+    --ios-topbar-border: rgba(0, 0, 0, 0.05);
+    --ios-rail-card-bg: rgba(255, 255, 255, 0.94);
     --ios-modal-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
     background: var(--ios-grouped-bg);
   }
@@ -1615,7 +1615,7 @@ select:focus {
     display: block;
   }
 
-  /* 导航栏：磨砂玻璃 sticky + 两排 grid 布局 */
+  /* 导航栏：iOS 26 Liquid Glass — 更通透 + 更强模糊 + 更高饱和 */
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     grid-template-areas:
@@ -1625,14 +1625,15 @@ select:focus {
     top: 0;
     z-index: 100;
     background: var(--ios-topbar-bg);
-    backdrop-filter: blur(20px) saturate(1.8);
-    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    backdrop-filter: blur(35px) saturate(2.4);
+    -webkit-backdrop-filter: blur(35px) saturate(2.4);
     border: none;
     border-bottom: 0.5px solid var(--ios-topbar-border);
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 8px;
     margin-bottom: 0;
+    transition: background 0.3s ease, border-color 0.3s ease;
   }
 
   .topbar-branding {
@@ -1658,18 +1659,75 @@ select:focus {
     justify-self: center;
   }
 
-  /* view-panel：透明滚动容器 + 水平 padding */
+  /* ═══ iOS 26 玻璃胶囊按钮 ═══ */
+  #addButton,
+  #settingsButton,
+  #homeButton {
+    background: rgba(255, 255, 255, 0.38);
+    backdrop-filter: blur(14px) saturate(1.8);
+    -webkit-backdrop-filter: blur(14px) saturate(1.8);
+    border: 0.5px solid rgba(255, 255, 255, 0.65);
+    border-radius: 22px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), inset 0 0.5px 0 rgba(255, 255, 255, 0.45);
+    color: #1d1d1f;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    background-image: none;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    min-width: auto;
+    height: 38px;
+    padding: 0 18px;
+  }
+
+  #addButton:active,
+  #settingsButton:active,
+  #homeButton:active {
+    background: rgba(255, 255, 255, 0.52);
+    transform: scale(0.96);
+    box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.06), inset 0 0.5px 0 rgba(255, 255, 255, 0.4);
+  }
+
+  /* ═══ iOS 26 玻璃 Chips ═══ */
+  .switcher-chip {
+    background: rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(10px) saturate(1.6);
+    -webkit-backdrop-filter: blur(10px) saturate(1.6);
+    border: 0.5px solid rgba(255, 255, 255, 0.55);
+    border-radius: 22px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 0 0.5px 0 rgba(255, 255, 255, 0.35);
+    color: #1d1d1f;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    height: 38px;
+    padding: 0 18px;
+    background-image: none;
+  }
+
+  .switcher-chip.active {
+    background: rgba(255, 255, 255, 0.48);
+    backdrop-filter: blur(10px) saturate(1.6);
+    -webkit-backdrop-filter: blur(10px) saturate(1.6);
+    border-color: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10), inset 0 0.5px 0 rgba(255, 255, 255, 0.5);
+    color: #111111;
+    font-weight: 600;
+    background-image: none;
+  }
+
+  /* view-panel：透明滚动容器 + iOS 26 内容渐隐 */
   .view-panel {
-    padding: 12px 16px 16px;
+    padding: 32px 16px 16px;
     background: transparent;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border: none;
     border-radius: 0;
     box-shadow: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 44px);
+    mask-image: linear-gradient(to bottom, transparent 0px, black 44px);
   }
 
-  /* 内容区块：iOS Grouped 卡片层 */
+  /* 内容区块：iOS 26 卡片层 — 更轻阴影 */
   .category-section,
   .settings-block,
   .empty-state-panel,
@@ -1680,14 +1738,14 @@ select:focus {
     background: var(--ios-card-bg);
     border: none;
     border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.04);
   }
 
   .selector-card {
     background: var(--ios-card-bg);
     border: none;
     border-radius: 12px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.06);
     overflow: hidden;
   }
 
@@ -1759,7 +1817,7 @@ select:focus {
   .category-section-title {
     font-size: 13px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.01em;
     color: var(--ios-section-header);
     text-transform: none;
     padding: 0 0 6px;
@@ -1770,7 +1828,7 @@ select:focus {
   .overview-group-title {
     font-size: 15px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.01em;
   }
 
   .subcategory-title {
@@ -1805,10 +1863,10 @@ select:focus {
     background: var(--ios-rail-card-bg);
     border: none;
     border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.06);
     overflow: hidden;
     padding: 0;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .image-items-rail .rail-card:active {
@@ -2534,26 +2592,96 @@ select:focus {
     background: rgba(44, 44, 46, 0.66);
   }
 
-  /* iPhone 暗色模式变量覆盖 */
+  /* iPhone 暗色模式 — iOS 26 Liquid Glass */
   @media (max-width: 768px) {
     body {
-      --ios-grouped-bg: #000000;
-      --ios-card-bg: #1c1c1e;
-      --ios-rail-card-bg: #2c2c2e;
-      --ios-section-header: rgba(235, 235, 245, 0.6);
-      --ios-separator: rgba(235, 235, 245, 0.1);
-      --ios-topbar-bg: rgba(0, 0, 0, 0.8);
-      --ios-topbar-border: rgba(255, 255, 255, 0.08);
-      --ios-modal-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+      --ios-grouped-bg: #08080a;
+      --ios-card-bg: rgba(28, 28, 30, 0.92);
+      --ios-rail-card-bg: rgba(44, 44, 46, 0.90);
+      --ios-section-header: rgba(235, 235, 245, 0.55);
+      --ios-separator: rgba(235, 235, 245, 0.08);
+      --ios-topbar-bg: rgba(0, 0, 0, 0.28);
+      --ios-topbar-border: rgba(255, 255, 255, 0.06);
+      --ios-modal-shadow: 0 -4px 20px rgba(0, 0, 0, 0.55);
+      --ios-glass-btn-bg: rgba(255, 255, 255, 0.10);
+      --ios-glass-btn-border: rgba(255, 255, 255, 0.20);
+      --ios-glass-btn-active-bg: rgba(255, 255, 255, 0.18);
+      --ios-glass-btn-text: #f5f5f7;
+      --ios-glass-chip-bg: rgba(255, 255, 255, 0.07);
+      --ios-glass-chip-border: rgba(255, 255, 255, 0.14);
+      --ios-glass-chip-active-bg: rgba(255, 255, 255, 0.16);
+      --ios-glass-chip-active-border: rgba(255, 255, 255, 0.28);
     }
 
     .topbar {
       background: var(--ios-topbar-bg);
+      backdrop-filter: blur(35px) saturate(2.4);
+      -webkit-backdrop-filter: blur(35px) saturate(2.4);
       border-color: var(--ios-topbar-border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    #addButton,
+    #settingsButton,
+    #homeButton {
+      background: var(--ios-glass-btn-bg);
+      backdrop-filter: blur(14px) saturate(1.8);
+      -webkit-backdrop-filter: blur(14px) saturate(1.8);
+      border-color: var(--ios-glass-btn-border);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.30), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
+      color: var(--ios-glass-btn-text);
+      background-image: none;
+    }
+
+    #addButton:active,
+    #settingsButton:active,
+    #homeButton:active {
+      background: var(--ios-glass-btn-active-bg);
+    }
+
+    .switcher-chip {
+      background: var(--ios-glass-chip-bg);
+      backdrop-filter: blur(10px) saturate(1.6);
+      -webkit-backdrop-filter: blur(10px) saturate(1.6);
+      border-color: var(--ios-glass-chip-border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
+      color: var(--ios-glass-btn-text);
+      background-image: none;
+    }
+
+    .switcher-chip.active {
+      background: var(--ios-glass-chip-active-bg);
+      border-color: var(--ios-glass-chip-active-border);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      background-image: none;
+    }
+
+    .view-panel {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 44px);
+      mask-image: linear-gradient(to bottom, transparent 0px, black 44px);
+    }
+
+    .category-section,
+    .settings-block,
+    .empty-state-panel,
+    .overview-group-card,
+    .glass-form,
+    .selector-card,
+    .upload-card,
+    .small-upload {
+      background: var(--ios-card-bg);
+      border: 0.5px solid rgba(255, 255, 255, 0.04);
+      box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.20);
+    }
+
+    .image-items-rail .rail-card {
+      background: var(--ios-rail-card-bg);
+      box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.25);
     }
 
     .modal-content:not(.crop-modal-content):not(.date-picker-modal-content)::before {
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.20);
     }
 
     .text-item-row {
