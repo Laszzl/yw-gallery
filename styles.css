@@ -1601,13 +1601,13 @@ select:focus {
 @media (max-width: 768px) {
   :root {
     --iphone-page: #f5f5f7;
-    --iphone-surface: rgba(255, 255, 255, 0.94);
-    --iphone-surface-strong: #ffffff;
+    --iphone-surface: rgba(255, 255, 255, 0.96);
+    --iphone-surface-soft: rgba(255, 255, 255, 0.88);
     --iphone-line: rgba(17, 17, 17, 0.08);
-    --iphone-line-strong: rgba(17, 17, 17, 0.12);
-    --iphone-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
-    --iphone-shadow-soft: 0 5px 16px rgba(15, 23, 42, 0.06);
-    --iphone-shadow-control: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --iphone-line-strong: rgba(17, 17, 17, 0.14);
+    --iphone-shadow: 0 12px 30px rgba(15, 23, 42, 0.09);
+    --iphone-shadow-soft: 0 6px 18px rgba(15, 23, 42, 0.07);
+    --iphone-shadow-control: 0 5px 14px rgba(15, 23, 42, 0.08);
   }
 
   body {
@@ -1621,7 +1621,7 @@ select:focus {
   }
 
   .app-main {
-    gap: 24px;
+    gap: 28px;
   }
 
   .topbar {
@@ -1659,19 +1659,30 @@ select:focus {
   .brand-button,
   .primary-button,
   .secondary-button,
-  .file-picker.primary-button {
-    min-height: 46px;
-    height: 46px;
+  .file-picker.primary-button,
+  .mini-button,
+  .mini-file-button,
+  .subtle-icon-btn,
+  .file-picker:not(.primary-button),
+  .switcher-chip {
+    min-height: 44px;
     border-radius: 999px;
-    font-size: 0.95rem;
-    font-weight: 600;
+    border: 1px solid var(--iphone-line);
+    background: var(--iphone-surface);
+    color: var(--text);
     box-shadow: var(--iphone-shadow-control);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0;
   }
 
-  .secondary-button {
-    background: var(--iphone-surface-strong);
-    color: var(--text);
-    border: 1px solid var(--iphone-line);
+  .brand-button,
+  .primary-button,
+  .file-picker.primary-button,
+  .switcher-chip.active {
+    background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+    border-color: #111111;
+    color: #ffffff;
   }
 
   .topbar #addButton,
@@ -1680,10 +1691,6 @@ select:focus {
     height: 42px;
     min-height: 42px;
     padding: 0 15px;
-    background: var(--iphone-surface-strong);
-    color: var(--text);
-    border: 1px solid var(--iphone-line);
-    box-shadow: var(--iphone-shadow-control);
   }
 
   .topbar #homeButton {
@@ -1691,30 +1698,14 @@ select:focus {
     height: 42px;
     min-height: 42px;
     padding: 0 17px;
-    background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
-    color: #ffffff;
-    border: 0;
-    box-shadow: var(--iphone-shadow-control);
-    letter-spacing: 0;
   }
 
   .switcher-chip {
     height: 38px;
     min-height: 38px;
     padding: 0 16px;
-    border-radius: 999px;
-    background: var(--iphone-surface);
-    border: 1px solid var(--iphone-line);
+    background: var(--iphone-surface-soft);
     box-shadow: var(--iphone-shadow-soft);
-    font-size: 0.92rem;
-    letter-spacing: 0;
-  }
-
-  .switcher-chip.active {
-    background: #111111;
-    color: #ffffff;
-    border-color: #111111;
-    box-shadow: var(--iphone-shadow-control);
   }
 
   /* 全部表单单列 */
@@ -1746,7 +1737,7 @@ select:focus {
     grid-column: auto;
   }
 
-  /* 文字直接落在页面上，只有具体控件悬浮 */
+  /* Flex 布局堆叠 */
   .category-section-header,
   .subcategory-header,
   .overview-group-header {
@@ -1760,6 +1751,7 @@ select:focus {
     align-items: stretch;
   }
 
+  /* 文字直接落在页面上，外层只负责布局 */
   .view-panel,
   .category-section,
   .subcategory-block,
@@ -1791,7 +1783,7 @@ select:focus {
   }
 
   .settings-layout {
-    gap: 32px;
+    gap: 34px;
   }
 
   .section-heading {
@@ -1821,9 +1813,62 @@ select:focus {
     font-weight: 600;
   }
 
+  /* 品类文字区直接显示在页面上 */
+  .category-section-header {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 14px;
+  }
+
+  .category-section-title {
+    font-size: 1.24rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .subcategory-header {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+
+  .subcategory-header > div:first-child,
+  .overview-group-header > div:first-child {
+    min-width: 0;
+  }
+
+  .subcategory-title {
+    font-size: 1rem;
+    font-weight: 650;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .subcategory-counts {
+    font-size: 0.78rem;
+    margin-top: 4px;
+  }
+
+  /* 去容器化：间距压缩 */
+  .grouped-content {
+    gap: 30px;
+    margin-top: 30px;
+  }
+
+  .subcategory-sections {
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .subcategory-content {
+    gap: 14px;
+    margin-top: 14px;
+  }
+
   .selector-card {
     overflow: hidden;
-    background: var(--iphone-surface-strong);
+    background: var(--iphone-surface);
     border: 1px solid var(--iphone-line);
     border-radius: 8px;
     box-shadow: var(--iphone-shadow);
@@ -1853,8 +1898,8 @@ select:focus {
 
   .detail-hero-image-wrap {
     width: min(210px, 62vw);
-    border: 6px solid var(--iphone-surface-strong);
-    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.12);
+    border: 6px solid var(--iphone-surface);
+    box-shadow: var(--iphone-shadow);
   }
 
   .detail-hero-name {
@@ -1863,64 +1908,10 @@ select:focus {
     letter-spacing: 0;
   }
 
-  .category-section-title {
-    font-size: 1.24rem;
-    font-weight: 700;
-    line-height: 1.2;
-  }
-
-  .category-section-header {
-    border-bottom: none;
-    padding-bottom: 0;
-    margin-bottom: 14px;
-  }
-
-  .subcategory-header {
-    gap: 12px;
-    min-height: 52px;
-    padding: 10px 12px;
-    margin-bottom: 12px;
-    background: var(--iphone-surface);
-    border: 1px solid var(--iphone-line);
-    border-radius: 8px;
-    box-shadow: var(--iphone-shadow-soft);
-  }
-
-  .subcategory-header > div:first-child,
-  .overview-group-header > div:first-child {
-    min-width: 0;
-  }
-
-  .subcategory-title {
-    font-size: 1rem;
-    font-weight: 650;
-    line-height: 1.25;
-    overflow-wrap: anywhere;
-  }
-
-  .subcategory-counts {
-    font-size: 0.78rem;
-    margin-top: 4px;
-  }
-
-  .grouped-content {
-    gap: 30px;
-    margin-top: 30px;
-  }
-
-  .subcategory-sections {
-    gap: 18px;
-    margin-top: 16px;
-  }
-
-  .subcategory-content {
-    gap: 14px;
-    margin-top: 14px;
-  }
-
+  /* 具体业务卡片悬浮 */
   .yw-card {
     overflow: hidden;
-    background: var(--iphone-surface-strong);
+    background: var(--iphone-surface);
     border: 1px solid var(--iphone-line);
     box-shadow: var(--iphone-shadow-soft);
     border-radius: 8px;
@@ -1943,16 +1934,14 @@ select:focus {
     font-size: 0.78rem;
   }
 
+  /* 去容器化：文本条目完全扁平化 */
   .text-item-row {
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    min-height: 72px;
-    padding: 13px 12px;
-    background: var(--iphone-surface-strong);
-    border: 1px solid var(--iphone-line);
-    border-radius: 8px;
-    box-shadow: var(--iphone-shadow-soft);
+    background: transparent;
+    border: none;
+    border-bottom: 0.5px solid var(--iphone-line);
+    box-shadow: none;
+    border-radius: 0;
+    padding: 11px 0;
   }
 
   .text-item-title {
@@ -1964,6 +1953,7 @@ select:focus {
     font-size: 0.78rem;
   }
 
+  /* 卡片尺寸缩小 */
   .rail-card {
     flex-basis: 176px;
   }
@@ -1994,7 +1984,7 @@ select:focus {
   .checkbox-panel {
     min-height: 50px;
     border-radius: 8px;
-    background: var(--iphone-surface-strong);
+    background-color: var(--iphone-surface);
     border: 1px solid var(--iphone-line);
     box-shadow: var(--iphone-shadow-control);
     font-size: 0.95rem;
@@ -2017,7 +2007,7 @@ select:focus {
   select:focus,
   .date-display-button:focus-visible {
     border-color: var(--iphone-line-strong);
-    background: var(--iphone-surface-strong);
+    background-color: var(--iphone-surface);
     box-shadow: var(--iphone-shadow-control), 0 0 0 4px rgba(17, 17, 17, 0.04);
   }
 
@@ -2027,7 +2017,7 @@ select:focus {
 
   .upload-card,
   .small-upload {
-    background: var(--iphone-surface-strong);
+    background: var(--iphone-surface);
     border: 1px solid var(--iphone-line);
     border-radius: 8px;
     box-shadow: var(--iphone-shadow-soft);
@@ -2055,19 +2045,6 @@ select:focus {
     min-width: 0;
   }
 
-  .mini-button,
-  .mini-file-button,
-  .subtle-icon-btn,
-  .file-picker:not(.primary-button) {
-    min-height: 44px;
-    height: 44px;
-    border-radius: 999px;
-    background: var(--iphone-surface-strong);
-    border: 1px solid var(--iphone-line);
-    box-shadow: var(--iphone-shadow-control);
-    font-size: 0.88rem;
-  }
-
   .danger-button,
   .danger-lite-button {
     box-shadow: 0 4px 12px rgba(192, 54, 44, 0.12);
@@ -2085,7 +2062,7 @@ select:focus {
     max-height: 85vh;
     overflow-y: auto;
     padding: 22px 20px calc(20px + env(safe-area-inset-bottom, 0px));
-    background: var(--iphone-surface-strong);
+    background: var(--iphone-surface);
     border: 1px solid var(--iphone-line);
     border-radius: 8px;
     box-shadow: 0 -8px 30px rgba(15, 23, 42, 0.12);
@@ -2099,7 +2076,7 @@ select:focus {
   .modal-content.crop-modal-content {
     width: 100%;
     padding: 24px 16px calc(18px + env(safe-area-inset-bottom, 0px));
-    background: var(--iphone-surface-strong);
+    background: var(--iphone-surface);
   }
 
   .crop-preview-container {
@@ -2172,7 +2149,10 @@ select:focus {
     min-height: 56px;
     padding: 12px;
     margin: 8px 0 0;
-    background: var(--iphone-surface-strong);
+  }
+
+  .overview-category-row {
+    background: var(--iphone-surface);
     border: 1px solid var(--iphone-line);
     border-radius: 8px;
     box-shadow: var(--iphone-shadow-soft);
@@ -2195,6 +2175,8 @@ select:focus {
 
   /* 切换器：固定显示 2 个 chip */
   .switcher-chip {
+    font-size: 0.95rem;
+    padding: 0 16px;
     flex: 0 0 calc((100% - 10px) / 2);
     min-width: 0;
   }
@@ -2799,14 +2781,14 @@ select:focus {
 /* ── iPhone 去容器化暗色模式 ── */
 @media (max-width: 768px) and (prefers-color-scheme: dark) {
   :root {
-    --iphone-page: #000000;
-    --iphone-surface: rgba(28, 28, 30, 0.94);
-    --iphone-surface-strong: #1c1c1e;
+    --iphone-page: #1c1c1e;
+    --iphone-surface: rgba(44, 44, 46, 0.96);
+    --iphone-surface-soft: rgba(44, 44, 46, 0.88);
     --iphone-line: rgba(255, 255, 255, 0.10);
     --iphone-line-strong: rgba(255, 255, 255, 0.18);
-    --iphone-shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
-    --iphone-shadow-soft: 0 5px 16px rgba(0, 0, 0, 0.36);
-    --iphone-shadow-control: 0 4px 14px rgba(0, 0, 0, 0.34);
+    --iphone-shadow: 0 12px 30px rgba(0, 0, 0, 0.42);
+    --iphone-shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.34);
+    --iphone-shadow-control: 0 5px 16px rgba(0, 0, 0, 0.34);
   }
 
   body {
@@ -2833,15 +2815,13 @@ select:focus {
     box-shadow: none;
   }
 
-  .topbar #addButton,
-  .topbar #settingsButton,
   .secondary-button,
   .mini-button,
   .mini-file-button,
   .subtle-icon-btn,
   .file-picker:not(.primary-button),
   .switcher-chip {
-    background: var(--iphone-surface-strong);
+    background: var(--iphone-surface);
     color: var(--text);
     border-color: var(--iphone-line);
     box-shadow: var(--iphone-shadow-control);
@@ -2850,8 +2830,7 @@ select:focus {
   .brand-button,
   .primary-button,
   .file-picker.primary-button,
-  .switcher-chip.active,
-  .topbar #homeButton {
+  .switcher-chip.active {
     background: #f5f5f7;
     color: #000000;
     border-color: #f5f5f7;
@@ -2859,10 +2838,7 @@ select:focus {
   }
 
   .selector-card,
-  .subcategory-header,
   .yw-card,
-  .text-item-row,
-  .manager-row,
   .overview-category-row,
   .upload-card,
   .small-upload,
@@ -2873,23 +2849,10 @@ select:focus {
   select,
   .date-display-button,
   .modal-content {
-    background: var(--iphone-surface-strong);
+    background-color: var(--iphone-surface);
     border-color: var(--iphone-line);
     box-shadow: var(--iphone-shadow-soft);
     color: var(--text);
-  }
-
-  .detail-hero-image-wrap {
-    border-color: var(--iphone-surface-strong);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.52);
-  }
-
-  .category-section + .category-section,
-  .category-section-header,
-  .subcategory-header,
-  .overview-group-header {
-    border-top-color: transparent;
-    border-bottom-color: rgba(255, 255, 255, 0.08);
   }
 
   input[type="text"]:focus,
@@ -2898,8 +2861,23 @@ select:focus {
   select:focus,
   .date-display-button:focus-visible {
     border-color: var(--iphone-line-strong);
-    background: #2c2c2e;
+    background-color: var(--iphone-surface);
     box-shadow: var(--iphone-shadow-control), 0 0 0 4px rgba(255, 255, 255, 0.06);
+  }
+
+  .detail-hero-image-wrap {
+    border-color: var(--iphone-surface);
+    box-shadow: var(--iphone-shadow);
+  }
+
+  .yw-card {
+    background: var(--iphone-surface);
+    border-color: var(--iphone-line);
+  }
+
+  .text-item-row {
+    background: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
   }
 
   .modal-content {
