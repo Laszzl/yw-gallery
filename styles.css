@@ -1586,43 +1586,15 @@ select:focus {
   }
 }
 
-/* ── iPhone：iOS 原生风格 ── */
+/* ── 小屏弹窗 ── */
 @media (max-width: 768px) {
-  /* ── 系统背景：纯色替换渐变 ── */
-  body {
-    background: #f2f2f7;
-  }
-
-  /* ── 删除 page-shell 容器 ── */
-  .page-shell {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  .app-main {
-    gap: 20px;
-    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  }
-
-  /* ── 导航栏浮动 ── */
   .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     grid-template-areas:
       "add brand settings"
       "switcher switcher switcher";
     gap: 14px 10px;
     padding: 16px;
-    padding-top: max(16px, env(safe-area-inset-top));
-    border-radius: 0;
-    border: none;
-    background: rgba(242, 242, 247, 0.86);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    box-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.08), 0 4px 14px rgba(0, 0, 0, 0.06);
   }
 
   .topbar-branding {
@@ -1673,161 +1645,10 @@ select:focus {
     flex: 0 0 calc((100% - 20px) / 3);
   }
 
-  /* ── view-panel 透明化 ── */
-  .view-panel {
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: none;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 0 16px;
-    animation: none;
-  }
-
-  /* ── 卡片悬浮体系 ── */
-  .selector-card,
-  .category-section,
-  .glass-form,
-  .settings-block,
-  .yw-card,
-  .text-item-row,
-  .empty-state-panel,
-  .manager-row,
-  .overview-group-card,
-  .upload-card {
-    background: #ffffff;
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
-
-  /* ── 特殊卡片微调 ── */
-  .selector-card {
-    border-radius: 16px;
-  }
-
-  .category-section {
-    padding: 20px;
-  }
-
-  .settings-block,
-  .glass-form {
-    padding: 20px;
-  }
-
-  .empty-state-panel {
-    padding: 48px 24px;
-    background: #ffffff;
-  }
-
-  .manager-row {
-    padding: 14px 16px;
-    margin-bottom: 8px;
-    border-radius: 10px;
-  }
-
-  .upload-card {
-    padding: 16px 20px;
-  }
-
-  .subcategory-block {
-    background: rgba(255, 255, 255, 0.82);
-    border: none;
-    border-radius: 10px;
-    padding: 18px;
-    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.03), 0 1px 4px rgba(0, 0, 0, 0.04);
-  }
-
-  .overview-group-card {
-    padding: 0;
-    background: #ffffff;
-  }
-
-  .overview-group-header {
-    padding: 18px 20px;
-  }
-
-  .overview-group-content {
-    padding: 0 20px 20px;
-  }
-
-  .overview-category-row {
-    background: rgba(255, 255, 255, 0.92);
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.03), 0 1px 4px rgba(0, 0, 0, 0.04);
-  }
-
-  .text-item-row {
-    padding: 16px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-  }
-
-  .yw-card {
-    border-radius: 12px;
-  }
-
-  /* ── 分区标题 iOS 化 ── */
-  .section-heading {
-    text-align: left;
-    gap: 4px;
-    margin-bottom: 16px;
-    padding: 0 16px;
-  }
-
-  .section-heading h2 {
-    font-size: 0.8125rem;
-    font-weight: 400;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #6e6e73;
-  }
-
-  /* ── 英雄区 ── */
-  .detail-hero-card {
-    padding: 32px 0 8px;
-    gap: 20px;
-  }
-
-  .detail-hero-image-wrap {
-    width: min(220px, 58vw);
-    border-width: 5px;
-  }
-
-  .detail-hero-name {
-    font-size: clamp(2.2rem, 8vw, 3.2rem);
-  }
-
-  .grouped-content {
-    gap: 20px;
-    margin-top: 24px;
-  }
-
-  /* ── 网格布局 ── */
-  .athlete-selector-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 0;
-  }
-
-  /* ── 表单 ── */
-  .add-item-form {
-    gap: 16px;
-  }
-
-  .form-footer-actions {
-    padding-top: 4px;
-  }
-
-  /* ── 弹窗（iOS 底部弹出） ── */
   .modal-overlay {
     padding: 16px;
     align-items: flex-end;
     padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
 
   .modal-content {
@@ -1853,6 +1674,11 @@ select:focus {
 
   .date-picker-columns {
     height: 180px;
+  }
+
+  .modal-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }
 
@@ -2436,56 +2262,5 @@ select:focus {
   /* Glass form */
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
-  }
-}
-
-/* ═══════════════════════════════════════════════
-   iPhone 暗色模式
-   ═══════════════════════════════════════════════ */
-@media (max-width: 768px) and (prefers-color-scheme: dark) {
-  body {
-    background: #000000;
-  }
-
-  .topbar {
-    background: rgba(28, 28, 30, 0.86);
-    box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.06), 0 4px 14px rgba(0, 0, 0, 0.4);
-  }
-
-  .selector-card,
-  .category-section,
-  .glass-form,
-  .settings-block,
-  .yw-card,
-  .text-item-row,
-  .empty-state-panel,
-  .manager-row,
-  .overview-group-card,
-  .upload-card {
-    background: #1c1c1e;
-    border: none;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 3px 10px rgba(0, 0, 0, 0.5);
-  }
-
-  .subcategory-block {
-    background: rgba(44, 44, 46, 0.86);
-    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.4);
-  }
-
-  .overview-category-row {
-    background: rgba(44, 44, 46, 0.92);
-    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.4);
-  }
-
-  .empty-state-panel {
-    background: #1c1c1e;
-  }
-
-  .overview-group-card {
-    background: #1c1c1e;
-  }
-
-  .section-heading h2 {
-    color: #8e8e93;
   }
 }
