@@ -2275,4 +2275,11 @@ select:focus {
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
   }
+
+  /* iPhone 暗色 body 背景 */
+  @media (max-width: 768px) {
+    body {
+      background: radial-gradient(circle at 50% -10%, rgba(44, 44, 46, 0.96), rgba(28, 28, 30, 0.88) 34%, rgba(20, 20, 22, 0.96) 100%);
+    }
+  }
 }
