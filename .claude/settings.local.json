@@ -26,7 +26,10 @@
       "Bash(sed -n '1167,1171p' styles.css)",
       "Bash(sed -n '1415,1419p' styles.css)",
       "Bash(sed -n '1508,1512p' styles.css)",
-      "Bash(sed -n '1666,1672p' styles.css)"
+      "Bash(sed -n '1666,1672p' styles.css)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:github.com)",
+      "Bash(\" /Users/liaozhenghai/Desktop/yw/app.js | head -20)"
     ]
   }
 }
