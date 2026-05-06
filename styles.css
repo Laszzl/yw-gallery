@@ -1476,7 +1476,7 @@ select:focus {
 }
 
 /* ═══════════════════════════════════════════════
-   三端适配：iPad 横版 (≤1366px) · iPad 竖版 (≤1024px) · iPhone (≤768px)
+   通用移动端适配：iPad 横版 (≤1366px) · iPad 竖版 (≤1024px)
    Mac 端（>1366px）使用上方默认样式，不做修改
    ═══════════════════════════════════════════════ */
 
@@ -1594,76 +1594,8 @@ select:focus {
   }
 }
 
-/* ── iPhone 端 ── */
+/* ── 小屏弹窗 ── */
 @media (max-width: 768px) {
-  .page-shell {
-    width: min(100% - 24px, 768px);
-    padding-top: 16px;
-    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .topbar {
-    padding: 16px;
-  }
-
-  /* 全部表单单列 */
-  .form-grid.four-columns,
-  .form-grid.three-columns,
-  .form-grid.two-columns {
-    grid-template-columns: 1fr;
-  }
-
-  .person-form-layout,
-  .person-manager-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .person-create-actions,
-  .person-photo-actions {
-    flex-direction: column;
-  }
-
-  .action-button-wide {
-    width: 100%;
-  }
-
-  /* Flex 布局堆叠 */
-  .category-section-header,
-  .subcategory-header,
-  .manager-row,
-  .text-item-row,
-  .overview-group-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  /* 面板内边距 */
-  .view-panel,
-  .category-section,
-  .settings-block,
-  .glass-form,
-  .empty-state-panel,
-  .subcategory-block,
-  .upload-card,
-  .modal-content {
-    padding: 20px;
-  }
-
-  /* 详情页头像 */
-  .detail-hero-image-wrap {
-    width: min(200px, 60vw);
-  }
-
-  /* 卡片 */
-  .rail-card {
-    flex-basis: 240px;
-  }
-
-  .athlete-selector-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* 弹窗：底部弹出，适配安全区 */
   .modal-overlay {
     padding: 16px;
     align-items: flex-end;
@@ -1671,6 +1603,7 @@ select:focus {
   }
 
   .modal-content {
+    padding: 20px;
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
@@ -1694,40 +1627,9 @@ select:focus {
     height: 180px;
   }
 
-  /* 性能优化 */
-  .view-panel,
   .modal-overlay {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-  }
-
-  /* 数据管理 */
-  .data-manage-actions {
-    flex-direction: column;
-  }
-
-  .data-manage-actions .primary-button,
-  .data-manage-actions .file-picker {
-    width: 100%;
-  }
-
-  /* 品类查看 */
-  .overview-person-filter {
-    width: 100%;
-  }
-
-  .overview-group-header {
-    padding: 16px 20px;
-  }
-
-  .overview-group-content {
-    padding: 0 16px 20px;
-  }
-
-  /* 切换器 */
-  .switcher-chip {
-    font-size: 0.95rem;
-    padding: 0 16px;
   }
 }
 
