@@ -987,33 +987,6 @@ button,
   outline-offset: 4px;
 }
 
-/* ── 触摸拖拽（Pointer Events，移动端专用）── */
-.touch-drag-ghost {
-  position: fixed;
-  z-index: 10000;
-  pointer-events: none;
-  transform: scale(1.05);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-  opacity: 0.92;
-  transition: none;
-}
-
-.rail-card.touch-dragging,
-.overview-group-card.touch-dragging,
-.overview-category-row.touch-dragging {
-  opacity: 0.3;
-}
-
-.touch-drop-indicator {
-  height: 3px;
-  background: var(--accent);
-  border-radius: 2px;
-  margin: 0;
-  flex-shrink: 0;
-  pointer-events: none;
-  transition: none;
-}
-
 .overview-group-header {
   width: 100%;
   padding: 22px 24px;
@@ -1615,13 +1588,48 @@ select:focus {
 
 /* ── 小屏弹窗 ── */
 @media (max-width: 768px) {
+  :root {
+    --bg-accent: #f2f2f7;
+    --panel: transparent;
+    --panel-strong: #ffffff;
+    --shadow-soft: 0 2px 8px rgba(15, 23, 42, 0.08);
+    --shadow-control: 0 2px 8px rgba(15, 23, 42, 0.1);
+    --shadow-topbar: 0 1px 3px rgba(15, 23, 42, 0.06);
+    --radius-xl: 16px;
+    --radius-lg: 14px;
+    --radius-md: 10px;
+    --text-hero: clamp(2rem, 8vw, 3rem);
+    --text-xxl: 1.35rem;
+    --text-xl: 1.15rem;
+    --text-lg: 1.05rem;
+    --text-base: 0.94rem;
+    --text-sm: 0.85rem;
+  }
+
+  body {
+    background: #f2f2f7;
+  }
+
+  .page-shell {
+    width: min(100% - 20px, 1024px);
+    padding: 10px 0 56px;
+  }
+
+  .app-main {
+    gap: 14px;
+  }
+
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     grid-template-areas:
       "add brand settings"
       "switcher switcher switcher";
     gap: 14px 10px;
-    padding: 16px;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
   }
 
   .topbar-branding {
@@ -1670,6 +1678,133 @@ select:focus {
 
   .athlete-switcher.scrollable .switcher-chip {
     flex: 0 0 calc((100% - 20px) / 3);
+  }
+
+  /* ── iPhone 容器透明化 ── */
+  .view-panel {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    animation: none;
+  }
+
+  .category-section {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .subcategory-block {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .empty-state-panel {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 40px 16px;
+  }
+
+  .empty-state-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .glass-form {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  /* ── iPhone 卡片浮动阴影 + 缩小 ── */
+  .selector-card {
+    background: #ffffff;
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .yw-card,
+  .text-item-row {
+    background: #ffffff;
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .yw-card-body {
+    padding: 10px 10px 12px;
+  }
+
+  .text-item-row {
+    padding: 12px 14px;
+  }
+
+  .subcategory-content {
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .grouped-content {
+    gap: 18px;
+    margin-top: 20px;
+  }
+
+  .subcategory-sections {
+    gap: 6px;
+  }
+
+  .rail-card {
+    flex-basis: 170px;
+  }
+
+  .detail-hero-image-wrap {
+    width: min(180px, 50vw);
+    border-width: 5px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+  }
+
+  .detail-hero-card {
+    gap: 14px;
+  }
+
+  .athlete-selector-grid {
+    gap: 14px;
+  }
+
+  .section-heading {
+    margin-bottom: 14px;
+  }
+
+  /* ── iPhone Settings 页 ── */
+  .settings-block {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: var(--shadow-soft);
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .settings-layout {
+    gap: 14px;
+  }
+
+  .manager-row,
+  .order-row {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    border: none;
+    box-shadow: var(--shadow-soft);
   }
 
   .modal-overlay {
@@ -2289,5 +2424,47 @@ select:focus {
   /* Glass form */
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   iPhone Dark Mode Overrides
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) and (prefers-color-scheme: dark) {
+  :root {
+    --bg-accent: #000000;
+  }
+
+  body {
+    background: #000000;
+  }
+
+  .topbar {
+    background: #1c1c1e;
+  }
+
+  .selector-card,
+  .yw-card,
+  .text-item-row,
+  .settings-block {
+    background: #1c1c1e;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .manager-row {
+    background: #2c2c2e;
+    box-shadow: none;
+  }
+
+  .detail-hero-image-wrap {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  }
+
+  .view-panel,
+  .category-section,
+  .subcategory-block,
+  .empty-state-panel,
+  .glass-form {
+    background: transparent;
   }
 }
