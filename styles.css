@@ -1595,12 +1595,12 @@ select:focus {
 
   body {
     background:
-      radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.96), rgba(245, 245, 247, 0.88) 34%, rgba(235, 236, 241, 0.96) 100%);
+      radial-gradient(ellipse 120% 60% at 50% -5%, rgba(255, 255, 255, 0.98), rgba(248, 248, 250, 0.86) 28%, rgba(238, 239, 244, 0.94) 62%, rgba(228, 229, 236, 0.96) 100%);
   }
 
   .page-shell {
     width: 100%;
-    padding: calc(10px + env(safe-area-inset-top, 0px)) 0 calc(48px + env(safe-area-inset-bottom, 0px));
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 0 calc(12px + env(safe-area-inset-bottom, 0px));
   }
 
   .app-main {
@@ -1708,7 +1708,7 @@ select:focus {
   }
 
   .view-panel {
-    padding: 0 12px;
+    padding: 0 12px calc(24px + env(safe-area-inset-bottom, 0px));
     border: 0;
     border-radius: 0;
     background: transparent;
@@ -1725,8 +1725,10 @@ select:focus {
   }
 
   .section-heading h2 {
-    font-size: 1.45rem;
-    line-height: 1.16;
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
   }
 
   .athlete-selector-grid {
@@ -1741,12 +1743,15 @@ select:focus {
   }
 
   .selector-name-overlay {
-    padding: 46px 18px 18px;
+    padding: 52px 18px 20px;
+    background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.18) 35%, rgba(0, 0, 0, 0.72) 100%);
   }
 
   .selector-name {
-    font-size: 1.3rem;
-    line-height: 1.18;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
   }
 
   .empty-state-panel {
@@ -1766,13 +1771,16 @@ select:focus {
   }
 
   .detail-hero-name {
-    font-size: 2.6rem;
-    line-height: 0.98;
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 0.94;
+    letter-spacing: -0.04em;
   }
 
   .grouped-content {
     gap: 20px;
     margin-top: 26px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   }
 
   .category-section {
@@ -1790,7 +1798,15 @@ select:focus {
   }
 
   .category-section-title {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .subcategory-title {
+    font-size: 1.1rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
   }
 
   .subcategory-sections {
@@ -1841,8 +1857,10 @@ select:focus {
 
   .yw-title,
   .text-item-title {
-    font-size: 1rem;
-    line-height: 1.3;
+    font-size: 1.05rem;
+    font-weight: 650;
+    line-height: 1.28;
+    letter-spacing: -0.015em;
   }
 
   .text-item-row {
@@ -1943,9 +1961,18 @@ select:focus {
   .date-display-button,
   .checkbox-panel {
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.76);
-    border-color: rgba(255, 255, 255, 0.68);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68), 0 4px 14px rgba(15, 23, 42, 0.05);
+    background: rgba(255, 255, 255, 0.68);
+    border-color: rgba(255, 255, 255, 0.62);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 3px 12px rgba(15, 23, 42, 0.04);
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  select:focus {
+    background: rgba(255, 255, 255, 0.88);
+    border-color: rgba(17, 17, 17, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 0 0 4px rgba(17, 17, 17, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
   }
 
   .overview-toolbar {
@@ -1993,10 +2020,10 @@ select:focus {
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
-    border-radius: 28px;
+    border-radius: 28px 28px 0 0;
     background: rgba(255, 255, 255, 0.82);
     border-color: rgba(255, 255, 255, 0.70);
-    box-shadow: 0 18px 54px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+    box-shadow: 0 -4px 32px rgba(15, 23, 42, 0.12), 0 18px 54px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.78);
     backdrop-filter: blur(24px) saturate(1.35);
     -webkit-backdrop-filter: blur(24px) saturate(1.35);
   }
@@ -2026,6 +2053,63 @@ select:focus {
 
   .photo-thumb-grid {
     gap: 10px;
+  }
+
+  /* ── iOS 26 tap feedback: spring-scale press ── */
+  button:active,
+  .mini-file-button:active,
+  .file-picker:active {
+    transform: scale(0.96);
+    transition: transform 0.12s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .selector-card:active {
+    transform: scale(0.975);
+    transition: transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .yw-card:active,
+  .text-item-row:active {
+    transform: scale(0.97);
+    transition: transform 0.12s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .switcher-chip:active {
+    transform: scale(0.94);
+    transition: transform 0.1s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .subcategory-block:active,
+  .glass-form:active,
+  .overview-group-card:active {
+    transform: scale(0.985);
+    transition: transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* ── Sheet indicator (iOS 26 drag handle) ── */
+  .modal-content::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 5px;
+    background: rgba(15, 23, 42, 0.18);
+    border-radius: 999px;
+    margin: 0 auto 16px;
+    flex-shrink: 0;
+  }
+
+  /* ── Rail snap scrolling ── */
+  .rail-list {
+    scroll-snap-type: x proximity;
+  }
+
+  .rail-card {
+    scroll-snap-align: start;
+  }
+
+  /* ── View transition: spring-like easing ── */
+  .view-panel {
+    animation-timing-function: cubic-bezier(0.22, 0.58, 0.32, 0.98);
   }
 }
 
@@ -2628,7 +2712,7 @@ select:focus {
 @media (prefers-color-scheme: dark) and (max-width: 768px) {
   body {
     background:
-      radial-gradient(circle at 50% -10%, rgba(58, 58, 60, 0.94), rgba(28, 28, 30, 0.92) 38%, rgba(12, 12, 14, 0.98) 100%);
+      radial-gradient(ellipse 120% 60% at 50% -5%, rgba(52, 52, 55, 0.96), rgba(32, 32, 35, 0.90) 28%, rgba(20, 20, 23, 0.94) 62%, rgba(10, 10, 13, 0.98) 100%);
   }
 
   .topbar {
@@ -2686,14 +2770,28 @@ select:focus {
   select,
   .date-display-button,
   .checkbox-panel {
-    background: rgba(255, 255, 255, 0.09);
-    border-color: rgba(255, 255, 255, 0.10);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 14px rgba(0, 0, 0, 0.18);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 3px 12px rgba(0, 0, 0, 0.16);
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  select:focus {
+    background: rgba(255, 255, 255, 0.11);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 4px rgba(255, 255, 255, 0.03), 0 4px 16px rgba(0, 0, 0, 0.26);
   }
 
   .modal-content {
     background: rgba(44, 44, 46, 0.84);
     border-color: rgba(255, 255, 255, 0.10);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.54), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.36), 0 24px 70px rgba(0, 0, 0, 0.54), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  }
+
+  .modal-content::before {
+    background: rgba(255, 255, 255, 0.18);
   }
 }
