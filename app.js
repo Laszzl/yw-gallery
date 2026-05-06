@@ -2352,7 +2352,7 @@ function updateRailMask(rail) {
 
   var atStart = scrollLeft <= 1;
   var atEnd = scrollLeft >= maxScroll - 1;
-  var fadeWidth = getComputedStyle(rail).getPropertyValue('--rail-fade-width').trim() || '32px';
+  var fadeWidth = '32px';
 
   var maskImage;
   if (atStart && atEnd) {
