@@ -1594,8 +1594,7 @@ select:focus {
   }
 
   body {
-    background:
-      radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.96), rgba(245, 245, 247, 0.88) 34%, rgba(235, 236, 241, 0.96) 100%);
+    background: var(--bg);
   }
 
   .page-shell {
@@ -1636,6 +1635,29 @@ select:focus {
   .athlete-switcher {
     grid-area: switcher;
     justify-self: center;
+  }
+
+  /* 去除所有容器视觉层 */
+  .view-panel,
+  .selector-card,
+  .category-section,
+  .glass-form,
+  .person-card-form,
+  .yw-card,
+  .text-item-row,
+  .empty-state-panel,
+  .empty-inline,
+  .settings-block,
+  .manager-row,
+  .overview-group-card,
+  .upload-card,
+  .small-upload,
+  .subcategory-block,
+  .overview-category-row,
+  .checkbox-panel {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
   }
 
   /* 弹窗底部对齐 + 全宽 */
