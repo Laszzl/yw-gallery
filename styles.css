@@ -1648,23 +1648,6 @@ select:focus {
     box-shadow: none;
   }
 
-  /* 结构容器透明化 — 统一页面背景色 */
-  .category-section,
-  .subcategory-block,
-  .settings-block,
-  .empty-state-panel,
-  .glass-form,
-  .upload-card,
-  .overview-group-card,
-  .manager-row,
-  .empty-inline,
-  .checkbox-panel {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    border-radius: 0;
-  }
-
   /* 弹窗底部对齐 + 全宽 */
   .modal-overlay {
     padding: 16px;
@@ -2291,4 +2274,5 @@ select:focus {
   .glass-form {
     background: rgba(44, 44, 46, 0.66);
   }
+
 }
