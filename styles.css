@@ -1586,54 +1586,264 @@ select:focus {
   }
 }
 
-/* ── 小屏弹窗 ── */
+/* ── 小屏（iPhone） ── */
 @media (max-width: 768px) {
-  :root {
-    --bg-accent: #f5f5f7;
-    --mobile-card-bg: rgba(255, 255, 255, 0.96);
-    --mobile-card-soft-bg: rgba(255, 255, 255, 0.9);
-    --mobile-control-bg: rgba(255, 255, 255, 0.94);
-    --mobile-card-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    --mobile-control-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-    --mobile-hairline: rgba(15, 23, 42, 0.06);
-    --radius-xl: 20px;
-    --radius-lg: 18px;
-    --radius-md: 14px;
-    --radius-sm: 8px;
-    --text-hero: clamp(2rem, 10vw, 2.65rem);
-    --text-xxl: 1.35rem;
-    --text-xl: 1.12rem;
-    --text-lg: 0.98rem;
-    --text-base: 0.88rem;
-    --text-sm: 0.78rem;
-  }
-
+  /* ═══ 统一底色 ═══ */
   body {
-    background: var(--bg-accent);
-    font-size: 14px;
+    background: var(--bg);
   }
 
+  :root {
+    --text-hero: clamp(2rem, 8vw, 2.8rem);
+    --text-xxl: 1.25rem;
+    --text-xl: 1.05rem;
+    --text-lg: 0.95rem;
+    --text-base: 0.88rem;
+    --text-sm: 0.82rem;
+    --radius-xl: 20px;
+  }
+
+  /* ═══ 全局间距 ═══ */
   .page-shell {
-    width: min(100% - 24px, 768px);
-    padding: 12px 0 calc(56px + env(safe-area-inset-bottom, 0px));
+    width: 100%;
+    padding: 8px 0 80px;
   }
 
   .app-main {
-    gap: 16px;
+    gap: 12px;
   }
 
+  .section-heading {
+    margin-bottom: 14px;
+  }
+
+  .section-heading h2 {
+    font-size: var(--text-xl);
+  }
+
+  /* ═══ 容器透明化 ═══ */
+  .view-panel {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    padding: 12px;
+  }
+
+  .category-section {
+    background: transparent;
+    padding: 14px;
+  }
+
+  .category-section-header {
+    margin-bottom: 4px;
+  }
+
+  .subcategory-block {
+    background: transparent;
+    border: none;
+    padding: 14px;
+  }
+
+  .subcategory-sections {
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .subcategory-content {
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .glass-form {
+    background: transparent;
+  }
+
+  .settings-block,
+  .glass-form {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .overview-group-card {
+    background: transparent;
+  }
+
+  .empty-state-panel {
+    background: transparent;
+    padding: 48px 16px;
+  }
+
+  .manager-row,
+  .order-row,
+  .overview-category-row {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    margin-bottom: 0;
+    padding: 11px 12px;
+  }
+
+  /* ═══ 悬浮卡片 ═══ */
+  .selector-card {
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: var(--radius-xl);
+  }
+
+  .yw-card {
+    background: #ffffff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .text-item-row {
+    background: #ffffff;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .upload-card,
+  .small-upload {
+    background: #ffffff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .checkbox-panel {
+    background: #ffffff;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .selector-name {
+    font-size: 1.1rem;
+  }
+
+  .switcher-chip {
+    font-size: 0.9rem;
+  }
+
+  .athlete-selector-grid {
+    gap: 10px;
+  }
+
+  .rail-card {
+    flex-basis: 180px;
+  }
+
+  .rail-list {
+    gap: 10px;
+    padding: 4px 2px 8px;
+    scroll-padding-inline: 2px;
+  }
+
+  .detail-hero-card {
+    gap: 12px;
+    padding: 4px 0 0;
+  }
+
+  .detail-hero-image-wrap {
+    width: min(168px, 43vw);
+  }
+
+  .grouped-content {
+    gap: 20px;
+    margin-top: 24px;
+  }
+
+  .yw-card-body {
+    padding: 12px 12px 14px;
+  }
+
+  /* ═══ 表单 ═══ */
+  .form-grid.three-columns,
+  .form-grid.two-columns,
+  .dual-upload-grid,
+  .category-form-row,
+  .person-form-layout,
+  .person-manager-layout {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  .date-display-button {
+    height: 44px;
+    font-size: 0.9rem;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .danger-button,
+  .mini-button,
+  .mini-file-button,
+  .file-picker {
+    min-height: 40px;
+    padding: 0 16px;
+    font-size: 0.88rem;
+  }
+
+  .upload-card {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .checkbox-panel {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+  }
+
+  .checkbox-inline-group {
+    gap: 14px;
+  }
+
+  .settings-layout {
+    gap: 20px;
+  }
+
+  .settings-block {
+    gap: 12px;
+  }
+
+  .settings-stack-layout {
+    gap: 12px;
+  }
+
+  .overview-list {
+    gap: 12px;
+  }
+
+  .overview-group-header {
+    padding: 14px;
+  }
+
+  .overview-group-content {
+    padding: 0 14px 14px;
+  }
+
+  .text-item-row {
+    padding: 13px 12px;
+  }
+
+  label {
+    gap: 6px;
+    font-size: 0.86rem;
+  }
+
+  /* ═══ Topbar ═══ */
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     grid-template-areas:
       "add brand settings"
       "switcher switcher switcher";
-    gap: 10px;
-    margin-bottom: 16px;
-    padding: 10px 12px 12px;
-    border: 0;
-    border-radius: var(--radius-xl);
-    background: var(--mobile-card-bg);
-    box-shadow: var(--mobile-control-shadow);
+    gap: 14px 10px;
+    padding: 12px 12px;
+    border-radius: 18px;
+    margin-bottom: 12px;
   }
 
   .topbar-branding {
@@ -1658,501 +1868,51 @@ select:focus {
   .topbar .brand-button,
   .topbar .primary-button,
   .topbar .secondary-button {
-    min-width: 58px;
-    height: 38px;
-    min-height: 38px;
-    padding: 0 14px;
-    font-size: 0.9rem;
+    min-width: 68px;
+    height: 44px;
+    padding: 0 18px;
   }
 
   .athlete-switcher {
     grid-area: switcher;
-    width: min(100%, 324px);
+    width: min(100%, 340px);
     justify-self: center;
     justify-content: center;
   }
 
-  .switcher-chip {
-    min-width: 62px;
-    height: 36px;
-    min-height: 36px;
-    padding: 0 12px;
-    font-size: 0.88rem;
-    background: var(--mobile-control-bg);
-    box-shadow: var(--mobile-control-shadow);
-  }
-
   .athlete-switcher.scrollable {
-    width: min(100%, 324px);
-    max-width: 324px;
-    padding: 2px 4px;
+    width: min(100%, 340px);
+    max-width: 340px;
   }
 
   .athlete-switcher.scrollable .switcher-scroll-area {
     width: 100%;
     min-width: 0;
-    gap: 8px;
-    padding-top: 6px;
-    padding-bottom: 14px;
-    margin-top: -6px;
-    margin-bottom: -14px;
   }
 
   .athlete-switcher.scrollable .switcher-chip {
-    flex: 0 0 calc((100% - 16px) / 3);
+    flex: 0 0 calc((100% - 20px) / 3);
   }
 
-  .view-panel {
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    animation: none;
-  }
-
-  .section-heading {
-    gap: 4px;
-    margin-bottom: 12px;
-  }
-
-  .section-heading h2 {
-    font-size: 1.16rem;
-  }
-
-  .section-heading.left {
-    padding: 0 2px;
-  }
-
-  .athlete-selector-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .selector-card {
-    border: 0;
-    border-radius: var(--radius-lg);
-    background: var(--mobile-card-bg);
-    box-shadow: var(--mobile-card-shadow);
-  }
-
-  .selector-image-wrap {
-    aspect-ratio: 4 / 5;
-  }
-
-  .selector-name-overlay {
-    padding: 34px 12px 12px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.58));
-  }
-
-  .selector-name {
-    font-size: 1rem;
-    line-height: 1.1;
-  }
-
-  .empty-state-panel {
-    padding: 42px 18px;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .empty-state-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 18px;
-  }
-
-  .empty-state-copy {
-    max-width: 260px;
-    font-size: var(--text-base);
-    line-height: 1.45;
-  }
-
-  .detail-hero-card {
-    gap: 12px;
-    padding: 4px 0 0;
-  }
-
-  .detail-hero-image-wrap {
-    width: min(168px, 43vw);
-    border-width: 5px;
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.13);
-  }
-
-  .detail-hero-name {
-    font-size: var(--text-hero);
-    line-height: 0.96;
-  }
-
-  .grouped-content {
-    gap: 20px;
-    margin-top: 24px;
-  }
-
-  .category-section {
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .category-section-header {
-    margin-bottom: 8px;
-    padding: 0 2px;
-  }
-
-  .category-section-title {
-    font-size: 1.18rem;
-  }
-
-  .subcategory-sections {
-    gap: 14px;
-    margin-top: 0;
-  }
-
-  .subcategory-block {
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .subcategory-header {
-    gap: 10px;
-    padding: 0 2px;
-  }
-
-  .subcategory-title {
-    font-size: 0.98rem;
-  }
-
-  .subcategory-counts,
-  .yw-status,
-  .text-item-status,
-  .yw-date,
-  .text-item-date,
-  .overview-group-meta,
-  .manager-row-subtitle,
-  .upload-summary {
-    font-size: var(--text-sm);
-  }
-
-  .subcategory-content {
-    gap: 12px;
-    margin-top: 10px;
-  }
-
-  .rail-list {
-    gap: 12px;
-    padding: 4px 2px 8px;
-    scroll-padding-inline: 2px;
-  }
-
-  .rail-card {
-    flex-basis: 176px;
-  }
-
-  .yw-card,
-  .text-item-row {
-    border: 0;
-    border-radius: var(--radius-lg);
-    background: var(--mobile-card-bg);
-    box-shadow: var(--mobile-card-shadow);
-  }
-
-  .yw-card-image-wrap {
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  }
-
-  .yw-card-body {
-    padding: 11px 12px 13px;
-  }
-
-  .yw-title,
-  .text-item-title {
-    font-size: 0.92rem;
-    line-height: 1.25;
-  }
-
-  .yw-meta-row,
-  .text-item-meta-row {
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .text-item-row {
-    min-height: 82px;
-    padding: 13px 12px;
-    gap: 10px;
-  }
-
-  .icon-btn {
-    width: 36px;
-    height: 36px;
-    min-height: 36px;
-  }
-
-  .icon-btn svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .mini-button,
-  .mini-file-button,
-  .subtle-icon-btn,
-  .file-picker:not(.primary-button),
-  .date-display-button,
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  select {
-    min-height: 44px;
-    border-radius: var(--radius-md);
-    background: var(--mobile-control-bg);
-    box-shadow: var(--mobile-control-shadow);
-  }
-
-  .primary-button,
-  .secondary-button,
-  .danger-button,
-  .mini-button,
-  .mini-file-button,
-  .file-picker {
-    min-height: 40px;
-    padding: 0 16px;
-    font-size: 0.88rem;
-  }
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  select,
-  .date-display-button {
-    height: 44px;
-    padding-left: 13px;
-    padding-right: 34px;
-    font-size: 0.9rem;
-    border-color: var(--mobile-hairline);
-  }
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"] {
-    padding-right: 13px;
-  }
-
-  select {
-    background-position: right 12px center;
-  }
-
-  label,
-  .date-picker-field {
-    gap: 6px;
-    font-size: 0.86rem;
-  }
-
-  #addView {
-    gap: 10px;
-  }
-
-  .glass-form {
-    padding: 0;
-    gap: 14px;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .form-grid.three-columns,
-  .form-grid.two-columns,
-  .dual-upload-grid,
-  .category-form-row,
-  .person-form-layout,
-  .person-manager-layout {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .add-row-grid > label,
-  .add-row-grid > .notes-checkbox-field,
-  .add-row-grid > .form-spacer {
-    min-height: 0;
-  }
-
-  .status-field,
-  .form-spacer {
-    grid-column: auto;
-  }
-
-  .form-spacer {
-    display: none;
-  }
-
-  .checkbox-panel {
-    min-height: 44px;
-    padding: 10px 12px;
-    border-radius: var(--radius-md);
-    background: var(--mobile-control-bg);
-    box-shadow: var(--mobile-control-shadow);
-  }
-
-  .checkbox-inline-group {
-    gap: 14px;
-  }
-
-  .checkbox-ui {
-    width: 22px;
-    height: 22px;
-  }
-
-  .upload-card,
-  .small-upload {
-    border: 0;
-    border-radius: var(--radius-lg);
-    background: var(--mobile-card-bg);
-    box-shadow: var(--mobile-card-shadow);
-  }
-
-  .upload-card {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 12px;
-    padding: 14px;
-  }
-
-  .small-upload {
-    padding: 12px 14px;
-  }
-
-  .upload-title {
-    font-size: 0.9rem;
-  }
-
-  .upload-summary {
-    margin-top: 4px;
-    line-height: 1.4;
-  }
-
-  .inline-actions,
-  .form-footer-actions,
-  .person-photo-actions,
-  .person-create-actions,
-  .data-manage-actions,
-  .overview-group-actions,
-  .subcategory-actions {
-    gap: 10px;
-  }
-
-  .settings-layout {
-    gap: 20px;
-  }
-
-  .settings-block {
-    padding: 0;
-    gap: 12px;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .settings-stack-layout {
-    gap: 12px;
-  }
-
-  .person-photo-actions .mini-file-button,
-  .person-photo-actions .danger-button,
-  .person-create-actions .primary-button,
-  .person-create-actions .mini-file-button,
-  .select-only-field select,
-  .overview-person-filter select {
-    height: 44px;
-    min-height: 44px;
-    font-size: 0.84rem;
-  }
-
-  .person-card-form {
-    gap: 12px;
-  }
-
-  .overview-toolbar {
-    margin-bottom: 10px;
-    justify-content: stretch;
-  }
-
-  .overview-person-filter {
-    width: 100%;
-  }
-
-  .overview-list {
-    gap: 12px;
-  }
-
-  .overview-group-card {
-    border: 0;
-    border-radius: var(--radius-lg);
-    background: var(--mobile-card-bg);
-    box-shadow: var(--mobile-card-shadow);
-  }
-
-  .overview-group-header {
-    padding: 14px;
-    gap: 10px;
-  }
-
-  .overview-group-title {
-    font-size: 0.98rem;
-  }
-
-  .overview-group-content {
-    padding: 0 14px 14px;
-  }
-
-  .manager-row,
-  .order-row,
-  .overview-category-row {
-    padding: 11px 12px;
-    border: 0;
-    border-radius: var(--radius-md);
-    background: var(--mobile-card-soft-bg);
-    box-shadow: var(--mobile-control-shadow);
-  }
-
-  .manager-row-title {
-    font-size: 0.9rem;
-  }
-
-  .data-manage-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
+  /* ═══ 模态弹窗 ═══ */
   .modal-overlay {
-    padding: 12px;
+    padding: 16px;
     align-items: flex-end;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
 
   .modal-content {
-    padding: 18px;
+    padding: 20px;
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
-    border-radius: 22px;
   }
 
   .crop-modal-content {
     width: 100%;
-    padding: 22px 14px;
+    padding: 24px 16px;
   }
 
   .crop-preview-container {
@@ -2161,7 +1921,7 @@ select:focus {
 
   .date-picker-modal-content {
     width: 100%;
-    padding: 22px 14px;
+    padding: 24px 16px;
   }
 
   .date-picker-columns {
@@ -2752,48 +2512,54 @@ select:focus {
   }
 }
 
+/* ═══ iPhone 暗色模式 ═══ */
 @media (max-width: 768px) and (prefers-color-scheme: dark) {
-  :root {
-    --mobile-card-bg: rgba(44, 44, 46, 0.96);
-    --mobile-card-soft-bg: rgba(58, 58, 60, 0.84);
-    --mobile-control-bg: rgba(44, 44, 46, 0.94);
-    --mobile-card-shadow: 0 10px 26px rgba(0, 0, 0, 0.34);
-    --mobile-control-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
-    --mobile-hairline: rgba(255, 255, 255, 0.07);
+  body {
+    background: var(--bg);
   }
 
+  /* 容器透明化（覆盖暗色模式背景） */
   .view-panel,
   .category-section,
   .subcategory-block,
-  .empty-state-panel,
+  .glass-form,
   .settings-block,
-  .glass-form {
+  .overview-group-card,
+  .empty-state-panel {
     background: transparent;
-    border-color: transparent;
-    box-shadow: none;
-  }
-
-  .selector-card,
-  .yw-card,
-  .text-item-row,
-  .upload-card,
-  .small-upload,
-  .overview-group-card {
-    background: var(--mobile-card-bg);
-    box-shadow: var(--mobile-card-shadow);
   }
 
   .manager-row,
   .order-row,
-  .overview-category-row,
-  .checkbox-panel,
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  select,
-  .date-display-button {
-    background: var(--mobile-control-bg);
-    border-color: var(--mobile-hairline);
-    box-shadow: var(--mobile-control-shadow);
+  .overview-category-row {
+    background: transparent;
+    border-bottom-color: var(--line);
+  }
+
+  /* 悬浮卡片 — 深色背景 + 微弱阴影 */
+  .selector-card {
+    background: #2c2c2e;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .yw-card {
+    background: #2c2c2e;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  .text-item-row {
+    background: #2c2c2e;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .upload-card,
+  .small-upload {
+    background: #2c2c2e;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  .checkbox-panel {
+    background: #2c2c2e;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
   }
 }
