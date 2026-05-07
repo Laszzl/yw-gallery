@@ -1646,20 +1646,6 @@ select:focus {
 
   .app-main {
     display: block;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 80px,
-      black 120px,
-      black 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 80px,
-      black 120px,
-      black 100%
-    );
   }
 
   .topbar {
@@ -1745,8 +1731,8 @@ select:focus {
   #homeButton,
   .switcher-chip {
     min-width: 0;
-    min-height: 42px;
-    height: 42px;
+    min-height: 44px;
+    height: 44px;
     padding: 0 18px;
     border: 0.5px solid var(--ios-control-border);
     border-radius: 999px;
@@ -1893,15 +1879,14 @@ select:focus {
   }
 
   .detail-hero-card {
-    flex-direction: row;
-    justify-content: flex-start;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
-    padding: 4px 2px 16px;
+    gap: 20px;
+    padding: 8px 0 10px;
   }
 
   .detail-hero-image-wrap {
-    width: 160px;
+    width: 200px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     border-width: 5px;
@@ -1916,7 +1901,7 @@ select:focus {
     font-size: 2.1rem;
     line-height: 1.05;
     letter-spacing: 0;
-    text-align: left;
+    text-align: center;
     overflow-wrap: anywhere;
   }
 
