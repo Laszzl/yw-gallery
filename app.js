@@ -428,10 +428,11 @@ function showModal(msg, { confirmLabel, showCancel } = {}) {
 
     if (showCancel) {
       cancelBtn.type = 'button';
-      cancelBtn.className = 'mini-button';
+      cancelBtn.className = 'secondary-button';
       cancelBtn.textContent = '取消';
       cancelBtn.onclick = () => cleanup(false);
-      actions.append(cancelBtn, confirmBtn);
+      confirmBtn.className = 'primary-button';
+      actions.append(confirmBtn, cancelBtn);
     } else {
       actions.append(confirmBtn);
     }
