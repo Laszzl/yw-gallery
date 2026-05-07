@@ -1646,6 +1646,20 @@ select:focus {
 
   .app-main {
     display: block;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 80px,
+      black 120px,
+      black 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 80px,
+      black 120px,
+      black 100%
+    );
   }
 
   .topbar {
@@ -1665,8 +1679,8 @@ select:focus {
     background: var(--ios-topbar-bg);
     background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
     box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
   }
 
   @supports (padding: max(0px)) {
@@ -1731,16 +1745,16 @@ select:focus {
   #homeButton,
   .switcher-chip {
     min-width: 0;
-    min-height: 36px;
-    height: 36px;
-    padding: 0 15px;
+    min-height: 42px;
+    height: 42px;
+    padding: 0 18px;
     border: 0.5px solid var(--ios-control-border);
     border-radius: 999px;
     background: var(--ios-control-bg);
     background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.18));
     box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(15, 23, 42, 0.04);
     color: var(--ios-label);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
@@ -1749,7 +1763,7 @@ select:focus {
   }
 
   #homeButton {
-    min-width: 64px;
+    min-width: 72px;
   }
 
   #addButton:active,
@@ -1785,8 +1799,6 @@ select:focus {
     animation: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    -webkit-mask-image: none;
-    mask-image: none;
   }
 
   @supports (padding: max(0px)) {
@@ -1797,8 +1809,12 @@ select:focus {
   }
 
   .section-heading {
-    text-align: left;
+    text-align: center;
     margin: 0 0 10px;
+  }
+
+  .section-heading.left {
+    text-align: left;
   }
 
   .section-heading h2,
@@ -1806,7 +1822,7 @@ select:focus {
     margin: 0;
     padding: 0 2px;
     color: var(--ios-secondary-label);
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.28;
   }
@@ -1879,14 +1895,20 @@ select:focus {
   .detail-hero-card {
     flex-direction: row;
     justify-content: flex-start;
+    align-items: center;
     gap: 14px;
     padding: 4px 2px 16px;
   }
 
   .detail-hero-image-wrap {
-    width: 76px;
-    border-width: 3px;
-    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+    width: 160px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+    flex-shrink: 0;
   }
 
   .detail-hero-name {
@@ -1980,12 +2002,12 @@ select:focus {
   }
 
   .image-items-rail .rail-card {
-    flex: 0 0 min(212px, 64vw);
+    flex: 0 0 min(224px, 68vw);
     scroll-snap-align: start;
-    border: 0.5px solid rgba(60, 60, 67, 0.08);
-    border-radius: 18px;
+    border: 0.5px solid rgba(60, 60, 67, 0.10);
+    border-radius: 20px;
     background: var(--ios-card-raised-bg);
-    box-shadow: var(--ios-card-shadow);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.04);
     overflow: hidden;
   }
 
@@ -1994,12 +2016,12 @@ select:focus {
   }
 
   .image-items-rail .yw-card-image-wrap {
-    border-radius: 18px 18px 0 0;
+    border-radius: 20px 20px 0 0;
     aspect-ratio: 1 / 1;
   }
 
   .image-items-rail .yw-card-body {
-    padding: 12px 12px 13px;
+    padding: 14px 14px 15px;
   }
 
   .yw-title,
@@ -2028,10 +2050,34 @@ select:focus {
     line-height: 1.28;
   }
 
-  .item-menu-wrap .icon-btn {
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .item-menu-wrap .icon-btn,
+  .compact-menu-wrap .icon-btn {
     width: 38px;
     height: 38px;
+    min-width: 38px;
     min-height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
   }
 
   .text-rail-block .rail-list {
@@ -2343,6 +2389,11 @@ select:focus {
 
   .crop-modal-actions button {
     max-width: none;
+  }
+
+  .crop-modal-actions .primary-button,
+  .date-picker-actions .primary-button {
+    order: -1;
   }
 
   .date-picker-modal-content {
@@ -2989,8 +3040,8 @@ select:focus {
       background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
       border-bottom-color: var(--ios-topbar-border);
       box-shadow: none;
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
     }
 
     #addButton,
@@ -3019,11 +3070,6 @@ select:focus {
       border-color: transparent;
       color: var(--ios-primary-fg);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-    }
-
-    .view-panel {
-      -webkit-mask-image: none;
-      mask-image: none;
     }
 
     .category-section,
