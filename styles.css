@@ -1586,58 +1586,99 @@ select:focus {
   }
 }
 
-/* ── iPhone：iOS Inset Grouped 风格 ── */
+/* ── iPhone：iOS 26 inspired inset grouped layout ── */
 @media (max-width: 768px) {
   html,
   body {
     overflow-x: hidden;
+    background: var(--ios-grouped-bg);
   }
 
-  /* iOS 26 Liquid Glass — warmer tones + translucent surfaces */
   body {
-    --ios-grouped-bg: #efedf0;
-    --ios-card-bg: rgba(255, 255, 255, 0.94);
-    --ios-section-header: rgba(60, 60, 67, 0.6);
-    --ios-separator: rgba(60, 60, 67, 0.10);
-    --ios-topbar-bg: rgba(242, 242, 247, 0.30);
-    --ios-topbar-border: rgba(0, 0, 0, 0.05);
-    --ios-rail-card-bg: rgba(255, 255, 255, 0.94);
-    --ios-modal-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-    background: var(--ios-grouped-bg);
+    --ios-grouped-bg: #f2f2f7;
+    --ios-card-bg: #ffffff;
+    --ios-card-raised-bg: #fbfbfd;
+    --ios-control-bg: rgba(255, 255, 255, 0.78);
+    --ios-control-bg-active: rgba(255, 255, 255, 0.96);
+    --ios-control-border: rgba(60, 60, 67, 0.12);
+    --ios-separator: rgba(60, 60, 67, 0.14);
+    --ios-label: #111111;
+    --ios-secondary-label: rgba(60, 60, 67, 0.66);
+    --ios-tertiary-label: rgba(60, 60, 67, 0.38);
+    --ios-fill: rgba(120, 120, 128, 0.12);
+    --ios-fill-strong: rgba(120, 120, 128, 0.18);
+    --ios-topbar-bg: rgba(248, 248, 250, 0.94);
+    --ios-topbar-border: rgba(60, 60, 67, 0.18);
+    --ios-primary-bg: #111111;
+    --ios-primary-fg: #ffffff;
+    --ios-danger-bg: rgba(255, 59, 48, 0.11);
+    --ios-danger: #c7352d;
+    --ios-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --ios-sheet-shadow: 0 -18px 44px rgba(15, 23, 42, 0.18);
+    min-width: 0;
+    color: var(--ios-label);
+  }
+
+  *,
+  *::before,
+  *::after {
+    letter-spacing: 0;
+  }
+
+  button,
+  input,
+  select,
+  .date-display-button {
+    font-size: 16px;
   }
 
   .page-shell {
     width: 100%;
-    padding: 0 0 calc(20px + env(safe-area-inset-bottom, 0px));
+    margin: 0;
+    padding: 0 0 calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @supports (padding: max(0px)) {
+    .page-shell {
+      padding-bottom: max(28px, calc(16px + env(safe-area-inset-bottom)));
+    }
   }
 
   .app-main {
     display: block;
   }
 
-  /* 导航栏：iOS 26 Liquid Glass — 更通透 + 更强模糊 + 更高饱和 */
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     grid-template-areas:
       "add brand settings"
       "switcher switcher switcher";
+    gap: 8px 10px;
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--ios-topbar-bg);
-    backdrop-filter: blur(35px) saturate(2.4);
-    -webkit-backdrop-filter: blur(35px) saturate(2.4);
+    margin: 0;
+    padding: calc(7px + env(safe-area-inset-top, 0px)) 14px 8px;
     border: none;
     border-bottom: 0.5px solid var(--ios-topbar-border);
     border-radius: 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 8px;
-    margin-bottom: 0;
-    transition: background 0.3s ease, border-color 0.3s ease;
+    background: var(--ios-topbar-bg);
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  @supports (padding: max(0px)) {
+    .topbar {
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+    }
   }
 
   .topbar-branding {
     grid-area: brand;
+    justify-content: center;
   }
 
   .topbar-actions {
@@ -1657,323 +1698,625 @@ select:focus {
   .athlete-switcher {
     grid-area: switcher;
     justify-self: center;
+    width: min(100%, 320px);
+    gap: 8px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    margin: 0 auto;
   }
 
-  /* ═══ iOS 26 玻璃胶囊按钮 ═══ */
+  .switcher-scroll-area,
+  .athlete-switcher.scrollable .switcher-scroll-area {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    align-items: center;
+    overflow-x: auto;
+    padding: 2px 2px 4px;
+    margin: 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .switcher-scroll-area::-webkit-scrollbar,
+  .athlete-switcher.scrollable .switcher-scroll-area::-webkit-scrollbar {
+    display: none;
+  }
+
   #addButton,
   #settingsButton,
+  #homeButton,
+  .switcher-chip {
+    min-width: 0;
+    min-height: 36px;
+    height: 36px;
+    padding: 0 15px;
+    border: 0.5px solid var(--ios-control-border);
+    border-radius: 999px;
+    background: var(--ios-control-bg);
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.18));
+    box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(15, 23, 42, 0.04);
+    color: var(--ios-label);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   #homeButton {
-    background: rgba(255, 255, 255, 0.38);
-    backdrop-filter: blur(14px) saturate(1.8);
-    -webkit-backdrop-filter: blur(14px) saturate(1.8);
-    border: 0.5px solid rgba(255, 255, 255, 0.65);
-    border-radius: 22px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), inset 0 0.5px 0 rgba(255, 255, 255, 0.45);
-    color: #1d1d1f;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    background-image: none;
-    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    min-width: auto;
-    height: 38px;
-    padding: 0 18px;
+    min-width: 64px;
   }
 
   #addButton:active,
   #settingsButton:active,
-  #homeButton:active {
-    background: rgba(255, 255, 255, 0.52);
-    transform: scale(0.96);
-    box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.06), inset 0 0.5px 0 rgba(255, 255, 255, 0.4);
+  #homeButton:active,
+  .switcher-chip:active {
+    background: var(--ios-control-bg-active);
+    transform: scale(0.97);
   }
 
-  /* ═══ iOS 26 玻璃 Chips ═══ */
-  .switcher-chip {
-    background: rgba(255, 255, 255, 0.28);
-    backdrop-filter: blur(10px) saturate(1.6);
-    -webkit-backdrop-filter: blur(10px) saturate(1.6);
-    border: 0.5px solid rgba(255, 255, 255, 0.55);
-    border-radius: 22px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 0 0.5px 0 rgba(255, 255, 255, 0.35);
-    color: #1d1d1f;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    height: 38px;
-    padding: 0 18px;
-    background-image: none;
+  .switcher-chip,
+  .athlete-switcher.scrollable .switcher-chip {
+    flex: 0 0 calc((100% - 16px) / 3);
+    scroll-snap-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .switcher-chip.active {
-    background: rgba(255, 255, 255, 0.48);
-    backdrop-filter: blur(10px) saturate(1.6);
-    -webkit-backdrop-filter: blur(10px) saturate(1.6);
-    border-color: rgba(255, 255, 255, 0.75);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10), inset 0 0.5px 0 rgba(255, 255, 255, 0.5);
-    color: #111111;
-    font-weight: 600;
+    background: var(--ios-primary-bg);
     background-image: none;
+    border-color: transparent;
+    color: var(--ios-primary-fg);
+    box-shadow: 0 2px 6px rgba(17, 17, 17, 0.12);
   }
 
-  /* view-panel：透明滚动容器 + iOS 26 内容渐隐 */
   .view-panel {
-    padding: 32px 16px 16px;
+    padding: 22px 16px 18px;
     background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
     border: none;
     border-radius: 0;
     box-shadow: none;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 44px);
-    mask-image: linear-gradient(to bottom, transparent 0px, black 44px);
+    animation: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
-  /* 内容区块：iOS 26 卡片层 — 更轻阴影 */
+  @supports (padding: max(0px)) {
+    .view-panel {
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+    }
+  }
+
+  .section-heading {
+    text-align: left;
+    margin: 0 0 10px;
+  }
+
+  .section-heading h2,
+  .category-section-title {
+    margin: 0;
+    padding: 0 2px;
+    color: var(--ios-secondary-label);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.28;
+  }
+
   .category-section,
   .settings-block,
   .empty-state-panel,
   .overview-group-card,
   .glass-form,
   .upload-card,
-  .small-upload {
+  .small-upload,
+  .checkbox-panel {
     background: var(--ios-card-bg);
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.04);
+    border: 0.5px solid rgba(60, 60, 67, 0.08);
+    border-radius: 22px;
+    box-shadow: var(--ios-card-shadow);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .category-section,
+  .settings-block,
+  .glass-form {
+    padding: 16px;
+    margin: 0 0 16px;
+  }
+
+  .category-section + .category-section,
+  .settings-block + .settings-block {
+    border-top: 0.5px solid rgba(60, 60, 67, 0.08);
+  }
+
+  .settings-layout,
+  .overview-list,
+  .subcategory-sections,
+  .add-item-form,
+  .glass-form,
+  .settings-block {
+    gap: 14px;
+  }
+
+  .athlete-selector-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 
   .selector-card {
+    border: 0.5px solid rgba(60, 60, 67, 0.08);
+    border-radius: 18px;
     background: var(--ios-card-bg);
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.06);
-    overflow: hidden;
+    box-shadow: var(--ios-card-shadow);
   }
 
-  /* 区块间距：margin 替代细线分割 */
-  .category-section {
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-  .category-section + .category-section {
-    border-top: none;
+  .selector-image-wrap {
+    border-radius: 18px;
   }
 
-  .settings-block {
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-  .settings-block + .settings-block {
-    border-top: none;
+  .selector-name-overlay {
+    padding: 34px 12px 12px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
   }
 
-  .settings-layout {
-    gap: 20px;
+  .selector-name {
+    font-size: clamp(1.05rem, 8vw, 2.4rem) !important;
+    line-height: 1.05;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
   }
-  .settings-layout .settings-block {
-    margin-bottom: 0;
+
+  .detail-hero-card {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 4px 2px 16px;
+  }
+
+  .detail-hero-image-wrap {
+    width: 76px;
+    border-width: 3px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+  }
+
+  .detail-hero-name {
+    min-width: 0;
+    font-size: 2.1rem;
+    line-height: 1.05;
+    letter-spacing: 0;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .grouped-content {
+    gap: 16px;
+    margin-top: 2px;
+  }
+
+  .category-section-header,
+  .subcategory-header,
+  .manager-row,
+  .overview-group-header,
+  .card-topline {
+    gap: 10px;
+  }
+
+  .category-section-header {
+    margin-bottom: 12px;
+  }
+
+  .subcategory-sections {
+    margin-top: 0;
   }
 
   .subcategory-block {
-    background: transparent;
+    padding: 13px 0;
+    margin: 0;
     border: none;
     border-radius: 0;
+    background: transparent;
     box-shadow: none;
-    padding: 12px 0;
-    margin-bottom: 0;
   }
+
   .subcategory-block + .subcategory-block {
     border-top: 0.5px solid var(--ios-separator);
   }
 
   .subcategory-block:first-child {
-    padding-top: 4px;
+    padding-top: 0;
   }
 
-  .empty-state-panel {
-    padding: 48px 16px;
-    margin-bottom: 20px;
+  .subcategory-block:last-child {
+    padding-bottom: 0;
   }
 
-  .glass-form {
-    padding: 20px 16px;
-    margin-bottom: 20px;
-  }
-
-  .overview-group-card {
-    padding: 16px;
-    margin-bottom: 10px;
-  }
-  .overview-group-card + .overview-group-card {
-    border-top: none;
-  }
-
-  /* iOS 风格 Section Header（13px 灰色小字） */
-  .section-heading {
-    text-align: left;
-    margin-bottom: 16px;
-  }
-
-  .section-heading h2,
-  .category-section-title {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: var(--ios-section-header);
-    text-transform: none;
-    padding: 0 0 6px;
-    margin: 0 0 8px;
-  }
-
+  .subcategory-title,
   .form-heading,
-  .overview-group-title {
-    font-size: 15px;
+  .overview-group-title,
+  .manager-row-title {
+    color: var(--ios-label);
+    font-size: 16px;
     font-weight: 600;
-    letter-spacing: 0.01em;
+    line-height: 1.25;
   }
 
-  .subcategory-title {
-    font-size: 14px;
-    font-weight: 600;
-    margin: 0;
+  .subcategory-counts,
+  .manager-row-subtitle,
+  .overview-group-meta,
+  .upload-summary {
+    color: var(--ios-secondary-label);
+    font-size: 13px;
+    line-height: 1.35;
   }
 
-  .subcategory-counts {
-    font-size: 12px;
-    color: var(--ios-section-header);
-    margin: 2px 0 0;
-  }
-
-  /* 首页体育生选择：2 列卡片网格 */
-  .athlete-selector-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .subcategory-content {
     gap: 12px;
+    margin-top: 12px;
   }
 
-  /* YW 图文卡片：水平滚动 + 卡片样式 */
-  .image-items-rail {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 4px 0 8px;
+  .subcategory-actions,
+  .overview-group-actions {
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .rail-list {
+    gap: 12px;
+    padding: 2px 0 10px;
+    scroll-snap-type: x proximity;
+    -webkit-mask-image: none;
+    mask-image: none;
     -webkit-overflow-scrolling: touch;
   }
 
   .image-items-rail .rail-card {
-    flex: 0 0 155px;
-    background: var(--ios-rail-card-bg);
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.06);
+    flex: 0 0 min(212px, 64vw);
+    scroll-snap-align: start;
+    border: 0.5px solid rgba(60, 60, 67, 0.08);
+    border-radius: 18px;
+    background: var(--ios-card-raised-bg);
+    box-shadow: var(--ios-card-shadow);
     overflow: hidden;
-    padding: 0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .image-items-rail .rail-card:active {
-    transform: scale(0.97);
+    transform: scale(0.985);
   }
 
   .image-items-rail .yw-card-image-wrap {
+    border-radius: 18px 18px 0 0;
     aspect-ratio: 1 / 1;
-    border-radius: 10px 10px 0 0;
   }
 
   .image-items-rail .yw-card-body {
-    padding: 10px 12px 12px;
+    padding: 12px 12px 13px;
   }
 
-  .image-items-rail .yw-title {
-    font-size: 14px;
+  .yw-title,
+  .image-items-rail .yw-title,
+  .text-item-title {
+    color: var(--ios-label);
+    font-size: 16px;
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.28;
   }
 
+  .yw-meta-row,
+  .text-item-meta-row {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .yw-status,
+  .yw-date,
+  .text-item-status,
+  .text-item-date,
   .image-items-rail .yw-status,
   .image-items-rail .yw-date {
-    font-size: 12px;
-    margin: 0;
+    color: var(--ios-secondary-label);
+    font-size: 13px;
+    line-height: 1.28;
   }
 
-  /* 纯文本 YW 条目：垂直排列 + 分隔线 */
+  .item-menu-wrap .icon-btn {
+    width: 38px;
+    height: 38px;
+    min-height: 38px;
+  }
+
   .text-rail-block .rail-list {
     display: block;
     overflow-x: visible;
+    padding: 0;
   }
 
   .text-item-row {
-    background: transparent;
+    width: 100%;
+    padding: 13px 0;
+    margin: 0;
     border: none;
     border-bottom: 0.5px solid var(--ios-separator);
     border-radius: 0;
+    background: transparent;
     box-shadow: none;
-    padding: 12px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0;
+    gap: 12px;
   }
 
   .text-item-row:last-child {
     border-bottom: none;
   }
 
-  .text-item-title {
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.4;
+  .form-grid.three-columns,
+  .form-grid.two-columns,
+  .dual-upload-grid,
+  .person-form-layout,
+  .person-manager-layout,
+  .settings-stack-layout,
+  .category-form-row,
+  .add-row-grid-bottom,
+  .person-upload-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .text-item-status,
-  .text-item-date {
-    font-size: 12px;
-    margin: 0;
+  .status-field,
+  .form-spacer {
+    grid-column: auto;
   }
 
-  /* 上传卡片 */
+  .form-spacer {
+    display: none;
+  }
+
+  label {
+    gap: 7px;
+    color: var(--ios-secondary-label);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  .date-display-button,
+  .checkbox-panel {
+    min-height: 50px;
+    height: auto;
+    border-radius: 14px;
+    border-color: var(--ios-control-border);
+    background-color: var(--ios-card-raised-bg);
+    color: var(--ios-label);
+    box-shadow: none;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  .date-display-button {
+    padding-left: 14px;
+  }
+
+  select,
+  .date-display-button {
+    padding-right: 38px;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  select:focus,
+  .date-display-button:focus-visible {
+    background-color: #ffffff;
+    border-color: rgba(17, 17, 17, 0.28);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .checkbox-panel {
+    padding: 12px 14px;
+  }
+
+  .checkbox-inline-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .upload-card {
-    padding: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 15px;
     gap: 12px;
   }
 
   .small-upload {
-    padding: 12px 16px;
+    padding: 13px 15px;
   }
 
   .upload-title {
-    font-size: 14px;
+    color: var(--ios-label);
+    font-size: 15px;
+    line-height: 1.25;
   }
 
-  /* 弹窗：真 Bottom Sheet */
-  .modal-overlay {
+  .inline-actions,
+  .form-footer-actions,
+  .person-create-actions,
+  .person-photo-actions,
+  .data-manage-actions,
+  .crop-modal-actions,
+  .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .danger-button,
+  .mini-button,
+  .mini-file-button,
+  .file-picker {
+    min-height: 48px;
+    border-radius: 999px;
+    font-size: 16px;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .file-picker.primary-button,
+  .form-footer-actions .primary-button {
+    background: var(--ios-primary-bg);
+    background-image: none;
+    color: var(--ios-primary-fg);
+    box-shadow: none;
+  }
+
+  .mini-button,
+  .mini-file-button,
+  .subtle-icon-btn,
+  .file-picker:not(.primary-button) {
+    background: var(--ios-fill);
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--ios-label);
+  }
+
+  .danger-button,
+  .danger-lite-button {
+    background: var(--ios-danger-bg);
+    color: var(--ios-danger);
+    box-shadow: none;
+  }
+
+  .person-photo-actions .mini-file-button,
+  .person-photo-actions .danger-button,
+  .person-create-actions .primary-button,
+  .person-create-actions .mini-file-button {
+    height: auto;
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  .manager-row,
+  .overview-category-row {
+    padding: 13px 14px;
+    border-radius: 16px;
+    background: var(--ios-card-raised-bg);
+    border-color: var(--ios-control-border);
+  }
+
+  .overview-group-card {
     padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .overview-group-header {
+    padding: 16px;
+  }
+
+  .overview-group-content {
+    padding: 0 16px 16px;
+  }
+
+  .overview-toolbar {
+    margin-bottom: 8px;
+  }
+
+  .overview-person-filter {
+    width: 100%;
+  }
+
+  .empty-state-panel {
+    padding: 44px 18px;
+    text-align: center;
+  }
+
+  .empty-state-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+  }
+
+  .modal-overlay {
     align-items: flex-end;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    min-height: 100vh;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.28);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+
+  @supports (height: 100svh) {
+    .modal-overlay {
+      min-height: 100svh;
+    }
   }
 
   .modal-content {
     width: 100%;
-    max-height: 85vh;
+    max-height: 86vh;
     overflow-y: auto;
-    border-radius: 20px 20px 0 0;
-    background: var(--ios-card-bg);
     border: none;
-    box-shadow: var(--ios-modal-shadow);
+    border-radius: 28px 28px 0 0;
+    background: var(--ios-card-bg);
+    box-shadow: var(--ios-sheet-shadow);
+    padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+    text-align: left;
+    animation: modalSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
-    animation: modalSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  @supports (height: 100svh) {
+    .modal-content {
+      max-height: 86svh;
+    }
+  }
+
+  @supports (padding: max(0px)) {
+    .modal-content {
+      padding-left: max(18px, env(safe-area-inset-left));
+      padding-right: max(18px, env(safe-area-inset-right));
+      padding-bottom: max(18px, calc(14px + env(safe-area-inset-bottom)));
+    }
   }
 
   .modal-content:not(.crop-modal-content):not(.date-picker-modal-content)::before {
-    content: '';
+    content: "";
     display: block;
-    width: 36px;
+    width: 38px;
     height: 5px;
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 2.5px;
     margin: 0 auto 16px;
+    border-radius: 999px;
+    background: var(--ios-tertiary-label);
+  }
+
+  .modal-title,
+  .crop-modal-content h3 {
+    color: var(--ios-label);
+    font-size: 20px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .modal-msg {
+    color: var(--ios-label);
+    font-size: 17px;
+    line-height: 1.45;
+    text-align: center;
   }
 
   @keyframes modalSlideUp {
@@ -1987,26 +2330,48 @@ select:focus {
     }
   }
 
-  .crop-modal-content {
+  .crop-modal-content,
+  .date-picker-modal-content {
     width: 100%;
-    padding: 24px 16px;
+    padding-top: 22px;
   }
 
   .crop-preview-container {
     max-width: 100%;
+    border-radius: 20px;
+  }
+
+  .crop-modal-actions button {
+    max-width: none;
   }
 
   .date-picker-modal-content {
-    width: 100%;
-    padding: 24px 16px;
+    gap: 14px;
   }
 
   .date-picker-columns {
-    height: 180px;
+    height: 190px;
+    border-radius: 18px;
+    background: var(--ios-fill);
+    border-color: transparent;
+  }
+
+  .date-picker-selection-bar {
+    border-top-color: var(--ios-separator);
+    border-bottom-color: var(--ios-separator);
+    background: rgba(255, 255, 255, 0.36);
   }
 
   .photo-thumb-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+    max-height: 42vh;
+  }
+
+  @supports (height: 100svh) {
+    .photo-thumb-grid {
+      max-height: 42svh;
+    }
   }
 }
 
@@ -2592,74 +2957,73 @@ select:focus {
     background: rgba(44, 44, 46, 0.66);
   }
 
-  /* iPhone 暗色模式 — iOS 26 Liquid Glass */
+  /* iPhone 暗色模式 */
   @media (max-width: 768px) {
     body {
-      --ios-grouped-bg: #08080a;
-      --ios-card-bg: rgba(28, 28, 30, 0.92);
-      --ios-rail-card-bg: rgba(44, 44, 46, 0.90);
-      --ios-section-header: rgba(235, 235, 245, 0.55);
-      --ios-separator: rgba(235, 235, 245, 0.08);
-      --ios-topbar-bg: rgba(0, 0, 0, 0.28);
-      --ios-topbar-border: rgba(255, 255, 255, 0.06);
-      --ios-modal-shadow: 0 -4px 20px rgba(0, 0, 0, 0.55);
-      --ios-glass-btn-bg: rgba(255, 255, 255, 0.10);
-      --ios-glass-btn-border: rgba(255, 255, 255, 0.20);
-      --ios-glass-btn-active-bg: rgba(255, 255, 255, 0.18);
-      --ios-glass-btn-text: #f5f5f7;
-      --ios-glass-chip-bg: rgba(255, 255, 255, 0.07);
-      --ios-glass-chip-border: rgba(255, 255, 255, 0.14);
-      --ios-glass-chip-active-bg: rgba(255, 255, 255, 0.16);
-      --ios-glass-chip-active-border: rgba(255, 255, 255, 0.28);
+      --ios-grouped-bg: #000000;
+      --ios-card-bg: #1c1c1e;
+      --ios-card-raised-bg: #2c2c2e;
+      --ios-control-bg: rgba(58, 58, 60, 0.82);
+      --ios-control-bg-active: rgba(72, 72, 74, 0.96);
+      --ios-control-border: rgba(235, 235, 245, 0.10);
+      --ios-separator: rgba(235, 235, 245, 0.12);
+      --ios-label: #f5f5f7;
+      --ios-secondary-label: rgba(235, 235, 245, 0.62);
+      --ios-tertiary-label: rgba(235, 235, 245, 0.32);
+      --ios-fill: rgba(120, 120, 128, 0.22);
+      --ios-fill-strong: rgba(120, 120, 128, 0.30);
+      --ios-topbar-bg: rgba(20, 20, 22, 0.95);
+      --ios-topbar-border: rgba(235, 235, 245, 0.10);
+      --ios-primary-bg: #f5f5f7;
+      --ios-primary-fg: #111111;
+      --ios-danger-bg: rgba(255, 69, 58, 0.16);
+      --ios-danger: #ff6961;
+      --ios-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
+      --ios-sheet-shadow: 0 -18px 48px rgba(0, 0, 0, 0.58);
+      background: var(--ios-grouped-bg);
+      color: var(--ios-label);
     }
 
     .topbar {
       background: var(--ios-topbar-bg);
-      backdrop-filter: blur(35px) saturate(2.4);
-      -webkit-backdrop-filter: blur(35px) saturate(2.4);
-      border-color: var(--ios-topbar-border);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+      border-bottom-color: var(--ios-topbar-border);
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     #addButton,
     #settingsButton,
-    #homeButton {
-      background: var(--ios-glass-btn-bg);
-      backdrop-filter: blur(14px) saturate(1.8);
-      -webkit-backdrop-filter: blur(14px) saturate(1.8);
-      border-color: var(--ios-glass-btn-border);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.30), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
-      color: var(--ios-glass-btn-text);
-      background-image: none;
+    #homeButton,
+    .switcher-chip {
+      background: var(--ios-control-bg);
+      background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02));
+      border-color: var(--ios-control-border);
+      color: var(--ios-label);
+      box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.12);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     #addButton:active,
     #settingsButton:active,
-    #homeButton:active {
-      background: var(--ios-glass-btn-active-bg);
-    }
-
-    .switcher-chip {
-      background: var(--ios-glass-chip-bg);
-      backdrop-filter: blur(10px) saturate(1.6);
-      -webkit-backdrop-filter: blur(10px) saturate(1.6);
-      border-color: var(--ios-glass-chip-border);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
-      color: var(--ios-glass-btn-text);
-      background-image: none;
+    #homeButton:active,
+    .switcher-chip:active {
+      background: var(--ios-control-bg-active);
     }
 
     .switcher-chip.active {
-      background: var(--ios-glass-chip-active-bg);
-      border-color: var(--ios-glass-chip-active-border);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
-      color: #ffffff;
+      background: var(--ios-primary-bg);
       background-image: none;
+      border-color: transparent;
+      color: var(--ios-primary-fg);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     }
 
     .view-panel {
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 44px);
-      mask-image: linear-gradient(to bottom, transparent 0px, black 44px);
+      -webkit-mask-image: none;
+      mask-image: none;
     }
 
     .category-section,
@@ -2669,19 +3033,54 @@ select:focus {
     .glass-form,
     .selector-card,
     .upload-card,
-    .small-upload {
+    .small-upload,
+    .checkbox-panel {
       background: var(--ios-card-bg);
-      border: 0.5px solid rgba(255, 255, 255, 0.04);
-      box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.20);
+      border-color: rgba(235, 235, 245, 0.08);
+      box-shadow: var(--ios-card-shadow);
     }
 
-    .image-items-rail .rail-card {
-      background: var(--ios-rail-card-bg);
-      box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.25);
+    .image-items-rail .rail-card,
+    .manager-row,
+    .overview-category-row,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    .date-display-button {
+      background-color: var(--ios-card-raised-bg);
+      border-color: var(--ios-control-border);
+      color: var(--ios-label);
+      box-shadow: none;
     }
 
-    .modal-content:not(.crop-modal-content):not(.date-picker-modal-content)::before {
-      background: rgba(255, 255, 255, 0.20);
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    .date-display-button:focus-visible {
+      background-color: #3a3a3c;
+      border-color: rgba(235, 235, 245, 0.24);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.07);
+    }
+
+    .primary-button,
+    .secondary-button,
+    .file-picker.primary-button,
+    .form-footer-actions .primary-button {
+      background: var(--ios-primary-bg);
+      color: var(--ios-primary-fg);
+      box-shadow: none;
+    }
+
+    .mini-button,
+    .mini-file-button,
+    .subtle-icon-btn,
+    .file-picker:not(.primary-button) {
+      background: var(--ios-fill);
+      border-color: transparent;
+      color: var(--ios-label);
+      box-shadow: none;
     }
 
     .text-item-row {
@@ -2689,13 +3088,135 @@ select:focus {
       border-bottom-color: var(--ios-separator);
     }
 
-    input[type="text"],
-    input[type="number"],
-    select,
-    .date-display-button {
-      background-color: #2c2c2e;
-      border-color: rgba(255, 255, 255, 0.08);
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.52);
+    }
+
+    .modal-content {
+      background: var(--ios-card-bg);
+      border-color: rgba(235, 235, 245, 0.08);
+      box-shadow: var(--ios-sheet-shadow);
+    }
+
+    .modal-content:not(.crop-modal-content):not(.date-picker-modal-content)::before {
+      background: var(--ios-tertiary-label);
+    }
+
+    .date-picker-columns {
+      background: var(--ios-fill);
+      border-color: transparent;
+    }
+
+    .date-picker-selection-bar {
+      background: rgba(255, 255, 255, 0.05);
+      border-top-color: var(--ios-separator);
+      border-bottom-color: var(--ios-separator);
     }
   }
 
+}
+
+@media (max-width: 768px) {
+  .crop-modal-content,
+  .date-picker-modal-content {
+    width: 100%;
+    padding: 22px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+    background: var(--ios-card-bg);
+  }
+
+  @supports (padding: max(0px)) {
+    .crop-modal-content,
+    .date-picker-modal-content {
+      padding-left: max(18px, env(safe-area-inset-left));
+      padding-right: max(18px, env(safe-area-inset-right));
+      padding-bottom: max(18px, calc(14px + env(safe-area-inset-bottom)));
+    }
+  }
+
+  .crop-modal-content h3 {
+    margin: 0 0 12px;
+    color: var(--ios-label);
+    font-size: 20px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .crop-preview-container {
+    max-width: 100%;
+    border-radius: 20px;
+    background: var(--ios-fill);
+  }
+
+  .crop-modal-actions,
+  .data-manage-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .crop-modal-actions button {
+    max-width: none;
+  }
+
+  .photo-thumb-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    max-height: 42vh;
+    padding: 2px 0;
+  }
+
+  @supports (height: 100svh) {
+    .photo-thumb-grid {
+      max-height: 42svh;
+    }
+  }
+
+  .photo-thumb-item {
+    border-radius: 16px;
+    background: var(--ios-fill);
+  }
+
+  .photo-thumb-replace {
+    inset: auto 8px 8px;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.58);
+    opacity: 1;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  #addButton:active,
+  #settingsButton:active,
+  #homeButton:active,
+  .switcher-chip:active,
+  .image-items-rail .rail-card:active {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-transparency: reduce) {
+  .topbar,
+  #addButton,
+  #settingsButton,
+  #homeButton,
+  .switcher-chip,
+  .modal-overlay,
+  .modal-content {
+    background-image: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
