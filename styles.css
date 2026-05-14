@@ -141,6 +141,21 @@ button,
   justify-content: center;
 }
 
+.button-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  pointer-events: none;
+}
+
+.icon-text-button {
+  gap: 8px;
+}
+
+.nav-icon-button .button-icon {
+  display: none;
+}
+
 .brand-button {
   min-width: 56px;
   background: linear-gradient(180deg, #151515 0%, #000000 100%);
@@ -1586,43 +1601,50 @@ select:focus {
   }
 }
 
-/* ── iPhone：iOS 26 inspired inset grouped layout ── */
+/* ── iPhone：iOS 26 Liquid Glass ── */
 @media (max-width: 768px) {
-  html,
+  /* ═══════════════════════════════════════════════
+     iOS 26 Design Tokens
+     ═══════════════════════════════════════════════ */
   body {
-    overflow-x: hidden;
-    background: var(--ios-grouped-bg);
-  }
-
-  body {
-    --ios-grouped-bg: #f2f2f7;
-    --ios-card-bg: #ffffff;
-    --ios-card-raised-bg: #fbfbfd;
-    --ios-control-bg: rgba(255, 255, 255, 0.78);
-    --ios-control-bg-active: rgba(255, 255, 255, 0.96);
-    --ios-control-border: rgba(60, 60, 67, 0.12);
-    --ios-separator: rgba(60, 60, 67, 0.14);
+    --ios-bg: #f2f2f7;
     --ios-label: #111111;
-    --ios-secondary-label: rgba(60, 60, 67, 0.66);
-    --ios-tertiary-label: rgba(60, 60, 67, 0.38);
-    --ios-fill: rgba(120, 120, 128, 0.12);
-    --ios-fill-strong: rgba(120, 120, 128, 0.18);
-    --ios-topbar-bg: rgba(248, 248, 250, 0.94);
-    --ios-topbar-border: rgba(60, 60, 67, 0.18);
+    --ios-secondary-label: rgba(60, 60, 67, 0.62);
+    --ios-separator: rgba(60, 60, 67, 0.12);
+
+    --ios-glass-bg: rgba(255, 255, 255, 0.38);
+    --ios-glass-bg-strong: rgba(255, 255, 255, 0.58);
+    --ios-glass-border: rgba(255, 255, 255, 0.62);
+    --ios-glass-shadow:
+      0 8px 24px rgba(15, 23, 42, 0.10),
+      0 1px 3px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -10px 18px rgba(255, 255, 255, 0.10);
+
+    --ios-card-bg: rgba(255, 255, 255, 0.66);
+    --ios-card-border: rgba(60, 60, 67, 0.08);
+    --ios-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+    --ios-fill: rgba(120, 120, 128, 0.10);
+    --ios-fill-strong: rgba(120, 120, 128, 0.16);
+
     --ios-primary-bg: #111111;
     --ios-primary-fg: #ffffff;
-    --ios-danger-bg: rgba(255, 59, 48, 0.11);
+    --ios-danger-bg: rgba(255, 59, 48, 0.10);
     --ios-danger: #c7352d;
-    --ios-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --ios-sheet-shadow: 0 -18px 44px rgba(15, 23, 42, 0.18);
+
+    --ios-nav-height: 68px;
+
     min-width: 0;
     color: var(--ios-label);
+    background: var(--ios-bg);
   }
 
-  *,
-  *::before,
-  *::after {
-    letter-spacing: 0;
+  html {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    background: var(--ios-bg);
   }
 
   button,
@@ -1632,55 +1654,70 @@ select:focus {
     font-size: 16px;
   }
 
+  /* ═══════════════════════════════════════════════
+     Page Shell — edge-to-edge
+     ═══════════════════════════════════════════════ */
   .page-shell {
     width: 100%;
     margin: 0;
-    padding: 0 0 calc(28px + env(safe-area-inset-bottom, 0px));
+    padding:
+      calc(env(safe-area-inset-top) + var(--ios-nav-height))
+      14px
+      calc(env(safe-area-inset-bottom) + 36px);
   }
 
   @supports (padding: max(0px)) {
     .page-shell {
-      padding-bottom: max(28px, calc(16px + env(safe-area-inset-bottom)));
+      padding:
+        calc(env(safe-area-inset-top) + var(--ios-nav-height))
+        max(14px, env(safe-area-inset-right))
+        max(36px, calc(env(safe-area-inset-bottom) + 36px))
+        max(14px, env(safe-area-inset-left));
     }
   }
 
   .app-main {
     display: block;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 56px, black 100%);
-    mask-image: linear-gradient(to bottom, transparent 0px, black 56px, black 100%);
   }
 
+  /* ═══════════════════════════════════════════════
+     Topbar — Fixed + Liquid Glass + scroll-edge fade
+     ═══════════════════════════════════════════════ */
   .topbar {
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     grid-template-areas:
       "add brand settings"
       "switcher switcher switcher";
-    gap: 8px 10px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    margin: 0;
-    padding: calc(7px + env(safe-area-inset-top, 0px)) 14px 8px;
-    border: none;
-    border-bottom: 0.5px solid var(--ios-topbar-border);
-    border-radius: 0;
-    background: var(--ios-topbar-bg);
-    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
-    box-shadow: none;
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-  }
 
-  @supports (padding: max(0px)) {
-    .topbar {
-      padding-left: max(14px, env(safe-area-inset-left));
-      padding-right: max(14px, env(safe-area-inset-right));
-    }
+    gap: 10px;
+    align-items: center;
+    padding:
+      calc(env(safe-area-inset-top) + 4px)
+      max(14px, env(safe-area-inset-right))
+      8px
+      max(14px, env(safe-area-inset-left));
+
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    pointer-events: none;
   }
 
   .topbar-branding {
     grid-area: brand;
     justify-content: center;
+    min-width: 0;
+    pointer-events: auto;
   }
 
   .topbar-actions {
@@ -1697,16 +1734,78 @@ select:focus {
     justify-self: end;
   }
 
+  /* ── Liquid Glass navigation buttons ── */
+  .brand-button,
+  #addButton,
+  #settingsButton {
+    pointer-events: auto;
+    height: 50px;
+    min-height: 50px;
+    border-radius: 999px;
+    border: 1px solid var(--ios-glass-border);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.28)),
+      var(--ios-glass-bg);
+    color: var(--ios-label);
+    box-shadow: var(--ios-glass-shadow);
+    -webkit-backdrop-filter: saturate(220%) blur(24px);
+    backdrop-filter: saturate(220%) blur(24px);
+    transform: translateZ(0);
+  }
+
+  .brand-button {
+    min-width: 130px;
+    padding: 0 28px;
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+  }
+
+  #addButton,
+  #settingsButton {
+    min-width: 50px;
+    width: 50px;
+    padding: 0;
+  }
+
+  #addButton .button-label,
+  #settingsButton .button-label {
+    display: none;
+  }
+
+  #addButton .button-icon,
+  #settingsButton .button-icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav-icon-button {
+    gap: 0;
+  }
+
+  .brand-button:active,
+  #addButton:active,
+  #settingsButton:active {
+    transform: scale(0.97);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.36)),
+      var(--ios-glass-bg-strong);
+  }
+
+  /* ═══════════════════════════════════════════════
+     Athlete Switcher — row 2 chips
+     ═══════════════════════════════════════════════ */
   .athlete-switcher {
     grid-area: switcher;
+    pointer-events: auto;
     justify-self: center;
-    width: min(100%, 320px);
-    gap: 8px;
-    flex-wrap: nowrap;
-    justify-content: center;
+    width: min(100%, 330px);
     overflow: hidden;
-    padding: 0;
     margin: 0 auto;
+    padding: 0;
+    display: flex;
+    justify-content: center;
   }
 
   .switcher-scroll-area,
@@ -1714,311 +1813,259 @@ select:focus {
     display: flex;
     width: 100%;
     gap: 8px;
-    align-items: center;
     overflow-x: auto;
-    padding: 2px 2px 4px;
-    margin: 0;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
+    padding: 2px 2px 4px;
   }
 
-  .switcher-scroll-area::-webkit-scrollbar,
-  .athlete-switcher.scrollable .switcher-scroll-area::-webkit-scrollbar {
+  .switcher-scroll-area::-webkit-scrollbar {
     display: none;
-  }
-
-  #addButton,
-  #settingsButton,
-  #homeButton,
-  .switcher-chip {
-    min-width: 0;
-    min-height: 50px;
-    height: 50px;
-    padding: 0 22px;
-    border: 0.5px solid var(--ios-control-border);
-    border-radius: 999px;
-    background: var(--ios-control-bg);
-    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.18));
-    box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(15, 23, 42, 0.04);
-    color: var(--ios-label);
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1;
-    white-space: nowrap;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  #homeButton {
-    min-width: 72px;
-  }
-
-  #addButton:active,
-  #settingsButton:active,
-  #homeButton:active,
-  .switcher-chip:active {
-    background: var(--ios-control-bg-active);
-    transform: scale(0.97);
   }
 
   .switcher-chip,
   .athlete-switcher.scrollable .switcher-chip {
     flex: 0 0 calc((100% - 16px) / 3);
-    scroll-snap-align: center;
+    min-width: 0;
+    height: 38px;
+    min-height: 38px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.50);
+    background: rgba(255, 255, 255, 0.30);
+    color: var(--ios-label);
+    box-shadow:
+      0 4px 14px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    -webkit-backdrop-filter: saturate(200%) blur(18px);
+    backdrop-filter: saturate(200%) blur(18px);
+    font-size: 0.92rem;
+    font-weight: 560;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    scroll-snap-align: center;
   }
 
   .switcher-chip.active {
-    background: var(--ios-primary-bg);
-    background-image: none;
-    border-color: transparent;
-    color: var(--ios-primary-fg);
-    box-shadow: 0 2px 6px rgba(17, 17, 17, 0.12);
+    background: rgba(17, 17, 17, 0.82);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.22);
   }
 
+  /* ═══════════════════════════════════════════════
+     View Panels — edge-to-edge, no desktop glass
+     ═══════════════════════════════════════════════ */
   .view-panel {
-    padding: 22px 16px 18px;
-    background: transparent;
-    border: none;
+    padding: 0;
+    border: 0;
     border-radius: 0;
+    background: transparent;
     box-shadow: none;
-    animation: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    overflow: visible;
+    animation: none;
   }
 
-  @supports (padding: max(0px)) {
-    .view-panel {
-      padding-left: max(16px, env(safe-area-inset-left));
-      padding-right: max(16px, env(safe-area-inset-right));
-    }
-  }
-
+  /* ═══════════════════════════════════════════════
+     Section Headings — iOS large title
+     ═══════════════════════════════════════════════ */
   .section-heading {
-    text-align: center;
-    margin: 0 0 14px;
+    margin: 8px 2px 16px;
+    text-align: left;
   }
 
   .section-heading.left {
     text-align: left;
   }
 
-  .section-heading h2,
-  .category-section-title {
+  .section-heading h2 {
+    font-size: 1.5rem;
+    line-height: 1.08;
+    font-weight: 680;
+    letter-spacing: -0.04em;
+    color: var(--ios-label);
     margin: 0;
-    padding: 0 2px;
-    color: var(--ios-secondary-label);
-    font-size: 19px;
-    font-weight: 600;
-    line-height: 1.28;
-    letter-spacing: 0.02em;
+    padding: 0;
   }
 
+  .category-section-title {
+    color: var(--ios-label);
+    font-size: 1.2rem;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Grouped Cards — lightweight iOS glass
+     ═══════════════════════════════════════════════ */
+  .selector-card,
   .category-section,
-  .settings-block,
+  .glass-form,
+  .yw-card,
+  .text-item-row,
   .empty-state-panel,
-  .overview-group-card,
-  .glass-form,
-  .upload-card,
-  .small-upload,
-  .checkbox-panel {
-    background: var(--ios-card-bg);
-    border: 0.5px solid rgba(60, 60, 67, 0.08);
-    border-radius: 22px;
-    box-shadow: var(--ios-card-shadow);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  .category-section,
+  .empty-inline,
   .settings-block,
-  .glass-form {
-    padding: 16px;
-    margin: 0 0 16px;
+  .manager-row,
+  .overview-group-card,
+  .upload-card,
+  .subcategory-block {
+    border: 1px solid var(--ios-card-border);
+    background: var(--ios-card-bg);
+    box-shadow: var(--ios-card-shadow);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    backdrop-filter: saturate(180%) blur(14px);
   }
 
-  .category-section + .category-section,
-  .settings-block + .settings-block {
-    border-top: 0.5px solid rgba(60, 60, 67, 0.08);
-  }
-
-  .settings-layout,
-  .overview-list,
-  .subcategory-sections,
-  .add-item-form,
-  .glass-form,
-  .settings-block {
+  /* ═══════════════════════════════════════════════
+     Home View — stacked athlete cards
+     ═══════════════════════════════════════════════ */
+  .athlete-selector-grid {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 14px;
   }
 
-  .athlete-selector-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
   .selector-card {
-    border: 0.5px solid rgba(60, 60, 67, 0.08);
-    border-radius: 18px;
-    background: var(--ios-card-bg);
-    box-shadow: var(--ios-card-shadow);
+    border-radius: 28px;
+    overflow: hidden;
   }
 
   .selector-image-wrap {
-    border-radius: 18px;
+    aspect-ratio: 4 / 5;
   }
 
   .selector-name-overlay {
-    padding: 34px 12px 12px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
+    padding: 42px 18px 18px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.58));
   }
 
   .selector-name {
-    font-size: clamp(1.05rem, 8vw, 2.4rem) !important;
-    line-height: 1.05;
-    letter-spacing: 0;
-    overflow-wrap: anywhere;
+    font-size: 1.35rem !important;
+    font-weight: 650;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
   }
 
+  /* ═══════════════════════════════════════════════
+     Athlete Detail — hero + grouped content flow
+     ═══════════════════════════════════════════════ */
   .detail-hero-card {
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    padding: 8px 0 10px;
+    padding: 8px 0 18px;
+    gap: 18px;
   }
 
   .detail-hero-image-wrap {
-    width: 260px;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
+    width: min(220px, 58vw);
     border-width: 6px;
-    border-style: solid;
-    border-color: rgba(255, 255, 255, 0.82);
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
-    flex-shrink: 0;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
   }
 
   .detail-hero-name {
-    min-width: 0;
-    font-size: 2.5rem;
-    line-height: 1.05;
-    letter-spacing: 0;
-    text-align: center;
-    overflow-wrap: anywhere;
+    font-size: clamp(2.6rem, 15vw, 4.4rem);
+    letter-spacing: -0.065em;
   }
 
   .grouped-content {
     gap: 16px;
-    margin-top: 2px;
+    margin-top: 18px;
   }
 
-  .category-section-header,
-  .subcategory-header,
-  .manager-row,
-  .overview-group-header,
-  .card-topline {
-    gap: 10px;
+  /* ── Category sections ── */
+  .category-section {
+    padding: 18px;
+    border-radius: 28px;
+    margin: 0;
   }
 
   .category-section-header {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
 
   .subcategory-sections {
-    margin-top: 0;
+    gap: 14px;
+    margin-top: 8px;
   }
 
   .subcategory-block {
-    padding: 13px 0;
+    padding: 16px;
+    border-radius: 24px;
     margin: 0;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
   }
 
   .subcategory-block + .subcategory-block {
-    border-top: 0.5px solid var(--ios-separator);
+    border-top: 1px solid var(--ios-card-border);
   }
 
-  .subcategory-block:first-child {
-    padding-top: 0;
-  }
-
-  .subcategory-block:last-child {
-    padding-bottom: 0;
-  }
-
-  .subcategory-title,
-  .form-heading,
-  .overview-group-title,
-  .manager-row-title {
+  .subcategory-title {
     color: var(--ios-label);
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1.25;
+    font-size: 1.2rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  .form-heading {
+    font-size: 1.1rem;
+    font-weight: 650;
+    color: var(--ios-label);
   }
 
   .subcategory-counts,
-  .manager-row-subtitle,
-  .overview-group-meta,
   .upload-summary {
     color: var(--ios-secondary-label);
-    font-size: 13px;
-    line-height: 1.35;
+    font-size: 0.82rem;
+    margin: 2px 0 0;
   }
 
   .subcategory-content {
-    gap: 12px;
+    gap: 10px;
     margin-top: 12px;
   }
 
-  .subcategory-actions,
-  .overview-group-actions {
-    gap: 8px;
-    flex-wrap: nowrap;
-  }
-
+  /* ── YW Rails (horizontal scroll cards) ── */
   .rail-list {
     gap: 12px;
-    padding: 2px 0 10px;
-    scroll-snap-type: x proximity;
-    -webkit-mask-image: none;
-    mask-image: none;
+    padding: 4px 0 8px;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  .image-items-rail .rail-card {
-    flex: 0 0 min(200px, 62vw);
-    scroll-snap-align: start;
-    border: 0.5px solid rgba(60, 60, 67, 0.10);
-    border-radius: 18px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 100%);
-    box-shadow: 0 2px 18px rgba(15, 23, 42, 0.08), 0 1px 4px rgba(15, 23, 42, 0.05), inset 0 0.5px 0 rgba(255, 255, 255, 0.9);
+  .rail-card {
+    flex: 0 0 78%;
+    max-width: 290px;
+  }
+
+  .yw-card {
+    border-radius: 24px;
     overflow: hidden;
   }
 
-  .image-items-rail .rail-card:active {
-    transform: scale(0.985);
+  .yw-card-image-wrap {
+    border-radius: 24px 24px 0 0;
   }
 
-  .image-items-rail .yw-card-image-wrap {
-    border-radius: 18px 18px 0 0;
-    aspect-ratio: 1 / 1;
-  }
-
-  .image-items-rail .yw-card-body {
-    padding: 12px 12px 14px;
+  .yw-card-body {
+    padding: 14px 14px 16px;
   }
 
   .yw-title,
-  .image-items-rail .yw-title,
   .text-item-title {
     color: var(--ios-label);
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 620;
     line-height: 1.28;
+  }
+
+  .yw-status,
+  .yw-date,
+  .text-item-status,
+  .text-item-date {
+    color: var(--ios-secondary-label);
+    font-size: 0.82rem;
   }
 
   .yw-meta-row,
@@ -2027,17 +2074,252 @@ select:focus {
     flex-wrap: wrap;
   }
 
-  .yw-status,
-  .yw-date,
-  .text-item-status,
-  .text-item-date,
-  .image-items-rail .yw-status,
-  .image-items-rail .yw-date {
-    color: var(--ios-secondary-label);
-    font-size: 13px;
-    line-height: 1.28;
+  /* ── Text-only item rows (stack vertically) ── */
+  .text-rail-block .rail-list {
+    display: block;
+    overflow-x: visible;
+    padding: 0;
   }
 
+  .text-item-row {
+    border-radius: 20px;
+    padding: 16px;
+    border-bottom: none;
+    margin-bottom: 8px;
+  }
+
+  .text-item-row:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Forms — single column iOS style
+     ═══════════════════════════════════════════════ */
+  .form-grid.three-columns,
+  .form-grid.two-columns,
+  .dual-upload-grid,
+  .settings-stack-layout,
+  .category-form-row,
+  .person-form-layout,
+  .person-manager-layout,
+  .add-row-grid-bottom,
+  .person-upload-summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .status-field,
+  .form-spacer {
+    grid-column: auto;
+  }
+
+  .form-spacer {
+    display: none;
+  }
+
+  .glass-form,
+  .settings-block {
+    padding: 18px;
+    border-radius: 28px;
+    gap: 16px;
+    margin: 0 0 16px;
+  }
+
+  .add-item-form {
+    gap: 16px;
+  }
+
+  label {
+    gap: 7px;
+    color: var(--ios-secondary-label);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  .date-display-button {
+    min-height: 50px;
+    border-radius: 16px;
+    border: 1px solid var(--ios-separator);
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: none;
+    color: var(--ios-label);
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  select:focus,
+  .date-display-button:focus-visible {
+    background-color: #ffffff;
+    border-color: rgba(17, 17, 17, 0.28);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .checkbox-panel {
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .checkbox-inline-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .upload-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .small-upload {
+    padding: 13px 15px;
+  }
+
+  .upload-title {
+    color: var(--ios-label);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* ── Buttons (primary, secondary, mini, danger) ── */
+  .primary-button,
+  .secondary-button,
+  .mini-button,
+  .mini-file-button,
+  .file-picker:not(.primary-button),
+  .danger-button {
+    min-height: 48px;
+    border-radius: 999px;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .file-picker.primary-button,
+  .form-footer-actions .primary-button {
+    background: var(--ios-primary-bg);
+    background-image: none;
+    color: var(--ios-primary-fg);
+    box-shadow: none;
+  }
+
+  .mini-button,
+  .mini-file-button,
+  .subtle-icon-btn,
+  .file-picker:not(.primary-button) {
+    background: var(--ios-fill);
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--ios-label);
+  }
+
+  .danger-button,
+  .danger-lite-button {
+    background: var(--ios-danger-bg);
+    color: var(--ios-danger);
+    box-shadow: none;
+  }
+
+  /* ── Action grids (stack vertically) ── */
+  .inline-actions,
+  .form-footer-actions,
+  .person-photo-actions,
+  .person-create-actions,
+  .data-manage-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .person-photo-actions .mini-file-button,
+  .person-photo-actions .danger-button,
+  .person-create-actions .primary-button,
+  .person-create-actions .mini-file-button {
+    height: auto;
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Settings — category overview cards
+     ═══════════════════════════════════════════════ */
+  .settings-layout {
+    gap: 16px;
+  }
+
+  .overview-list {
+    gap: 14px;
+  }
+
+  .overview-group-card {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 24px;
+  }
+
+  .overview-group-header {
+    padding: 16px;
+  }
+
+  .overview-group-content {
+    padding: 0 16px 16px;
+  }
+
+  .overview-group-title,
+  .manager-row-title {
+    color: var(--ios-label);
+    font-size: 1.05rem;
+    font-weight: 620;
+  }
+
+  .overview-group-meta,
+  .manager-row-subtitle {
+    color: var(--ios-secondary-label);
+    font-size: 0.82rem;
+  }
+
+  .manager-row,
+  .overview-category-row {
+    padding: 13px 14px;
+    border-radius: 16px;
+  }
+
+  .overview-toolbar {
+    margin-bottom: 8px;
+  }
+
+  .overview-person-filter {
+    width: 100%;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Empty State
+     ═══════════════════════════════════════════════ */
+  .empty-state-panel {
+    padding: 44px 18px;
+    text-align: center;
+    border-radius: 28px;
+  }
+
+  .empty-state-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+  }
+
+  .empty-state-copy {
+    color: var(--ios-secondary-label);
+  }
+
+  /* ═══════════════════════════════════════════════
+     Icon Buttons (circle, for menus/toggles)
+     ═══════════════════════════════════════════════ */
   .icon-btn {
     width: 40px;
     height: 40px;
@@ -2079,274 +2361,74 @@ select:focus {
     pointer-events: none;
   }
 
-  .text-rail-block .rail-list {
-    display: block;
-    overflow-x: visible;
-    padding: 0;
+  .icon-text-button {
+    gap: 8px;
   }
 
-  .text-item-row {
-    width: 100%;
-    padding: 13px 0;
-    margin: 0;
-    border: none;
-    border-bottom: 0.5px solid var(--ios-separator);
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    gap: 12px;
+  .icon-text-button .button-icon {
+    width: 17px;
+    height: 17px;
   }
 
-  .text-item-row:last-child {
-    border-bottom: none;
-  }
-
-  .form-grid.three-columns,
-  .form-grid.two-columns,
-  .dual-upload-grid,
-  .person-form-layout,
-  .person-manager-layout,
-  .settings-stack-layout,
-  .category-form-row,
-  .add-row-grid-bottom,
-  .person-upload-summary-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .status-field,
-  .form-spacer {
-    grid-column: auto;
-  }
-
-  .form-spacer {
-    display: none;
-  }
-
-  label {
-    gap: 7px;
-    color: var(--ios-secondary-label);
-    font-size: 15px;
-    font-weight: 600;
-  }
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  select,
-  .date-display-button,
-  .checkbox-panel {
-    min-height: 50px;
-    height: auto;
-    border-radius: 14px;
-    border-color: var(--ios-control-border);
-    background-color: var(--ios-card-raised-bg);
-    color: var(--ios-label);
-    box-shadow: none;
-  }
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  select,
-  .date-display-button {
-    padding-left: 14px;
-  }
-
-  select,
-  .date-display-button {
-    padding-right: 38px;
-  }
-
-  input[type="text"]:focus,
-  input[type="number"]:focus,
-  input[type="date"]:focus,
-  select:focus,
-  .date-display-button:focus-visible {
-    background-color: #ffffff;
-    border-color: rgba(17, 17, 17, 0.28);
-    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
-  }
-
-  .checkbox-panel {
-    padding: 12px 14px;
-  }
-
-  .checkbox-inline-group {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .upload-card {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 15px;
-    gap: 12px;
-  }
-
-  .small-upload {
-    padding: 13px 15px;
-  }
-
-  .upload-title {
-    color: var(--ios-label);
-    font-size: 15px;
-    line-height: 1.25;
-  }
-
-  .inline-actions,
-  .form-footer-actions,
-  .person-create-actions,
-  .person-photo-actions,
-  .data-manage-actions,
-  .crop-modal-actions,
-  .modal-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .primary-button,
-  .secondary-button,
-  .danger-button,
-  .mini-button,
-  .mini-file-button,
-  .file-picker {
-    min-height: 48px;
-    border-radius: 999px;
-    font-size: 16px;
-  }
-
-  .primary-button,
-  .secondary-button,
-  .file-picker.primary-button,
-  .form-footer-actions .primary-button {
-    background: var(--ios-primary-bg);
-    background-image: none;
-    color: var(--ios-primary-fg);
-    box-shadow: none;
-  }
-
-  .mini-button,
-  .mini-file-button,
-  .subtle-icon-btn,
-  .file-picker:not(.primary-button) {
-    background: var(--ios-fill);
-    border-color: transparent;
-    box-shadow: none;
-    color: var(--ios-label);
-  }
-
-  .danger-button,
-  .danger-lite-button {
-    background: var(--ios-danger-bg);
-    color: var(--ios-danger);
-    box-shadow: none;
-  }
-
-  .person-photo-actions .mini-file-button,
-  .person-photo-actions .danger-button,
-  .person-create-actions .primary-button,
-  .person-create-actions .mini-file-button {
-    height: auto;
-    min-height: 48px;
-    font-size: 15px;
-  }
-
-  .manager-row,
-  .overview-category-row {
-    padding: 13px 14px;
-    border-radius: 16px;
-    background: var(--ios-card-raised-bg);
-    border-color: var(--ios-control-border);
-  }
-
-  .overview-group-card {
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-  }
-
-  .overview-group-header {
-    padding: 16px;
-  }
-
-  .overview-group-content {
-    padding: 0 16px 16px;
-  }
-
-  .overview-toolbar {
-    margin-bottom: 8px;
-  }
-
-  .overview-person-filter {
-    width: 100%;
-  }
-
-  .empty-state-panel {
-    padding: 44px 18px;
-    text-align: center;
-  }
-
-  .empty-state-icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 22px;
-  }
-
+  /* ═══════════════════════════════════════════════
+     Modals — Bottom Sheet iOS style
+     ═══════════════════════════════════════════════ */
   .modal-overlay {
     align-items: flex-end;
+    justify-content: center;
     min-height: 100vh;
-    padding: 0;
-    background: rgba(0, 0, 0, 0.28);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    padding:
+      12px
+      10px
+      max(10px, env(safe-area-inset-bottom));
+    background: rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
-  @supports (height: 100svh) {
+  @supports (height: 100dvh) {
     .modal-overlay {
-      min-height: 100svh;
+      min-height: 100dvh;
     }
   }
 
   .modal-content {
     width: 100%;
-    max-height: 86vh;
+    max-width: none;
+    max-height: 85vh;
     overflow-y: auto;
-    border: none;
-    border-radius: 32px 32px 0 0;
-    background: var(--ios-card-bg);
-    box-shadow: var(--ios-sheet-shadow);
-    padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px));
-    text-align: left;
-    animation: modalSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    border-radius: 30px;
+    padding: 22px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.56);
+    box-shadow: 0 -18px 48px rgba(15, 23, 42, 0.18);
+    -webkit-backdrop-filter: saturate(210%) blur(26px);
+    backdrop-filter: saturate(210%) blur(26px);
+    animation: iosSheetUp 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  @supports (height: 100svh) {
-    .modal-content {
-      max-height: 86svh;
+  @keyframes iosSheetUp {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
     }
   }
 
-  @supports (padding: max(0px)) {
+  @supports (height: 100dvh) {
     .modal-content {
-      padding-left: max(18px, env(safe-area-inset-left));
-      padding-right: max(18px, env(safe-area-inset-right));
-      padding-bottom: max(18px, calc(14px + env(safe-area-inset-bottom)));
+      max-height: 85dvh;
     }
   }
 
-  .modal-content:not(.crop-modal-content):not(.date-picker-modal-content)::before {
-    content: "";
-    display: block;
-    width: 38px;
-    height: 5px;
-    margin: 0 auto 16px;
-    border-radius: 999px;
-    background: var(--ios-tertiary-label);
+  .crop-modal-content,
+  .date-picker-modal-content,
+  .photo-manage-content,
+  .item-actions-content {
+    width: 100%;
   }
 
   .modal-title,
@@ -2355,6 +2437,7 @@ select:focus {
     font-size: 20px;
     line-height: 1.2;
     text-align: center;
+    margin: 0 0 12px;
   }
 
   .modal-msg {
@@ -2364,39 +2447,22 @@ select:focus {
     text-align: center;
   }
 
-  @keyframes modalSlideUp {
-    from {
-      transform: translateY(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  .crop-modal-content,
-  .date-picker-modal-content {
+  .modal-actions,
+  .crop-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
     width: 100%;
-    padding-top: 22px;
-  }
-
-  .crop-preview-container {
-    max-width: 100%;
-    border-radius: 20px;
   }
 
   .crop-modal-actions button {
     max-width: none;
   }
 
-  .crop-modal-actions .primary-button,
-  .date-picker-actions .primary-button {
-    order: -1;
-  }
-
+  /* ── Date picker ── */
   .date-picker-modal-content {
     gap: 14px;
+    padding-bottom: 18px;
   }
 
   .date-picker-columns {
@@ -2412,16 +2478,46 @@ select:focus {
     background: rgba(255, 255, 255, 0.36);
   }
 
+  /* ── Crop ── */
+  .crop-preview-container {
+    max-width: 100%;
+    border-radius: 20px;
+  }
+
+  /* ── Photo manage grid ── */
   .photo-thumb-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     max-height: 42vh;
   }
 
-  @supports (height: 100svh) {
+  @supports (height: 100dvh) {
     .photo-thumb-grid {
-      max-height: 42svh;
+      max-height: 42dvh;
     }
+  }
+
+  /* ── Status toggles ── */
+  .item-status-toggles {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .status-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .status-toggle-label {
+    color: var(--ios-label);
+    font-size: 17px;
+  }
+
+  .modal-actions-col {
+    display: grid;
+    gap: 10px;
   }
 }
 
@@ -3010,98 +3106,63 @@ select:focus {
   /* iPhone 暗色模式 */
   @media (max-width: 768px) {
     body {
-      --ios-grouped-bg: #000000;
-      --ios-card-bg: #1c1c1e;
-      --ios-card-raised-bg: #2c2c2e;
-      --ios-control-bg: rgba(58, 58, 60, 0.82);
-      --ios-control-bg-active: rgba(72, 72, 74, 0.96);
-      --ios-control-border: rgba(235, 235, 245, 0.10);
-      --ios-separator: rgba(235, 235, 245, 0.12);
-      --ios-label: #f5f5f7;
+      --ios-bg: #000000;
+      --ios-label: rgba(255, 255, 255, 0.96);
       --ios-secondary-label: rgba(235, 235, 245, 0.62);
-      --ios-tertiary-label: rgba(235, 235, 245, 0.32);
-      --ios-fill: rgba(120, 120, 128, 0.22);
-      --ios-fill-strong: rgba(120, 120, 128, 0.30);
-      --ios-topbar-bg: rgba(20, 20, 22, 0.95);
-      --ios-topbar-border: rgba(235, 235, 245, 0.10);
+      --ios-separator: rgba(235, 235, 245, 0.14);
+
+      --ios-glass-bg: rgba(35, 35, 38, 0.38);
+      --ios-glass-bg-strong: rgba(48, 48, 52, 0.56);
+      --ios-glass-border: rgba(255, 255, 255, 0.12);
+      --ios-glass-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.38),
+        0 1px 3px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        inset 0 -10px 18px rgba(255, 255, 255, 0.02);
+
+      --ios-card-bg: rgba(28, 28, 30, 0.62);
+      --ios-card-border: rgba(235, 235, 245, 0.08);
+      --ios-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+
+      --ios-fill: rgba(120, 120, 128, 0.18);
+      --ios-fill-strong: rgba(120, 120, 128, 0.24);
+
       --ios-primary-bg: #f5f5f7;
       --ios-primary-fg: #111111;
-      --ios-danger-bg: rgba(255, 69, 58, 0.16);
+      --ios-danger-bg: rgba(255, 69, 58, 0.14);
       --ios-danger: #ff6961;
-      --ios-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
-      --ios-sheet-shadow: 0 -18px 48px rgba(0, 0, 0, 0.58);
-      background: var(--ios-grouped-bg);
-      color: var(--ios-label);
+
+      background: #000;
     }
 
-    .topbar {
-      background: var(--ios-topbar-bg);
-      background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
-      border-bottom-color: var(--ios-topbar-border);
-      box-shadow: none;
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-    }
-
+    .brand-button,
     #addButton,
-    #settingsButton,
-    #homeButton,
-    .switcher-chip {
-      background: var(--ios-control-bg);
-      background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02));
-      border-color: var(--ios-control-border);
+    #settingsButton {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)),
+        var(--ios-glass-bg);
       color: var(--ios-label);
-      box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.12);
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
     }
 
-    #addButton:active,
-    #settingsButton:active,
-    #homeButton:active,
-    .switcher-chip:active {
-      background: var(--ios-control-bg-active);
+    .switcher-chip {
+      background: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.14);
+      color: var(--ios-label);
     }
 
     .switcher-chip.active {
-      background: var(--ios-primary-bg);
-      background-image: none;
-      border-color: transparent;
-      color: var(--ios-primary-fg);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      background: rgba(255, 255, 255, 0.92);
+      color: #000000;
+      border-color: rgba(255, 255, 255, 0.18);
     }
 
-    .category-section,
-    .settings-block,
-    .empty-state-panel,
-    .overview-group-card,
-    .glass-form,
-    .selector-card,
-    .upload-card,
-    .small-upload,
-    .checkbox-panel {
-      background: var(--ios-card-bg);
-      border-color: rgba(235, 235, 245, 0.08);
-      box-shadow: var(--ios-card-shadow);
-    }
-
-    .image-items-rail .rail-card {
-      background: linear-gradient(135deg, rgba(58,58,60,0.92) 0%, rgba(44,44,46,0.78) 100%);
-      border-color: var(--ios-control-border);
-      box-shadow: 0 2px 18px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.18), inset 0 0.5px 0 rgba(255, 255, 255, 0.08);
-    }
-
-    .manager-row,
-    .overview-category-row,
     input[type="text"],
     input[type="number"],
     input[type="date"],
     select,
     .date-display-button {
-      background-color: var(--ios-card-raised-bg);
-      border-color: var(--ios-control-border);
+      background: rgba(44, 44, 46, 0.72);
       color: var(--ios-label);
-      box-shadow: none;
     }
 
     input[type="text"]:focus,
@@ -3114,53 +3175,13 @@ select:focus {
       box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.07);
     }
 
-    .primary-button,
-    .secondary-button,
-    .file-picker.primary-button,
-    .form-footer-actions .primary-button {
-      background: var(--ios-primary-bg);
-      color: var(--ios-primary-fg);
-      box-shadow: none;
-    }
-
-    .mini-button,
-    .mini-file-button,
-    .subtle-icon-btn,
-    .file-picker:not(.primary-button) {
-      background: var(--ios-fill);
-      border-color: transparent;
-      color: var(--ios-label);
-      box-shadow: none;
-    }
-
-    .text-item-row {
-      background: transparent;
-      border-bottom-color: var(--ios-separator);
-    }
-
-    .modal-overlay {
-      background: rgba(0, 0, 0, 0.52);
-    }
-
     .modal-content {
-      background: var(--ios-card-bg);
-      border-color: rgba(235, 235, 245, 0.08);
-      box-shadow: var(--ios-sheet-shadow);
-    }
-
-    .modal-content:not(.crop-modal-content):not(.date-picker-modal-content)::before {
-      background: var(--ios-tertiary-label);
-    }
-
-    .date-picker-columns {
-      background: var(--ios-fill);
-      border-color: transparent;
+      background: rgba(28, 28, 30, 0.82);
+      border-color: rgba(255, 255, 255, 0.10);
     }
 
     .date-picker-selection-bar {
       background: rgba(255, 255, 255, 0.05);
-      border-top-color: var(--ios-separator);
-      border-bottom-color: var(--ios-separator);
     }
   }
 
@@ -3169,26 +3190,8 @@ select:focus {
 @media (max-width: 768px) {
   .crop-modal-content,
   .date-picker-modal-content {
-    width: 100%;
-    padding: 22px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+    padding: 22px 18px 18px;
     background: var(--ios-card-bg);
-  }
-
-  @supports (padding: max(0px)) {
-    .crop-modal-content,
-    .date-picker-modal-content {
-      padding-left: max(18px, env(safe-area-inset-left));
-      padding-right: max(18px, env(safe-area-inset-right));
-      padding-bottom: max(18px, calc(14px + env(safe-area-inset-bottom)));
-    }
-  }
-
-  .crop-modal-content h3 {
-    margin: 0 0 12px;
-    color: var(--ios-label);
-    font-size: 20px;
-    line-height: 1.2;
-    text-align: center;
   }
 
   .crop-preview-container {
@@ -3216,9 +3219,9 @@ select:focus {
     padding: 2px 0;
   }
 
-  @supports (height: 100svh) {
+  @supports (height: 100dvh) {
     .photo-thumb-grid {
-      max-height: 42svh;
+      max-height: 42dvh;
     }
   }
 
@@ -3231,10 +3234,16 @@ select:focus {
     inset: auto 8px 8px;
     min-height: 34px;
     padding: 0 12px;
+    gap: 6px;
     border-radius: 999px;
     background: rgba(0, 0, 0, 0.58);
     opacity: 1;
     font-size: 14px;
+  }
+
+  .photo-thumb-replace .button-icon {
+    width: 15px;
+    height: 15px;
   }
 }
 
@@ -3268,14 +3277,55 @@ select:focus {
     background-image: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    box-shadow: none;
   }
 
-  .app-main {
-    -webkit-mask-image: none;
-    mask-image: none;
+  .topbar {
+    background: var(--ios-bg);
+    box-shadow: 0 0.5px 0 0 var(--ios-separator);
   }
 
   .image-items-rail .rail-card {
-    background: var(--ios-card-raised-bg);
+    background: var(--ios-card-bg);
+  }
+
+  .category-section,
+  .settings-block,
+  .empty-state-panel,
+  .overview-group-card,
+  .glass-form,
+  .selector-card,
+  .upload-card,
+  .small-upload,
+  .checkbox-panel,
+  .manager-row,
+  .overview-category-row,
+  .modal-content {
+    background: var(--ios-bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .modal-overlay {
+    background: rgba(0, 0, 0, 0.52);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  #addButton,
+  #settingsButton,
+  #homeButton,
+  .switcher-chip {
+    background: var(--ios-fill);
+    border-color: var(--ios-separator);
+  }
+
+  #addButton[aria-current="page"],
+  #settingsButton[aria-current="page"],
+  #homeButton[aria-current="page"],
+  .switcher-chip.active {
+    background: var(--ios-fill-strong);
+    border-color: var(--ios-separator);
   }
 }
