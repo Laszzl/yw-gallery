@@ -1689,7 +1689,7 @@ select:focus {
     gap: 10px;
     align-items: center;
     padding:
-      4px
+      2px
       14px
       8px
       14px;
@@ -1697,7 +1697,7 @@ select:focus {
     margin: 0;
     border: 0;
     border-radius: 0;
-    background: transparent;
+    background: var(--ios-bg);
     box-shadow: none;
     overflow: visible;
     pointer-events: none;
@@ -1917,8 +1917,7 @@ select:focus {
   .settings-block,
   .manager-row,
   .overview-group-card,
-  .upload-card,
-  .subcategory-block {
+  .upload-card {
     border: 1px solid var(--ios-card-border);
     background: var(--ios-card-bg);
     box-shadow: var(--ios-card-shadow);
@@ -1997,13 +1996,18 @@ select:focus {
   }
 
   .subcategory-block {
-    padding: 16px;
-    border-radius: 24px;
+    padding: 14px 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     margin: 0;
   }
 
   .subcategory-block + .subcategory-block {
-    border-top: 1px solid var(--ios-card-border);
+    border-top: 1px solid var(--ios-separator);
   }
 
   .subcategory-title {
