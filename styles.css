@@ -1633,7 +1633,7 @@ select:focus {
     --ios-danger-bg: rgba(255, 59, 48, 0.10);
     --ios-danger: #c7352d;
 
-    --ios-nav-height: 108px;
+    --ios-nav-height: calc(108px + env(safe-area-inset-top, 0px));
 
     min-width: 0;
     color: var(--ios-label);
@@ -1689,7 +1689,7 @@ select:focus {
     gap: 10px;
     align-items: center;
     padding:
-      2px
+      calc(2px + env(safe-area-inset-top, 0px))
       14px
       8px
       14px;
@@ -3142,7 +3142,7 @@ select:focus {
       --ios-danger-bg: rgba(255, 69, 58, 0.14);
       --ios-danger: #ff6961;
 
-      --ios-nav-height: 108px;
+      --ios-nav-height: calc(108px + env(safe-area-inset-top, 0px));
 
       background: #000;
     }
