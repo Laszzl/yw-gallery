@@ -1609,7 +1609,6 @@ select:focus {
   html {
     min-height: 100%;
     overflow-x: hidden;
-    background: var(--ios-bg);
   }
 
   body {
@@ -3117,10 +3116,6 @@ select:focus {
 
   /* iPhone 暗色模式 */
   @media (max-width: 768px) {
-    html {
-      --ios-bg: #000000;
-    }
-
     body {
       --ios-bg: #000000;
       --ios-label: rgba(255, 255, 255, 0.96);
