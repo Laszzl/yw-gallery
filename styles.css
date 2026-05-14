@@ -1661,7 +1661,7 @@ select:focus {
     width: 100%;
     margin: 0;
     padding:
-      var(--ios-nav-height)
+      0
       14px
       36px;
   }
