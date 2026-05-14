@@ -12,14 +12,20 @@
     <div class="page-shell">
       <header class="topbar">
         <div class="topbar-branding">
-          <button id="homeButton" class="brand-button" type="button">原味</button>
+          <button id="homeButton" class="brand-button" type="button" aria-label="返回主页">原味</button>
         </div>
         <nav id="athleteSwitcher" class="athlete-switcher">
           <div class="switcher-scroll-area"></div>
         </nav>
         <div class="topbar-actions">
-          <button id="addButton" class="primary-button" type="button">添加</button>
-          <button id="settingsButton" class="secondary-button" type="button">设置</button>
+          <button id="addButton" class="primary-button nav-icon-button" type="button" aria-label="添加 YW" title="添加 YW">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span class="button-label">添加</span>
+          </button>
+          <button id="settingsButton" class="secondary-button nav-icon-button" type="button" aria-label="设置" title="设置">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10"/><path d="M18 7h2"/><path d="M10 17h10"/><path d="M4 17h2"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+            <span class="button-label">设置</span>
+          </button>
         </div>
       </header>
 
@@ -114,11 +120,15 @@
                   <p id="itemPhotosSummary" class="upload-summary">可多选图片，未选择文件</p>
                 </div>
                 <div class="inline-actions">
-                  <label class="file-picker primary-button">
+                  <label class="file-picker primary-button icon-text-button">
+                    <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/><path d="M4 19h16"/></svg>
                     选择图片
                     <input name="photos" id="itemPhotosInput" type="file" accept="image/*" multiple />
                   </label>
-                  <button id="clearItemFilesButton" class="mini-button" type="button">清空已选</button>
+                  <button id="clearItemFilesButton" class="mini-button icon-text-button" type="button">
+                    <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    清空已选
+                  </button>
                 </div>
               </div>
               <div class="form-footer-actions">
@@ -273,8 +283,14 @@
         <h3 class="modal-title">图片管理</h3>
         <div id="photoThumbGrid" class="photo-thumb-grid"></div>
         <div class="modal-actions-col">
-          <button id="modalPhotoAddBtn" class="primary-button center-btn">添加图片</button>
-          <button id="modalPhotoDeleteBtn" class="danger-button center-btn">删除所有图片</button>
+          <button id="modalPhotoAddBtn" class="primary-button center-btn icon-text-button">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            添加图片
+          </button>
+          <button id="modalPhotoDeleteBtn" class="danger-button center-btn icon-text-button">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            删除所有图片
+          </button>
         </div>
         <input id="modalPhotoInput" type="file" accept="image/*" class="visually-hidden-input" />
       </div>
@@ -298,8 +314,14 @@
           </div>
         </div>
         <div class="modal-actions-col item-actions-list">
-          <button id="itemActionManageBtn" class="primary-button center-btn" type="button">图片管理</button>
-          <button id="itemActionDeleteBtn" class="danger-button center-btn" type="button">删除</button>
+          <button id="itemActionManageBtn" class="primary-button center-btn icon-text-button" type="button">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m8 13 2.4-2.4a1.4 1.4 0 0 1 2 0L17 15"/><circle cx="8.5" cy="8.5" r="1.2"/></svg>
+            图片管理
+          </button>
+          <button id="itemActionDeleteBtn" class="danger-button center-btn icon-text-button" type="button">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            删除
+          </button>
         </div>
       </div>
     </div>
@@ -343,7 +365,10 @@
     <template id="photoThumbTemplate">
       <div class="photo-thumb-item">
         <img class="photo-thumb-img" alt="缩略图" />
-        <button class="photo-thumb-replace" type="button">替换</button>
+        <button class="photo-thumb-replace" type="button" aria-label="替换图片" title="替换图片">
+          <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2"/><path d="M3 12A9 9 0 0 1 18.5 5.8"/><path d="M18 2v4h4M6 22v-4H2"/></svg>
+          <span>替换</span>
+        </button>
       </div>
     </template>
 
@@ -390,7 +415,7 @@
             <p class="subcategory-counts"></p>
           </div>
           <div class="subcategory-actions">
-            <button class="mini-button icon-btn subtle-icon-btn" data-subcategory-toggle type="button" title="切换展开状态">
+            <button class="mini-button icon-btn subtle-icon-btn" data-subcategory-toggle type="button" title="切换展开状态" aria-label="切换展开状态">
               <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </button>
           </div>
@@ -421,7 +446,7 @@
               </div>
             </div>
             <div class="item-menu-wrap">
-              <button class="mini-button icon-btn" data-item-menu-toggle type="button" title="更多操作">
+              <button class="mini-button icon-btn" data-item-menu-toggle type="button" title="更多操作" aria-label="更多操作">
                 <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
               </button>
             </div>
@@ -440,7 +465,7 @@
           </div>
         </div>
         <div class="item-menu-wrap compact-menu-wrap">
-          <button class="mini-button icon-btn" data-item-menu-toggle type="button" title="更多操作">
+          <button class="mini-button icon-btn" data-item-menu-toggle type="button" title="更多操作" aria-label="更多操作">
             <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
           </button>
         </div>
@@ -455,10 +480,10 @@
             <p class="overview-group-meta"></p>
           </div>
           <div class="overview-group-actions">
-            <button class="mini-button danger-lite-button icon-btn" data-group-delete type="button" title="删除">
+            <button class="mini-button danger-lite-button icon-btn" data-group-delete type="button" title="删除" aria-label="删除大品类">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
             </button>
-            <button class="mini-button icon-btn subtle-icon-btn" data-group-toggle type="button" title="切换展开状态">
+            <button class="mini-button icon-btn subtle-icon-btn" data-group-toggle type="button" title="切换展开状态" aria-label="切换展开状态">
               <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </button>
           </div>
@@ -473,7 +498,7 @@
           <span class="manager-row-title"></span>
         </div>
         <div class="order-actions">
-          <button class="mini-button danger-lite-button icon-btn" data-category-delete type="button" title="删除">
+          <button class="mini-button danger-lite-button icon-btn" data-category-delete type="button" title="删除" aria-label="删除小品类">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
           </button>
         </div>

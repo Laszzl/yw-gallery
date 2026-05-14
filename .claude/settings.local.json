@@ -31,7 +31,17 @@
       "WebFetch(domain:github.com)",
       "Bash(\" /Users/liaozhenghai/Desktop/yw/app.js | head -20)",
       "Bash(awk -F: 'NR>30')",
-      "Bash(awk '/@media \\\\\\(max-width: 768px\\\\\\)/,/^}/' /Users/liaozhenghai/Desktop/yw/styles.css)"
+      "Bash(awk '/@media \\\\\\(max-width: 768px\\\\\\)/,/^}/' /Users/liaozhenghai/Desktop/yw/styles.css)",
+      "Bash(awk '/@media \\\\\\(prefers-color-scheme: dark\\\\\\)/,/^$/' /Users/liaozhenghai/Desktop/yw/styles.css)",
+      "Bash(awk '/iPhone.*iOS Inset Grouped/,/^}$/ {print NR\": \"$0}' /Users/liaozhenghai/Desktop/yw/styles.css)",
+      "Bash(awk '/iPhone.*iOS Inset Grouped/,/^}$/' /Users/liaozhenghai/Desktop/yw/styles.css)",
+      "Bash(xcrun simctl *)",
+      "mcp__plugin_microsoft-docs_microsoft-learn__microsoft_docs_search",
+      "WebFetch(domain:www.ekino.fr)",
+      "Bash(awk '/@media/ {print NR\": \"$0; depth++} /^[[:space:]]*}[[:space:]]*$/ {depth--}' /Users/liaozhenghai/Desktop/yw/styles.css)",
+      "Bash(osascript -e 'tell application \"Safari\" to activate' -e 'tell application \"Safari\" to make new document with properties {URL:\"http://localhost:8080/index.html?v=4\"}')",
+      "Bash(osascript -e ' *)",
+      "Bash(awk *)"
     ]
   }
 }

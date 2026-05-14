@@ -1043,6 +1043,10 @@ function renderCurrentView() {
   elements.addView.hidden = viewState.currentView !== 'add';
   elements.settingsView.hidden = viewState.currentView !== 'settings';
 
+  elements.homeButton.setAttribute('aria-current', viewState.currentView === 'home' ? 'page' : 'false');
+  elements.addButton.setAttribute('aria-current', viewState.currentView === 'add' ? 'page' : 'false');
+  elements.settingsButton.setAttribute('aria-current', viewState.currentView === 'settings' ? 'page' : 'false');
+
   if (viewState.currentView === 'home') renderHomeView();
   if (viewState.currentView === 'athlete') renderAthleteView();
   if (viewState.currentView === 'settings') renderCategoryOverview();
@@ -1063,8 +1067,12 @@ function renderSwitcher() {
     const fragment = elements.templates.switcherChip.content.cloneNode(true);
     const button = fragment.querySelector('.switcher-chip');
     button.textContent = person.name;
+    button.setAttribute('aria-label', `查看${person.name}的图库`);
     if (person.id === viewState.selectedPersonId && viewState.currentView === 'athlete') {
       button.classList.add('active');
+      button.setAttribute('aria-current', 'page');
+    } else {
+      button.removeAttribute('aria-current');
     }
     button.addEventListener('click', () => showAthleteView(person.id));
     elements.switcherScrollArea.append(fragment);

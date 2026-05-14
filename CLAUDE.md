@@ -68,10 +68,12 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 ### iPhone 适配 (max-width: 768px)
 - 顶部导航分两排：第一排左侧“添加”、中间“原味”、右侧“设置”；第二排体育生 chip 居中，横向滚动时固定只显示 3 个。
+- iPhone 端视觉只参考 iOS App，不沿用 Mac/iPad 的厚重按钮和桌面卡片感；顶部导航为透明容器上的 Liquid Glass 漂浮控件。
+- 滚动时顶部使用 scroll-edge 渐隐层，让内容进入导航下方时自然淡出；导航控件保持清晰可点。
 - 弹窗底部对齐（`align-items: flex-end`），适配底部 safe-area
 - 弹窗全宽、max-height 85vh、overflow-y auto
 - 裁剪弹窗和日期弹窗全宽 100%
-- backdrop-filter 移除（iOS Safari 滚动时 backdrop-filter 导致卡顿）
+- iPhone 顶部导航允许使用 `backdrop-filter` 实现 Liquid Glass；如真实 iOS Safari 出现明显滚动卡顿，再降级为轻量透明渐变层。
 
 ## 持久化与图片
 
