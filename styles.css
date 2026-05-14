@@ -1606,6 +1606,12 @@ select:focus {
   /* ═══════════════════════════════════════════════
      iOS 26 Design Tokens
      ═══════════════════════════════════════════════ */
+  html {
+    min-height: 100%;
+    overflow-x: hidden;
+    background: var(--ios-bg);
+  }
+
   body {
     --ios-bg: #f2f2f7;
     --ios-label: #111111;
@@ -1635,15 +1641,11 @@ select:focus {
 
     --ios-nav-height: calc(108px + env(safe-area-inset-top, 0px));
 
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0;
     min-width: 0;
     color: var(--ios-label);
-    background: var(--ios-bg);
-  }
-
-  html {
-    width: 100%;
-    min-width: 0;
-    overflow-x: hidden;
     background: var(--ios-bg);
   }
 
@@ -1661,7 +1663,7 @@ select:focus {
     width: 100%;
     margin: 0;
     padding:
-      0
+      var(--ios-nav-height)
       14px
       36px;
   }
@@ -3115,6 +3117,10 @@ select:focus {
 
   /* iPhone 暗色模式 */
   @media (max-width: 768px) {
+    html {
+      --ios-bg: #000000;
+    }
+
     body {
       --ios-bg: #000000;
       --ios-label: rgba(255, 255, 255, 0.96);
