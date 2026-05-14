@@ -1661,19 +1661,9 @@ select:focus {
     width: 100%;
     margin: 0;
     padding:
-      calc(env(safe-area-inset-top) + var(--ios-nav-height))
+      var(--ios-nav-height)
       14px
-      calc(env(safe-area-inset-bottom) + 36px);
-  }
-
-  @supports (padding: max(0px)) {
-    .page-shell {
-      padding:
-        calc(env(safe-area-inset-top) + var(--ios-nav-height))
-        max(14px, env(safe-area-inset-right))
-        max(36px, calc(env(safe-area-inset-bottom) + 36px))
-        max(14px, env(safe-area-inset-left));
-    }
+      36px;
   }
 
   .app-main {
@@ -1699,10 +1689,10 @@ select:focus {
     gap: 10px;
     align-items: center;
     padding:
-      calc(env(safe-area-inset-top) + 4px)
-      max(14px, env(safe-area-inset-right))
+      4px
+      14px
       8px
-      max(14px, env(safe-area-inset-left));
+      14px;
 
     margin: 0;
     border: 0;
@@ -2395,7 +2385,7 @@ select:focus {
     padding:
       12px
       10px
-      max(10px, env(safe-area-inset-bottom));
+      10px;
     background: rgba(0, 0, 0, 0.32);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);

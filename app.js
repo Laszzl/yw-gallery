@@ -1074,7 +1074,7 @@ function renderSwitcher() {
     const button = fragment.querySelector('.switcher-chip');
     button.textContent = person.name;
     button.setAttribute('aria-label', `查看${person.name}的图库`);
-    if (person.id === viewState.selectedPersonId && viewState.currentView === 'athlete') {
+    if (!overflow && person.id === viewState.selectedPersonId && viewState.currentView === 'athlete') {
       button.classList.add('active');
       button.setAttribute('aria-current', 'page');
     } else {
