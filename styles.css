@@ -1808,6 +1808,16 @@ select:focus {
     justify-content: center;
   }
 
+  .athlete-switcher.scrollable {
+    flex-wrap: nowrap;
+    justify-content: center;
+    overflow: hidden;
+    width: min(100%, 330px);
+    max-width: 330px;
+    padding: 0;
+    margin: 0 auto;
+  }
+
   .switcher-scroll-area,
   .athlete-switcher.scrollable .switcher-scroll-area {
     display: flex;
@@ -1818,6 +1828,11 @@ select:focus {
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
     padding: 2px 2px 4px;
+  }
+
+  .athlete-switcher.scrollable .switcher-scroll-area {
+    padding: 2px 2px 4px;
+    margin: 0;
   }
 
   .switcher-scroll-area::-webkit-scrollbar {
@@ -3162,8 +3177,16 @@ select:focus {
     .secondary-button,
     .file-picker.primary-button,
     .form-footer-actions .primary-button {
+      background: var(--ios-primary-bg);
+      background-image: none;
       color: var(--ios-primary-fg);
       box-shadow: none;
+    }
+
+    .secondary-button {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: var(--ios-label);
     }
 
     .mini-button,
@@ -3171,6 +3194,7 @@ select:focus {
     .subtle-icon-btn,
     .file-picker:not(.primary-button) {
       background: var(--ios-fill);
+      background-image: none;
       border-color: transparent;
       box-shadow: none;
       color: var(--ios-label);
@@ -3178,6 +3202,9 @@ select:focus {
 
     .danger-button,
     .danger-lite-button {
+      background: var(--ios-danger-bg);
+      background-image: none;
+      color: var(--ios-danger);
       box-shadow: none;
     }
 

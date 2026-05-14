@@ -1028,6 +1028,11 @@ const attachItemDrag = createDragHandler({
 // ═══════════════════════════════════════════════
 // Render
 // ═══════════════════════════════════════════════
+function updateNavHeight() {
+  var hasAthletes = state.people.length > 0;
+  document.body.style.setProperty('--ios-nav-height', hasAthletes ? '110px' : '68px');
+}
+
 function renderAll() {
   closeItemActionsModal();
   closePhotoManageModal();
@@ -1035,6 +1040,7 @@ function renderAll() {
   syncFormOptions();
   renderSwitcher();
   renderCurrentView();
+  updateNavHeight();
 }
 
 function renderCurrentView() {
