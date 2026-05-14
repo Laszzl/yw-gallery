@@ -1633,7 +1633,7 @@ select:focus {
     --ios-danger-bg: rgba(255, 59, 48, 0.10);
     --ios-danger: #c7352d;
 
-    --ios-nav-height: 68px;
+    --ios-nav-height: 110px;
 
     min-width: 0;
     color: var(--ios-label);
@@ -1977,7 +1977,7 @@ select:focus {
 
   .grouped-content {
     gap: 16px;
-    margin-top: 18px;
+    margin-top: 36px;
   }
 
   /* ── Category sections ── */
@@ -3130,7 +3130,7 @@ select:focus {
       --ios-danger-bg: rgba(255, 69, 58, 0.14);
       --ios-danger: #ff6961;
 
-      --ios-nav-height: 68px;
+      --ios-nav-height: 110px;
 
       background: #000;
     }
