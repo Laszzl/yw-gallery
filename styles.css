@@ -1818,8 +1818,6 @@ select:focus {
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
     padding: 2px 2px 4px;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
   }
 
   .athlete-switcher.scrollable .switcher-scroll-area {
