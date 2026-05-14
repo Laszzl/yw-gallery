@@ -1633,7 +1633,7 @@ select:focus {
     --ios-danger-bg: rgba(255, 59, 48, 0.10);
     --ios-danger: #c7352d;
 
-    --ios-nav-height: 110px;
+    --ios-nav-height: 68px;
 
     min-width: 0;
     color: var(--ios-label);
@@ -2037,11 +2037,13 @@ select:focus {
     padding: 4px 0 8px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
   }
 
   .rail-card {
-    flex: 0 0 78%;
+    flex: 0 0 100%;
     max-width: 290px;
+    scroll-snap-align: start;
   }
 
   .yw-card {
@@ -2079,22 +2081,13 @@ select:focus {
     flex-wrap: wrap;
   }
 
-  /* ── Text-only item rows (stack vertically) ── */
-  .text-rail-block .rail-list {
-    display: block;
-    overflow-x: visible;
-    padding: 0;
-  }
-
+  /* ── Text-only item rows ── */
   .text-item-row {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
     border-radius: 20px;
     padding: 16px;
     border-bottom: none;
-    margin-bottom: 8px;
-  }
-
-  .text-item-row:last-child {
-    margin-bottom: 0;
   }
 
   /* ═══════════════════════════════════════════════
@@ -3137,7 +3130,7 @@ select:focus {
       --ios-danger-bg: rgba(255, 69, 58, 0.14);
       --ios-danger: #ff6961;
 
-      --ios-nav-height: 110px;
+      --ios-nav-height: 68px;
 
       background: #000;
     }
