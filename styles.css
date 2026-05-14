@@ -3132,7 +3132,13 @@ select:focus {
       --ios-danger-bg: rgba(255, 69, 58, 0.14);
       --ios-danger: #ff6961;
 
+      --ios-nav-height: 68px;
+
       background: #000;
+    }
+
+    .topbar {
+      background: transparent;
     }
 
     .brand-button,
@@ -3144,16 +3150,32 @@ select:focus {
       color: var(--ios-label);
     }
 
+    .brand-button:active,
+    #addButton:active,
+    #settingsButton:active {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)),
+        var(--ios-glass-bg-strong);
+    }
+
     .switcher-chip {
       background: rgba(255, 255, 255, 0.10);
       border-color: rgba(255, 255, 255, 0.14);
       color: var(--ios-label);
+      box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      -webkit-backdrop-filter: saturate(200%) blur(18px);
+      backdrop-filter: saturate(200%) blur(18px);
     }
 
     .switcher-chip.active {
       background: rgba(255, 255, 255, 0.92);
       color: #000000;
       border-color: rgba(255, 255, 255, 0.18);
+      box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
     }
 
     input[type="text"],
