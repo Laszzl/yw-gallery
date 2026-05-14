@@ -3158,6 +3158,29 @@ select:focus {
         var(--ios-glass-bg-strong);
     }
 
+    .primary-button,
+    .secondary-button,
+    .file-picker.primary-button,
+    .form-footer-actions .primary-button {
+      color: var(--ios-primary-fg);
+      box-shadow: none;
+    }
+
+    .mini-button,
+    .mini-file-button,
+    .subtle-icon-btn,
+    .file-picker:not(.primary-button) {
+      background: var(--ios-fill);
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--ios-label);
+    }
+
+    .danger-button,
+    .danger-lite-button {
+      box-shadow: none;
+    }
+
     .switcher-chip {
       background: rgba(255, 255, 255, 0.10);
       border-color: rgba(255, 255, 255, 0.14);
