@@ -2201,13 +2201,13 @@ function updateRailMask(rail) {
   var scrollLeft = rail.scrollLeft;
   var maxScroll = rail.scrollWidth - rail.clientWidth;
 
-  if (maxScroll <= 1) {
+  if (maxScroll <= 2) {
     rail.style.setProperty('--rail-mask-image', 'none');
     return;
   }
 
-  var atStart = scrollLeft <= 1;
-  var atEnd = scrollLeft >= maxScroll - 1;
+  var atStart = scrollLeft <= 8;
+  var atEnd = scrollLeft >= maxScroll - 8;
   var fadeWidth = '32px';
 
   var maskImage;
