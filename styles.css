@@ -1645,7 +1645,7 @@ select:focus {
     padding: 0;
     min-width: 0;
     color: var(--ios-label);
-    background: var(--ios-bg);
+    background: linear-gradient(to bottom, transparent var(--ios-nav-height), var(--ios-bg) var(--ios-nav-height));
   }
 
   button,
@@ -1701,18 +1701,6 @@ select:focus {
     background: transparent;
     box-shadow: none;
     overflow: visible;
-    pointer-events: none;
-  }
-
-  .topbar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--ios-nav-height);
-    background: var(--ios-bg);
-    z-index: -1;
     pointer-events: none;
   }
 
@@ -3161,7 +3149,7 @@ select:focus {
 
       --ios-nav-height: calc(108px + env(safe-area-inset-top, 0px));
 
-      background: #000;
+      background: linear-gradient(to bottom, transparent var(--ios-nav-height), var(--ios-bg) var(--ios-nav-height));
     }
 
     .topbar {
