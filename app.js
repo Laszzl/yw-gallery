@@ -1030,7 +1030,7 @@ const attachItemDrag = createDragHandler({
 // ═══════════════════════════════════════════════
 function updateNavHeight() {
   var hasAthletes = state.people.length > 0;
-  document.body.style.setProperty('--ios-nav-height', hasAthletes ? '124px' : '68px');
+  document.body.style.setProperty('--ios-nav-height', hasAthletes ? 'calc(124px + env(safe-area-inset-top, 0px))' : 'calc(68px + env(safe-area-inset-top, 0px))');
 }
 
 function renderAll() {
@@ -1057,7 +1057,7 @@ function renderCurrentView() {
   if (viewState.currentView === 'athlete') renderAthleteView();
   if (viewState.currentView === 'settings') renderCategoryOverview();
 
-  window.scrollTo({ top: 0, behavior: 'instant' });
+  window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
 function showHomeView() { viewState.currentView = 'home'; renderAll(); }

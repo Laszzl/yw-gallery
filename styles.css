@@ -1645,6 +1645,7 @@ select:focus {
     padding: 0;
     min-width: 0;
     color: var(--ios-label);
+    background: var(--ios-bg);
   }
 
   button,
@@ -1663,8 +1664,7 @@ select:focus {
     padding:
       var(--ios-nav-height)
       14px
-      36px;
-    background: linear-gradient(to bottom, transparent var(--ios-nav-height), var(--ios-bg) var(--ios-nav-height));
+      calc(36px + env(safe-area-inset-bottom, 0px));
   }
 
   .app-main {
@@ -1701,6 +1701,30 @@ select:focus {
     background: transparent;
     box-shadow: none;
     overflow: visible;
+    pointer-events: none;
+  }
+
+  .topbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--ios-nav-height);
+    background: var(--ios-bg);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .topbar::after {
+    content: '';
+    position: absolute;
+    top: var(--ios-nav-height);
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, var(--ios-bg), transparent);
+    z-index: -1;
     pointer-events: none;
   }
 
@@ -2395,7 +2419,7 @@ select:focus {
     padding:
       12px
       10px
-      20px;
+      calc(20px + env(safe-area-inset-bottom, 0px));
     background: rgba(0, 0, 0, 0.32);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -2474,10 +2498,16 @@ select:focus {
     max-width: none;
   }
 
-  /* ── Date picker ── */
+  /* ── Date picker / Crop modal extras ── */
   .date-picker-modal-content {
     gap: 14px;
-    padding-bottom: 18px;
+    padding: 22px 18px 18px;
+    background: var(--ios-card-bg);
+  }
+
+  .crop-modal-content {
+    padding: 22px 18px 18px;
+    background: var(--ios-card-bg);
   }
 
   .date-picker-columns {
@@ -2497,6 +2527,7 @@ select:focus {
   .crop-preview-container {
     max-width: 100%;
     border-radius: 20px;
+    background: var(--ios-fill);
   }
 
   /* ── Photo manage grid ── */
@@ -2504,12 +2535,34 @@ select:focus {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     max-height: 42vh;
+    padding: 2px 0;
   }
 
   @supports (height: 100dvh) {
     .photo-thumb-grid {
       max-height: 42dvh;
     }
+  }
+
+  .photo-thumb-item {
+    border-radius: 16px;
+    background: var(--ios-fill);
+  }
+
+  .photo-thumb-replace {
+    inset: auto 8px 8px;
+    min-height: 34px;
+    padding: 0 12px;
+    gap: 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.58);
+    opacity: 1;
+    font-size: 14px;
+  }
+
+  .photo-thumb-replace .button-icon {
+    width: 15px;
+    height: 15px;
   }
 
   /* ── Status toggles ── */
@@ -3148,6 +3201,12 @@ select:focus {
       --ios-danger: #ff6961;
 
       --ios-nav-height: calc(108px + env(safe-area-inset-top, 0px));
+
+      background: #000;
+    }
+
+    .topbar {
+      background: transparent;
     }
 
     .brand-button,
@@ -3178,8 +3237,8 @@ select:focus {
     }
 
     .secondary-button {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: var(--ios-fill);
+      border-color: transparent;
       color: var(--ios-label);
     }
 
@@ -3245,66 +3304,6 @@ select:focus {
     }
   }
 
-}
-
-@media (max-width: 768px) {
-  .crop-modal-content,
-  .date-picker-modal-content {
-    padding: 22px 18px 18px;
-    background: var(--ios-card-bg);
-  }
-
-  .crop-preview-container {
-    max-width: 100%;
-    border-radius: 20px;
-    background: var(--ios-fill);
-  }
-
-  .crop-modal-actions,
-  .data-manage-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .crop-modal-actions button {
-    max-width: none;
-  }
-
-  .photo-thumb-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    max-height: 42vh;
-    padding: 2px 0;
-  }
-
-  @supports (height: 100dvh) {
-    .photo-thumb-grid {
-      max-height: 42dvh;
-    }
-  }
-
-  .photo-thumb-item {
-    border-radius: 16px;
-    background: var(--ios-fill);
-  }
-
-  .photo-thumb-replace {
-    inset: auto 8px 8px;
-    min-height: 34px;
-    padding: 0 12px;
-    gap: 6px;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.58);
-    opacity: 1;
-    font-size: 14px;
-  }
-
-  .photo-thumb-replace .button-icon {
-    width: 15px;
-    height: 15px;
-  }
 }
 
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
