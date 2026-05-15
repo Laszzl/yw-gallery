@@ -1670,7 +1670,7 @@ select:focus {
      Page Shell — edge-to-edge
      ═══════════════════════════════════════════════ */
   .page-shell {
-    --ios-topbar-space: calc(var(--ios-nav-height) + 4px);
+    --ios-topbar-space: calc(var(--ios-nav-height) + 8px);
 
     width: 100%;
     min-height: 100vh;

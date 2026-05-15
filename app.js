@@ -1030,7 +1030,7 @@ const attachItemDrag = createDragHandler({
 // ═══════════════════════════════════════════════
 function updateNavHeight() {
   var hasAthletes = state.people.length > 0;
-  document.body.style.setProperty('--ios-nav-height', hasAthletes ? '110px' : '68px');
+  document.body.style.setProperty('--ios-nav-height', hasAthletes ? '120px' : '66px');
 }
 
 function renderAll() {
@@ -2225,12 +2225,22 @@ function updateRailMask(rail) {
 }
 
 var _railMaskResizeObserver = null;
+var _railMaskPending = new WeakMap();
+
+function scheduleRailMask(rail) {
+  if (_railMaskPending.get(rail)) return;
+  _railMaskPending.set(rail, true);
+  requestAnimationFrame(function () {
+    _railMaskPending.set(rail, false);
+    updateRailMask(rail);
+  });
+}
 
 function setupRailMasks() {
   if (!_railMaskResizeObserver) {
     _railMaskResizeObserver = new ResizeObserver(function (entries) {
       for (var i = 0; i < entries.length; i++) {
-        updateRailMask(entries[i].target);
+        scheduleRailMask(entries[i].target);
       }
     });
   }
@@ -2244,7 +2254,7 @@ function setupRailMasks() {
     }
     rail.dataset.railMaskSetup = '1';
     rail.addEventListener('scroll', function () {
-      updateRailMask(this);
+      scheduleRailMask(this);
     }, { passive: true });
     _railMaskResizeObserver.observe(rail);
     updateRailMask(rail);
