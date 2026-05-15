@@ -3237,8 +3237,9 @@ select:focus {
     }
 
     html,
+    body,
     .page-shell {
-      background: var(--ios-bg);
+      background: #000000;
     }
 
     .topbar {
