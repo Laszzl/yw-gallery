@@ -2200,6 +2200,15 @@ async function cropMultipleInputFiles(input, aspectRatio) {
 function updateRailMask(rail) {
   var scrollLeft = rail.scrollLeft;
   var maxScroll = rail.scrollWidth - rail.clientWidth;
+  var isPhone = matchMedia('(max-width: 768px)').matches;
+
+  if (isPhone) {
+    var atStart = scrollLeft <= 8;
+    var atEnd = maxScroll <= 2 || scrollLeft >= maxScroll - 8;
+    rail.style.setProperty('--rail-fade-l', atStart ? '0' : '1');
+    rail.style.setProperty('--rail-fade-r', atEnd ? '0' : '1');
+    return;
+  }
 
   if (maxScroll <= 2) {
     rail.style.setProperty('--rail-mask-image', 'none');

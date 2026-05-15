@@ -2097,18 +2097,45 @@ select:focus {
   }
 
   /* ── YW Rails (horizontal scroll cards) ── */
+  .rail-block {
+    position: relative;
+  }
+
+  .rail-block::before,
+  .rail-block::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .rail-block::before {
+    left: 0;
+    background: linear-gradient(to right, var(--ios-bg), transparent);
+    opacity: var(--rail-fade-l, 0);
+  }
+
+  .rail-block::after {
+    right: 0;
+    background: linear-gradient(to left, var(--ios-bg), transparent);
+    opacity: var(--rail-fade-r, 0);
+  }
+
   .rail-list {
     gap: 12px;
     padding: 4px 0 8px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
   }
 
   .rail-card {
     flex: 0 0 100%;
     max-width: 290px;
-    scroll-snap-align: start;
   }
 
   .yw-card {
