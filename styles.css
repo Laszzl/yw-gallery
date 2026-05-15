@@ -1691,7 +1691,7 @@ select:focus {
     padding:
       4px
       14px
-      18px
+      20px
       14px;
 
     margin: 0;
@@ -1837,12 +1837,12 @@ select:focus {
     min-height: 38px;
     padding: 0 10px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.50);
-    background: rgba(255, 255, 255, 0.42);
+    border: none;
+    background: rgba(255, 255, 255, 0.46);
     color: var(--ios-label);
     box-shadow: none;
-    -webkit-backdrop-filter: saturate(200%) blur(20px);
-    backdrop-filter: saturate(200%) blur(20px);
+    -webkit-backdrop-filter: saturate(200%) blur(24px);
+    backdrop-filter: saturate(200%) blur(24px);
     font-size: 0.92rem;
     font-weight: 560;
     overflow: hidden;
@@ -1854,7 +1854,7 @@ select:focus {
   .switcher-chip.active {
     background: rgba(17, 17, 17, 0.82);
     color: white;
-    border-color: rgba(255, 255, 255, 0.22);
+    border: none;
   }
 
   /* ═══════════════════════════════════════════════
@@ -3214,18 +3214,18 @@ select:focus {
     }
 
     .switcher-chip {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.18);
+      border: none;
       color: var(--ios-label);
       box-shadow: none;
-      -webkit-backdrop-filter: saturate(200%) blur(20px);
-      backdrop-filter: saturate(200%) blur(20px);
+      -webkit-backdrop-filter: saturate(200%) blur(24px);
+      backdrop-filter: saturate(200%) blur(24px);
     }
 
     .switcher-chip.active {
       background: rgba(255, 255, 255, 0.92);
       color: #000000;
-      border-color: rgba(255, 255, 255, 0.18);
+      border: none;
       box-shadow: none;
     }
 
