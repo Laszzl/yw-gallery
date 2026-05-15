@@ -1698,9 +1698,21 @@ select:focus {
     margin: 0;
     border: 0;
     border-radius: 0;
-    background: var(--ios-bg);
+    background: transparent;
     box-shadow: none;
     overflow: visible;
+    pointer-events: none;
+  }
+
+  .topbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--ios-nav-height);
+    background: var(--ios-bg);
+    z-index: -1;
     pointer-events: none;
   }
 
@@ -3153,7 +3165,7 @@ select:focus {
     }
 
     .topbar {
-      background: var(--ios-bg);
+      background: transparent;
     }
 
     .brand-button,
