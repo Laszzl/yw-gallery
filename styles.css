@@ -2495,8 +2495,6 @@ select:focus {
   .modal-content {
     width: 100%;
     max-width: none;
-    max-height: 85vh;
-    overflow-y: auto;
     border-radius: 30px;
     padding: 22px;
     background: rgba(255, 255, 255, 0.78);
@@ -2515,12 +2513,6 @@ select:focus {
     to {
       transform: translateY(0);
       opacity: 1;
-    }
-  }
-
-  @supports (height: 100dvh) {
-    .modal-content {
-      max-height: 85dvh;
     }
   }
 
@@ -2557,6 +2549,10 @@ select:focus {
 
   .crop-modal-actions button {
     max-width: none;
+  }
+
+  .modal-content .button-icon {
+    display: none;
   }
 
   /* ── Date picker ── */
@@ -3367,7 +3363,6 @@ select:focus {
   .crop-preview-container {
     max-width: 100%;
     border-radius: 20px;
-    background: var(--ios-fill);
   }
 
   .crop-modal-actions,
