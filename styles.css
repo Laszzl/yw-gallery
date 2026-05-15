@@ -1704,18 +1704,6 @@ select:focus {
     pointer-events: none;
   }
 
-  .topbar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--ios-nav-height);
-    background: #f5f5f7;
-    z-index: -1;
-    pointer-events: none;
-  }
-
   .topbar-branding {
     grid-area: brand;
     justify-content: center;
@@ -3162,10 +3150,6 @@ select:focus {
 
     .topbar {
       background: transparent;
-    }
-
-    .topbar::before {
-      background: #000;
     }
 
     .brand-button,
