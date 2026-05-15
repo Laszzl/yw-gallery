@@ -1030,7 +1030,7 @@ const attachItemDrag = createDragHandler({
 // ═══════════════════════════════════════════════
 function updateNavHeight() {
   var hasAthletes = state.people.length > 0;
-  document.body.style.setProperty('--ios-nav-height', hasAthletes ? '130px' : '68px');
+  document.body.style.setProperty('--ios-nav-height', hasAthletes ? '110px' : '68px');
 }
 
 function renderAll() {

@@ -42,7 +42,10 @@
       "Bash(osascript -e 'tell application \"Safari\" to activate' -e 'tell application \"Safari\" to make new document with properties {URL:\"http://localhost:8080/index.html?v=4\"}')",
       "Bash(osascript -e ' *)",
       "Bash(awk *)",
-      "Bash(GIT_CURL_VERBOSE=1 git push origin main)"
+      "Bash(GIT_CURL_VERBOSE=1 git push origin main)",
+      "Bash(lsof -ti:8080)",
+      "Bash(osascript -e 'tell application \"Simulator\" to activate' -e 'tell application \"Simulator\" to open location \"http://localhost:8080/index.html\"')",
+      "Bash(osascript -e 'tell application \"Safari\" to activate' -e 'tell application \"Safari\" to make new document with properties {URL:\"http://localhost:8080/index.html?v=5\"}')"
     ]
   }
 }

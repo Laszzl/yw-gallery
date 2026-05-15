@@ -1617,9 +1617,7 @@ select:focus {
     --ios-glass-border: rgba(255, 255, 255, 0.62);
     --ios-glass-shadow:
       0 8px 24px rgba(15, 23, 42, 0.10),
-      0 1px 3px rgba(15, 23, 42, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.85),
-      inset 0 -10px 18px rgba(255, 255, 255, 0.10);
+      0 1px 3px rgba(15, 23, 42, 0.06);
 
     --ios-card-bg: rgba(255, 255, 255, 0.66);
     --ios-card-border: rgba(60, 60, 67, 0.08);
@@ -1640,11 +1638,24 @@ select:focus {
     background: var(--ios-bg);
   }
 
-  html {
+  html,
+  body {
     width: 100%;
     min-width: 0;
+    min-height: 100%;
     overflow-x: hidden;
     background: var(--ios-bg);
+  }
+
+  body {
+    min-height: 100vh;
+    color: var(--ios-label);
+  }
+
+  @supports (min-height: 100dvh) {
+    body {
+      min-height: 100dvh;
+    }
   }
 
   button,
@@ -1658,16 +1669,50 @@ select:focus {
      Page Shell — edge-to-edge
      ═══════════════════════════════════════════════ */
   .page-shell {
+    --ios-topbar-space: calc(env(safe-area-inset-top, 0px) + 112px);
+
     width: 100%;
+    min-height: 100vh;
     margin: 0;
-    padding:
-      var(--ios-nav-height)
-      14px
-      36px;
+    padding: 0 14px 36px;
+    background: var(--ios-bg);
+    overflow: visible;
+  }
+
+  @supports (min-height: 100dvh) {
+    .page-shell {
+      min-height: 100dvh;
+    }
   }
 
   .app-main {
     display: block;
+    min-height: 100vh;
+    padding-top: var(--ios-topbar-space);
+    background: transparent;
+
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgba(0, 0, 0, 0.08) calc(env(safe-area-inset-top, 0px) + 18px),
+      rgba(0, 0, 0, 0.35) calc(env(safe-area-inset-top, 0px) + 58px),
+      rgba(0, 0, 0, 0.78) calc(env(safe-area-inset-top, 0px) + 104px),
+      #000 calc(env(safe-area-inset-top, 0px) + 138px)
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgba(0, 0, 0, 0.08) calc(env(safe-area-inset-top, 0px) + 18px),
+      rgba(0, 0, 0, 0.35) calc(env(safe-area-inset-top, 0px) + 58px),
+      rgba(0, 0, 0, 0.78) calc(env(safe-area-inset-top, 0px) + 104px),
+      #000 calc(env(safe-area-inset-top, 0px) + 138px)
+    );
+  }
+
+  @supports (min-height: 100dvh) {
+    .app-main {
+      min-height: 100dvh;
+    }
   }
 
   /* ═══════════════════════════════════════════════
@@ -1689,9 +1734,9 @@ select:focus {
     gap: 10px;
     align-items: center;
     padding:
-      4px
+      max(8px, env(safe-area-inset-top, 0px))
       14px
-      20px
+      8px
       14px;
 
     margin: 0;
@@ -1701,6 +1746,9 @@ select:focus {
     box-shadow: none;
     overflow: visible;
     pointer-events: none;
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .topbar-branding {
@@ -1732,14 +1780,21 @@ select:focus {
     height: 50px;
     min-height: 50px;
     border-radius: 999px;
-    border: 1px solid var(--ios-glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.56);
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.28)),
-      var(--ios-glass-bg);
-    color: var(--ios-label);
-    box-shadow: var(--ios-glass-shadow);
-    -webkit-backdrop-filter: saturate(220%) blur(24px);
-    backdrop-filter: saturate(220%) blur(24px);
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.78) 0%,
+        rgba(255, 255, 255, 0.42) 42%,
+        rgba(255, 255, 255, 0.18) 100%
+      );
+    color: rgba(17, 17, 17, 0.84);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.72),
+      inset 0 -1px 1px rgba(255, 255, 255, 0.22),
+      0 8px 24px rgba(15, 23, 42, 0.10);
+    -webkit-backdrop-filter: saturate(220%) blur(26px);
+    backdrop-filter: saturate(220%) blur(26px);
     transform: translateZ(0);
   }
 
@@ -1777,10 +1832,14 @@ select:focus {
   .brand-button:active,
   #addButton:active,
   #settingsButton:active {
-    transform: scale(0.97);
+    transform: scale(0.97) translateZ(0);
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.36)),
-      var(--ios-glass-bg-strong);
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.88) 0%,
+        rgba(255, 255, 255, 0.52) 42%,
+        rgba(255, 255, 255, 0.26) 100%
+      );
   }
 
   /* ═══════════════════════════════════════════════
@@ -1837,12 +1896,14 @@ select:focus {
     min-height: 38px;
     padding: 0 10px;
     border-radius: 999px;
-    border: none;
-    background: rgba(255, 255, 255, 0.46);
-    color: var(--ios-label);
-    box-shadow: none;
-    -webkit-backdrop-filter: saturate(200%) blur(24px);
-    backdrop-filter: saturate(200%) blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    background: rgba(255, 255, 255, 0.28);
+    color: rgba(17, 17, 17, 0.78);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.58),
+      0 4px 16px rgba(15, 23, 42, 0.08);
+    -webkit-backdrop-filter: saturate(210%) blur(20px);
+    backdrop-filter: saturate(210%) blur(20px);
     font-size: 0.92rem;
     font-weight: 560;
     overflow: hidden;
@@ -1852,9 +1913,9 @@ select:focus {
   }
 
   .switcher-chip.active {
-    background: rgba(17, 17, 17, 0.82);
-    color: white;
-    border: none;
+    background: rgba(255, 255, 255, 0.54);
+    color: rgba(17, 17, 17, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.62);
   }
 
   /* ═══════════════════════════════════════════════
@@ -2027,30 +2088,6 @@ select:focus {
   .subcategory-content {
     gap: 10px;
     margin-top: 12px;
-  }
-
-  .subcategory-header > div:first-child {
-    min-width: 0;
-    flex: 1;
-  }
-
-  .subcategory-header .mini-button.icon-btn {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .subcategory-header .mini-button.icon-btn svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .subcategory-block.collapsed .toggle-chevron {
-    transform: rotate(90deg);
   }
 
   /* ── YW Rails (horizontal scroll cards) ── */
@@ -3136,9 +3173,7 @@ select:focus {
       --ios-glass-border: rgba(255, 255, 255, 0.12);
       --ios-glass-shadow:
         0 8px 24px rgba(0, 0, 0, 0.38),
-        0 1px 3px rgba(0, 0, 0, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        inset 0 -10px 18px rgba(255, 255, 255, 0.02);
+        0 1px 3px rgba(0, 0, 0, 0.22);
 
       --ios-card-bg: rgba(28, 28, 30, 0.62);
       --ios-card-border: rgba(235, 235, 245, 0.08);
@@ -3154,28 +3189,47 @@ select:focus {
 
       --ios-nav-height: 56px;
 
-      background: #000;
+      background: var(--ios-bg);
+      color: var(--ios-label);
+    }
+
+    html,
+    .page-shell {
+      background: var(--ios-bg);
     }
 
     .topbar {
       background: transparent;
+      box-shadow: none;
     }
 
     .brand-button,
     #addButton,
     #settingsButton {
+      border-color: rgba(255, 255, 255, 0.18);
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)),
-        var(--ios-glass-bg);
-      color: var(--ios-label);
+        linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.22) 0%,
+          rgba(255, 255, 255, 0.10) 48%,
+          rgba(255, 255, 255, 0.06) 100%
+        );
+      color: rgba(255, 255, 255, 0.88);
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        0 8px 24px rgba(0, 0, 0, 0.22);
     }
 
     .brand-button:active,
     #addButton:active,
     #settingsButton:active {
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)),
-        var(--ios-glass-bg-strong);
+        linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.28) 0%,
+          rgba(255, 255, 255, 0.14) 48%,
+          rgba(255, 255, 255, 0.08) 100%
+        );
     }
 
     .primary-button,
@@ -3213,20 +3267,16 @@ select:focus {
       box-shadow: none;
     }
 
-    .switcher-chip {
-      background: rgba(255, 255, 255, 0.18);
-      border: none;
-      color: var(--ios-label);
-      box-shadow: none;
-      -webkit-backdrop-filter: saturate(200%) blur(24px);
-      backdrop-filter: saturate(200%) blur(24px);
+    .switcher-chip,
+    .athlete-switcher.scrollable .switcher-chip {
+      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.10);
+      color: rgba(255, 255, 255, 0.78);
     }
 
     .switcher-chip.active {
-      background: rgba(255, 255, 255, 0.92);
-      color: #000000;
-      border: none;
-      box-shadow: none;
+      background: rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.95);
     }
 
     input[type="text"],
