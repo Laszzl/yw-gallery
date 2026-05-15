@@ -2578,6 +2578,7 @@ select:focus {
   .crop-preview-container {
     max-width: 100%;
     border-radius: 20px;
+    background: transparent;
   }
 
   /* ── Photo manage grid ── */
@@ -3363,6 +3364,7 @@ select:focus {
   .crop-preview-container {
     max-width: 100%;
     border-radius: 20px;
+    background: transparent;
   }
 
   .crop-modal-actions,
