@@ -1691,7 +1691,7 @@ select:focus {
     padding:
       4px
       14px
-      8px
+      18px
       14px;
 
     margin: 0;
@@ -1838,13 +1838,11 @@ select:focus {
     padding: 0 10px;
     border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.50);
-    background: rgba(255, 255, 255, 0.30);
+    background: rgba(255, 255, 255, 0.42);
     color: var(--ios-label);
-    box-shadow:
-      0 4px 14px rgba(15, 23, 42, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.65);
-    -webkit-backdrop-filter: saturate(200%) blur(18px);
-    backdrop-filter: saturate(200%) blur(18px);
+    box-shadow: none;
+    -webkit-backdrop-filter: saturate(200%) blur(20px);
+    backdrop-filter: saturate(200%) blur(20px);
     font-size: 0.92rem;
     font-weight: 560;
     overflow: hidden;
@@ -2029,6 +2027,30 @@ select:focus {
   .subcategory-content {
     gap: 10px;
     margin-top: 12px;
+  }
+
+  .subcategory-header > div:first-child {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .subcategory-header .mini-button.icon-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .subcategory-header .mini-button.icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .subcategory-block.collapsed .toggle-chevron {
+    transform: rotate(90deg);
   }
 
   /* ── YW Rails (horizontal scroll cards) ── */
@@ -3192,23 +3214,19 @@ select:focus {
     }
 
     .switcher-chip {
-      background: rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.16);
       border-color: rgba(255, 255, 255, 0.14);
       color: var(--ios-label);
-      box-shadow:
-        0 4px 14px rgba(0, 0, 0, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      -webkit-backdrop-filter: saturate(200%) blur(18px);
-      backdrop-filter: saturate(200%) blur(18px);
+      box-shadow: none;
+      -webkit-backdrop-filter: saturate(200%) blur(20px);
+      backdrop-filter: saturate(200%) blur(20px);
     }
 
     .switcher-chip.active {
       background: rgba(255, 255, 255, 0.92);
       color: #000000;
       border-color: rgba(255, 255, 255, 0.18);
-      box-shadow:
-        0 4px 14px rgba(0, 0, 0, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      box-shadow: none;
     }
 
     input[type="text"],
