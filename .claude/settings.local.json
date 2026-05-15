@@ -41,7 +41,8 @@
       "Bash(awk '/@media/ {print NR\": \"$0; depth++} /^[[:space:]]*}[[:space:]]*$/ {depth--}' /Users/liaozhenghai/Desktop/yw/styles.css)",
       "Bash(osascript -e 'tell application \"Safari\" to activate' -e 'tell application \"Safari\" to make new document with properties {URL:\"http://localhost:8080/index.html?v=4\"}')",
       "Bash(osascript -e ' *)",
-      "Bash(awk *)"
+      "Bash(awk *)",
+      "Bash(GIT_CURL_VERBOSE=1 git push origin main)"
     ]
   }
 }
