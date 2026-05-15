@@ -1607,21 +1607,21 @@ select:focus {
      iOS 26 Design Tokens
      ═══════════════════════════════════════════════ */
   body {
-    --ios-bg: #f2f2f7;
+    --ios-bg: #f5f5fa;
     --ios-label: #111111;
     --ios-secondary-label: rgba(60, 60, 67, 0.62);
     --ios-separator: rgba(60, 60, 67, 0.12);
 
-    --ios-glass-bg: rgba(255, 255, 255, 0.38);
-    --ios-glass-bg-strong: rgba(255, 255, 255, 0.58);
-    --ios-glass-border: rgba(255, 255, 255, 0.62);
+    --ios-glass-bg: rgba(255, 255, 255, 0.24);
+    --ios-glass-bg-strong: rgba(255, 255, 255, 0.38);
+    --ios-glass-border: rgba(255, 255, 255, 0.38);
     --ios-glass-shadow:
       0 8px 24px rgba(15, 23, 42, 0.10),
       0 1px 3px rgba(15, 23, 42, 0.06);
 
-    --ios-card-bg: rgba(255, 255, 255, 0.66);
-    --ios-card-border: rgba(60, 60, 67, 0.08);
-    --ios-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --ios-card-bg: rgba(255, 255, 255, 0.30);
+    --ios-card-border: rgba(60, 60, 67, 0.04);
+    --ios-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
 
     --ios-fill: rgba(120, 120, 128, 0.10);
     --ios-fill-strong: rgba(120, 120, 128, 0.16);
@@ -1780,21 +1780,20 @@ select:focus {
     height: 50px;
     min-height: 50px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
+    border: 0.5px solid rgba(255, 255, 255, 0.32);
     background:
       linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.78) 0%,
-        rgba(255, 255, 255, 0.42) 42%,
-        rgba(255, 255, 255, 0.18) 100%
+        rgba(255, 255, 255, 0.40) 0%,
+        rgba(255, 255, 255, 0.24) 55%,
+        rgba(255, 255, 255, 0.10) 100%
       );
-    color: rgba(17, 17, 17, 0.84);
+    color: rgba(17, 17, 17, 0.88);
     box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.72),
-      inset 0 -1px 1px rgba(255, 255, 255, 0.22),
-      0 8px 24px rgba(15, 23, 42, 0.10);
-    -webkit-backdrop-filter: saturate(220%) blur(26px);
-    backdrop-filter: saturate(220%) blur(26px);
+      0 2px 14px rgba(15, 23, 42, 0.06),
+      0 0 0 0.5px rgba(255, 255, 255, 0.24);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
     transform: translateZ(0);
   }
 
@@ -1832,14 +1831,17 @@ select:focus {
   .brand-button:active,
   #addButton:active,
   #settingsButton:active {
-    transform: scale(0.97) translateZ(0);
+    transform: scale(0.96) translateZ(0);
     background:
       linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.88) 0%,
-        rgba(255, 255, 255, 0.52) 42%,
-        rgba(255, 255, 255, 0.26) 100%
+        rgba(255, 255, 255, 0.50) 0%,
+        rgba(255, 255, 255, 0.30) 55%,
+        rgba(255, 255, 255, 0.14) 100%
       );
+    box-shadow:
+      0 0 6px rgba(15, 23, 42, 0.02),
+      0 0 0 0.5px rgba(255, 255, 255, 0.14);
   }
 
   /* ═══════════════════════════════════════════════
@@ -1896,14 +1898,14 @@ select:focus {
     min-height: 38px;
     padding: 0 10px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.42);
-    background: rgba(255, 255, 255, 0.28);
-    color: rgba(17, 17, 17, 0.78);
+    border: 0.5px solid rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.18);
+    color: rgba(17, 17, 17, 0.76);
     box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.58),
-      0 4px 16px rgba(15, 23, 42, 0.08);
-    -webkit-backdrop-filter: saturate(210%) blur(20px);
-    backdrop-filter: saturate(210%) blur(20px);
+      0 1px 8px rgba(15, 23, 42, 0.04),
+      0 0 0 0.5px rgba(255, 255, 255, 0.18);
+    -webkit-backdrop-filter: saturate(170%) blur(16px);
+    backdrop-filter: saturate(170%) blur(16px);
     font-size: 0.92rem;
     font-weight: 560;
     overflow: hidden;
@@ -1913,9 +1915,12 @@ select:focus {
   }
 
   .switcher-chip.active {
-    background: rgba(255, 255, 255, 0.54);
-    color: rgba(17, 17, 17, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.62);
+    background: rgba(255, 255, 255, 0.36);
+    color: rgba(17, 17, 17, 0.93);
+    border: 0.5px solid rgba(255, 255, 255, 0.40);
+    box-shadow:
+      0 2px 10px rgba(15, 23, 42, 0.06),
+      0 0 0 0.5px rgba(255, 255, 255, 0.28);
   }
 
   /* ═══════════════════════════════════════════════
@@ -1981,8 +1986,8 @@ select:focus {
     border: 1px solid var(--ios-card-border);
     background: var(--ios-card-bg);
     box-shadow: var(--ios-card-shadow);
-    -webkit-backdrop-filter: saturate(180%) blur(14px);
-    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(150%) blur(10px);
+    backdrop-filter: saturate(150%) blur(10px);
   }
 
   /* ═══════════════════════════════════════════════
@@ -3168,16 +3173,16 @@ select:focus {
       --ios-secondary-label: rgba(235, 235, 245, 0.62);
       --ios-separator: rgba(235, 235, 245, 0.14);
 
-      --ios-glass-bg: rgba(35, 35, 38, 0.38);
-      --ios-glass-bg-strong: rgba(48, 48, 52, 0.56);
-      --ios-glass-border: rgba(255, 255, 255, 0.12);
+      --ios-glass-bg: rgba(35, 35, 38, 0.24);
+      --ios-glass-bg-strong: rgba(48, 48, 52, 0.36);
+      --ios-glass-border: rgba(255, 255, 255, 0.08);
       --ios-glass-shadow:
         0 8px 24px rgba(0, 0, 0, 0.38),
         0 1px 3px rgba(0, 0, 0, 0.22);
 
-      --ios-card-bg: rgba(28, 28, 30, 0.62);
-      --ios-card-border: rgba(235, 235, 245, 0.08);
-      --ios-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+      --ios-card-bg: rgba(28, 28, 30, 0.40);
+      --ios-card-border: rgba(235, 235, 245, 0.05);
+      --ios-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
 
       --ios-fill: rgba(120, 120, 128, 0.18);
       --ios-fill-strong: rgba(120, 120, 128, 0.24);
@@ -3206,18 +3211,18 @@ select:focus {
     .brand-button,
     #addButton,
     #settingsButton {
-      border-color: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.10);
       background:
         linear-gradient(
           135deg,
-          rgba(255, 255, 255, 0.22) 0%,
-          rgba(255, 255, 255, 0.10) 48%,
-          rgba(255, 255, 255, 0.06) 100%
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.07) 55%,
+          rgba(255, 255, 255, 0.03) 100%
         );
-      color: rgba(255, 255, 255, 0.88);
+      color: rgba(255, 255, 255, 0.93);
       box-shadow:
-        inset 0 1px 1px rgba(255, 255, 255, 0.18),
-        0 8px 24px rgba(0, 0, 0, 0.22);
+        0 2px 14px rgba(0, 0, 0, 0.18),
+        0 0 0 0.5px rgba(255, 255, 255, 0.06);
     }
 
     .brand-button:active,
@@ -3226,10 +3231,13 @@ select:focus {
       background:
         linear-gradient(
           135deg,
-          rgba(255, 255, 255, 0.28) 0%,
-          rgba(255, 255, 255, 0.14) 48%,
-          rgba(255, 255, 255, 0.08) 100%
+          rgba(255, 255, 255, 0.16) 0%,
+          rgba(255, 255, 255, 0.09) 55%,
+          rgba(255, 255, 255, 0.04) 100%
         );
+      box-shadow:
+        0 0 6px rgba(0, 0, 0, 0.12),
+        0 0 0 0.5px rgba(255, 255, 255, 0.04);
     }
 
     .primary-button,
@@ -3269,14 +3277,14 @@ select:focus {
 
     .switcher-chip,
     .athlete-switcher.scrollable .switcher-chip {
-      border-color: rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.10);
-      color: rgba(255, 255, 255, 0.78);
+      border-color: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.72);
     }
 
     .switcher-chip.active {
-      background: rgba(255, 255, 255, 0.22);
-      color: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.96);
     }
 
     input[type="text"],
