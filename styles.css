@@ -1645,7 +1645,6 @@ select:focus {
     padding: 0;
     min-width: 0;
     color: var(--ios-label);
-    background: linear-gradient(to bottom, transparent var(--ios-nav-height), var(--ios-bg) var(--ios-nav-height));
   }
 
   button,
@@ -1665,6 +1664,7 @@ select:focus {
       var(--ios-nav-height)
       14px
       36px;
+    background: linear-gradient(to bottom, transparent var(--ios-nav-height), var(--ios-bg) var(--ios-nav-height));
   }
 
   .app-main {
@@ -3148,12 +3148,6 @@ select:focus {
       --ios-danger: #ff6961;
 
       --ios-nav-height: calc(108px + env(safe-area-inset-top, 0px));
-
-      background: linear-gradient(to bottom, transparent var(--ios-nav-height), var(--ios-bg) var(--ios-nav-height));
-    }
-
-    .topbar {
-      background: transparent;
     }
 
     .brand-button,
