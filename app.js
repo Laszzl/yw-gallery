@@ -1057,13 +1057,12 @@ function renderCurrentView() {
   if (viewState.currentView === 'athlete') renderAthleteView();
   if (viewState.currentView === 'settings') renderCategoryOverview();
 
-  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-function showHomeView() { viewState.currentView = 'home'; renderAll(); }
-function showAddView() { viewState.currentView = 'add'; renderAll(); }
-function showAthleteView(personId) { viewState.currentView = 'athlete'; viewState.selectedPersonId = personId; renderAll(); }
-function showSettingsView() { viewState.currentView = 'settings'; renderAll(); }
+function showHomeView() { viewState.currentView = 'home'; renderAll(); window.scrollTo({ top: 0, behavior: 'instant' }); }
+function showAddView() { viewState.currentView = 'add'; renderAll(); window.scrollTo({ top: 0, behavior: 'instant' }); }
+function showAthleteView(personId) { viewState.currentView = 'athlete'; viewState.selectedPersonId = personId; renderAll(); window.scrollTo({ top: 0, behavior: 'instant' }); }
+function showSettingsView() { viewState.currentView = 'settings'; renderAll(); window.scrollTo({ top: 0, behavior: 'instant' }); }
 
 function renderSwitcher() {
   elements.switcherScrollArea.innerHTML = '';
