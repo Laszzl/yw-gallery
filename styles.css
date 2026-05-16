@@ -1474,6 +1474,48 @@ select:focus {
   display: grid;
   gap: 20px;
 }
+/* ── Photo thumb grid ── */
+.photo-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.photo-thumb-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.04);
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.photo-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-thumb-replace {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  min-height: unset;
+  padding: 0;
+  box-shadow: none;
+}
 
 .item-actions-list button {
   width: 100%;
@@ -2837,48 +2879,6 @@ select:focus {
   max-width: 180px;
 }
 
-/* ── Photo thumb grid ── */
-.photo-thumb-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  max-height: 360px;
-  overflow-y: auto;
-  padding: 4px 0;
-}
-
-.photo-thumb-item {
-  position: relative;
-  aspect-ratio: 1 / 1;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: rgba(15, 23, 42, 0.04);
-  transition: box-shadow 0.22s ease, transform 0.22s ease;
-}
-
-.photo-thumb-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.photo-thumb-replace {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.88rem;
-  border-radius: 0;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  min-height: unset;
-  padding: 0;
-  box-shadow: none;
-}
 
 /* ── Photo counter on YW cards ── */
 .yw-card-image-wrap {

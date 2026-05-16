@@ -1760,6 +1760,7 @@ function openGalleryManageModal(personId) {
     addBtn.onclick = null;
     deleteBtn.onclick = null;
     photoManageState = { itemId: null, mode: null, replaceIndex: null };
+    syncGallerySettings();
   };
 
   modal.onclick = (e) => { if (e.target === modal) cleanup(); };
@@ -1781,6 +1782,7 @@ function openGalleryManageModal(personId) {
         } else {
           await showModal('已取消本次图片更新');
         }
+        syncGallerySettings();
         renderThumbGrid();
         modal.hidden = false;
         return;
@@ -1797,6 +1799,7 @@ function openGalleryManageModal(personId) {
     }
     await saveState();
     renderGallery(person);
+    syncGallerySettings();
     await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${newPhotos.length} 张图片`);
     renderThumbGrid();
     modal.hidden = false;
@@ -1829,6 +1832,7 @@ function openGalleryManageModal(personId) {
     person.galleryPhotos = [];
     await saveState();
     renderGallery(person);
+    syncGallerySettings();
     await showModal('画廊图片已删除');
     renderThumbGrid();
     modal.hidden = false;
