@@ -2928,6 +2928,10 @@ select:focus {
     --hover-danger-bg: rgba(255, 105, 97, 0.15);
   }
 
+  html {
+    background: #1c1c1e;
+  }
+
   /* Topbar */
   .topbar {
     background: rgba(44, 44, 46, 0.96);
