@@ -605,6 +605,79 @@ button,
   margin-top: 40px;
 }
 
+/* ── Gallery section (athlete detail page) ── */
+.athlete-gallery {
+  margin-top: 40px;
+}
+
+.gallery-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.gallery-title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.gallery-counts {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.gallery-card-image-wrap {
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(135deg, #eceef3 0%, #fafbfd 100%);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.gallery-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+/* ── Gallery settings ── */
+.gallery-settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle-label {
+  font-weight: 500;
+  font-size: var(--text-base);
+}
+
+.gallery-photo-count {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
 .category-section {
   padding: 28px;
   background: rgba(255, 255, 255, 0.72);
@@ -1496,6 +1569,14 @@ select:focus {
   .rail-card {
     flex-basis: 280px;
   }
+
+  .athlete-gallery {
+    margin-top: 32px;
+  }
+
+  .gallery-card {
+    flex-basis: 240px;
+  }
 }
 
 /* ── iPad 竖版 ── */
@@ -1557,6 +1638,14 @@ select:focus {
   /* 卡片 */
   .rail-card {
     flex-basis: 220px;
+  }
+
+  .athlete-gallery {
+    margin-top: 28px;
+  }
+
+  .gallery-card {
+    flex-basis: 200px;
   }
 
   .athlete-selector-grid {
@@ -2139,6 +2228,56 @@ select:focus {
   .rail-card {
     flex: 0 0 100%;
     max-width: 290px;
+  }
+
+  /* ── Gallery on iPhone ── */
+  .athlete-gallery {
+    margin-top: 24px;
+  }
+
+  .gallery-heading {
+    margin-bottom: 8px;
+    padding: 0 2px;
+  }
+
+  .gallery-title {
+    font-size: 1.2rem;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    color: var(--ios-label);
+  }
+
+  .gallery-counts {
+    color: var(--ios-secondary-label);
+    font-size: 0.82rem;
+  }
+
+  .gallery-card {
+    flex: 0 0 100%;
+    max-width: 200px;
+    border-radius: 24px;
+    border: 1px solid var(--ios-card-border);
+    background: var(--ios-card-bg);
+    box-shadow: var(--ios-card-shadow);
+  }
+
+  .gallery-card-image-wrap {
+    border-radius: 24px;
+  }
+
+  .gallery-settings-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .toggle-label {
+    color: var(--ios-label);
+    font-size: 17px;
+  }
+
+  .gallery-photo-count {
+    color: var(--ios-secondary-label);
   }
 
   .yw-card {
@@ -2874,6 +3013,11 @@ select:focus {
     transform: scale(1.018);
   }
 
+  .gallery-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--hover-panel-shadow);
+  }
+
   .photo-thumb-item:hover .photo-thumb-replace {
     opacity: 1;
   }
@@ -3006,6 +3150,14 @@ select:focus {
   .selector-image-wrap,
   .yw-card-image-wrap {
     background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
+  }
+
+  .gallery-card-image-wrap {
+    background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
+  }
+
+  .gallery-card {
+    border-color: rgba(255, 255, 255, 0.06);
   }
 
   .selector-card {

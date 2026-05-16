@@ -164,6 +164,9 @@ function normalizeState() {
   }
 
   for (const person of state.people) {
+    if (person.galleryEnabled === undefined) { person.galleryEnabled = false; changed = true; }
+    if (!Array.isArray(person.galleryPhotos)) { person.galleryPhotos = []; changed = true; }
+
     const currentGroupOrder = state.groupOrderByPerson[person.id];
     const nextGroupOrder = normalizeOrderList(currentGroupOrder, groupIds);
     if (!arraysEqual(currentGroupOrder, nextGroupOrder)) {
@@ -318,9 +321,14 @@ function cacheElements() {
     homeEmptyState: document.querySelector('#homeEmptyState'),
     athleteSelectorGrid: document.querySelector('#athleteSelectorGrid'),
     athleteDetailHero: document.querySelector('#athleteDetailHero'),
+    athleteGallery: document.querySelector('#athleteGallery'),
     athleteGroupedContent: document.querySelector('#athleteGroupedContent'),
 
     settingsPersonSelect: document.querySelector('#settingsPersonSelect'),
+    gallerySettingsBlock: document.querySelector('#gallerySettingsBlock'),
+    galleryToggleBtn: document.querySelector('#galleryToggleBtn'),
+    galleryManageBtn: document.querySelector('#galleryManageBtn'),
+    galleryPhotoCount: document.querySelector('#galleryPhotoCount'),
     overviewPersonSelect: document.querySelector('#overviewPersonSelect'),
     settingsPersonHomePhotoInput: document.querySelector('#settingsPersonHomePhotoInput'),
     settingsPersonDetailPhotoInput: document.querySelector('#settingsPersonDetailPhotoInput'),
@@ -377,6 +385,7 @@ function cacheElements() {
     categorySection: document.querySelector('#categorySectionTemplate'),
     subcategory: document.querySelector('#subcategoryTemplate'),
     ywCard: document.querySelector('#ywCardTemplate'),
+    galleryCard: document.querySelector('#galleryCardTemplate'),
     textItem: document.querySelector('#textItemTemplate'),
     overviewGroup: document.querySelector('#overviewGroupTemplate'),
     overviewCategory: document.querySelector('#overviewCategoryTemplate'),
@@ -743,7 +752,7 @@ async function createPerson(name, homePhotoFile, detailPhotoFile) {
     detailPhotoUrl = await readFileAsDataURL(detailPhotoFile);
   }
 
-  const person = { id: crypto.randomUUID(), name, homePhotoUrl, detailPhotoUrl };
+  const person = { id: crypto.randomUUID(), name, homePhotoUrl, detailPhotoUrl, galleryEnabled: false, galleryPhotos: [] };
   state.people.push(person);
   state.groupOrderByPerson[person.id] = state.groups.map((g) => g.id);
   await saveState();
@@ -1054,7 +1063,7 @@ function renderCurrentView() {
 
   if (viewState.currentView === 'home') renderHomeView();
   if (viewState.currentView === 'athlete') renderAthleteView();
-  if (viewState.currentView === 'settings') renderCategoryOverview();
+  if (viewState.currentView === 'settings') { renderCategoryOverview(); syncGallerySettings(); }
 
 }
 
@@ -1111,6 +1120,26 @@ function syncFormOptions() {
   );
 }
 
+function syncGallerySettings() {
+  if (viewState.currentView !== 'settings') return;
+  const personId = viewState.settingsActivePersonId;
+  const person = state.people.find((p) => p.id === personId);
+
+  if (!person) {
+    elements.gallerySettingsBlock.hidden = true;
+    return;
+  }
+
+  elements.gallerySettingsBlock.hidden = false;
+
+  const enabled = person.galleryEnabled === true;
+  elements.galleryToggleBtn.classList.toggle('active', enabled);
+  elements.galleryToggleBtn.setAttribute('aria-checked', String(enabled));
+
+  const count = (person.galleryPhotos || []).length;
+  elements.galleryPhotoCount.textContent = count > 0 ? `${count} 张图片` : '暂无图片';
+}
+
 function syncGroupOptions() {
   const activePersonForGroups = elements.itemPersonSelect.value || state.people[0]?.id || null;
   const nextGroups = getOrderedGroupsForPerson(activePersonForGroups);
@@ -1155,6 +1184,7 @@ function renderHomeView() {
 function renderAthleteView() {
   const person = state.people.find((p) => p.id === viewState.selectedPersonId);
   elements.athleteDetailHero.innerHTML = '';
+  elements.athleteGallery.innerHTML = '';
   elements.athleteGroupedContent.innerHTML = '';
   if (!person) { viewState.currentView = 'home'; return; }
 
@@ -1164,6 +1194,8 @@ function renderAthleteView() {
   heroName.textContent = person.name;
   if (person.detailPhotoUrl) heroImage.src = person.detailPhotoUrl;
   elements.athleteDetailHero.append(heroFragment);
+
+  renderGallery(person);
 
   const groupsWithContent = getOrderedGroupsForPerson(person.id).filter((g) => hasGroupContent(person.id, g.id));
   for (const group of groupsWithContent) {
@@ -1307,6 +1339,43 @@ function renderGroupSection(personId, group) {
     subSections.append(subFragment);
   }
   return fragment;
+}
+
+function renderGallery(person) {
+  elements.athleteGallery.innerHTML = '';
+
+  if (!person.galleryEnabled || !person.galleryPhotos || person.galleryPhotos.length === 0) {
+    elements.athleteGallery.hidden = true;
+    return;
+  }
+
+  elements.athleteGallery.hidden = false;
+
+  const heading = document.createElement('div');
+  heading.className = 'gallery-heading';
+  const title = document.createElement('h2');
+  title.className = 'gallery-title';
+  title.textContent = '画廊';
+  const counts = document.createElement('p');
+  counts.className = 'gallery-counts';
+  counts.textContent = `${person.galleryPhotos.length} 张`;
+  heading.append(title, counts);
+  elements.athleteGallery.append(heading);
+
+  const railBlock = document.createElement('div');
+  railBlock.className = 'rail-block';
+  const railList = document.createElement('div');
+  railList.className = 'rail-list gallery-rail';
+
+  for (const photoUrl of person.galleryPhotos) {
+    const frag = elements.templates.galleryCard.content.cloneNode(true);
+    const image = frag.querySelector('.gallery-card-image');
+    image.src = photoUrl;
+    railList.append(frag);
+  }
+
+  railBlock.append(railList);
+  elements.athleteGallery.append(railBlock);
 }
 
 function hydrateItemCard(card, item, type, { titleSelector, dateSelector, statusSelector }) {
@@ -1647,6 +1716,127 @@ function openPhotoManageModal(itemId) {
   renderThumbGrid();
 }
 
+function openGalleryManageModal(personId) {
+  const modal = document.getElementById('photoManageModal');
+  const thumbGrid = document.getElementById('photoThumbGrid');
+  const addBtn = document.getElementById('modalPhotoAddBtn');
+  const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
+  const fileInput = document.getElementById('modalPhotoInput');
+  fileInput.value = '';
+  modal.hidden = false;
+  photoManageState = { itemId: null, mode: null, replaceIndex: null, galleryPersonId: personId };
+
+  const renderThumbGrid = () => {
+    thumbGrid.innerHTML = '';
+    const person = state.people.find((p) => p.id === personId);
+    if (!person) return;
+    const photos = person.galleryPhotos || [];
+    deleteBtn.hidden = photos.length === 0;
+    if (photos.length === 0) {
+      thumbGrid.style.display = 'none';
+      return;
+    }
+    thumbGrid.style.display = '';
+    for (let i = 0; i < photos.length; i++) {
+      const frag = elements.templates.photoThumb.content.cloneNode(true);
+      const thumbImg = frag.querySelector('.photo-thumb-img');
+      const replaceBtn = frag.querySelector('.photo-thumb-replace');
+      thumbImg.src = photos[i];
+      replaceBtn.addEventListener('click', () => {
+        photoManageState.mode = 'replace';
+        photoManageState.replaceIndex = i;
+        fileInput.multiple = false;
+        fileInput.value = '';
+        fileInput.click();
+      });
+      thumbGrid.append(frag);
+    }
+  };
+
+  const cleanup = () => {
+    modal.hidden = true;
+    modal.onclick = null;
+    fileInput.onchange = null;
+    addBtn.onclick = null;
+    deleteBtn.onclick = null;
+    photoManageState = { itemId: null, mode: null, replaceIndex: null };
+  };
+
+  modal.onclick = (e) => { if (e.target === modal) cleanup(); };
+
+  const handleFiles = async (files) => {
+    modal.hidden = true;
+    if (!files.length) { modal.hidden = false; return; }
+    const person = state.people.find((p) => p.id === personId);
+    if (!person) { modal.hidden = false; return; }
+    const newPhotos = [];
+    for (const file of files) {
+      const cropResult = await showCropModal(file, 4 / 5);
+      const finalFile = resolveCroppedFile(file, cropResult);
+      if (!finalFile) {
+        if (newPhotos.length) {
+          person.galleryPhotos = [...(person.galleryPhotos || []), ...newPhotos];
+          await saveState();
+          await showModal(`已更新 ${newPhotos.length} 张，剩余已取消`);
+        } else {
+          await showModal('已取消本次图片更新');
+        }
+        renderThumbGrid();
+        modal.hidden = false;
+        return;
+      }
+      newPhotos.push(await readFileAsDataURL(finalFile));
+    }
+
+    if (photoManageState.mode === 'replace') {
+      const current = [...(person.galleryPhotos || [])];
+      current[photoManageState.replaceIndex] = newPhotos[0];
+      person.galleryPhotos = current;
+    } else {
+      person.galleryPhotos = [...(person.galleryPhotos || []), ...newPhotos];
+    }
+    await saveState();
+    renderGallery(person);
+    await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${newPhotos.length} 张图片`);
+    renderThumbGrid();
+    modal.hidden = false;
+  };
+
+  fileInput.onchange = async (event) => {
+    const rawFiles = [...(event.target.files ?? [])].filter((f) => f.size > 0);
+    await handleFiles(rawFiles);
+  };
+
+  addBtn.onclick = () => {
+    photoManageState.mode = 'add';
+    photoManageState.replaceIndex = null;
+    fileInput.multiple = true;
+    fileInput.value = '';
+    fileInput.click();
+  };
+
+  deleteBtn.onclick = async () => {
+    const person = state.people.find((p) => p.id === personId);
+    if (!person || !person.galleryPhotos?.length) {
+      modal.hidden = true;
+      await showModal('当前画廊没有图片可删除');
+      modal.hidden = false;
+      return;
+    }
+    modal.hidden = true;
+    const confirmed = await showModal('确认删除所有画廊图片吗？', { showCancel: true });
+    if (!confirmed) { modal.hidden = false; return; }
+    person.galleryPhotos = [];
+    await saveState();
+    renderGallery(person);
+    await showModal('画廊图片已删除');
+    renderThumbGrid();
+    modal.hidden = false;
+  };
+
+  renderThumbGrid();
+}
+
 // ═══════════════════════════════════════════════
 // Crop modal
 // ═══════════════════════════════════════════════
@@ -1963,6 +2153,7 @@ function bindEvents() {
 
   elements.settingsPersonSelect.addEventListener('change', (event) => {
     viewState.settingsActivePersonId = event.target.value;
+    syncGallerySettings();
   });
   elements.overviewPersonSelect.addEventListener('change', (event) => {
     viewState.overviewPersonId = event.target.value;
@@ -1993,6 +2184,31 @@ function bindEvents() {
     if (!file) return;
     await importData(file);
     event.target.value = '';
+  });
+
+  // Gallery settings
+  elements.galleryToggleBtn.addEventListener('click', async () => {
+    const personId = viewState.settingsActivePersonId;
+    if (!personId) return;
+    const person = state.people.find((p) => p.id === personId);
+    if (!person) return;
+    person.galleryEnabled = !person.galleryEnabled;
+    await saveState();
+    syncGallerySettings();
+    await showModal(person.galleryEnabled ? '画廊已启用' : '画廊已关闭');
+  });
+
+  elements.galleryManageBtn.addEventListener('click', () => {
+    const personId = viewState.settingsActivePersonId;
+    if (!personId) return;
+    const person = state.people.find((p) => p.id === personId);
+    if (!person) return;
+    if (!person.galleryEnabled) {
+      person.galleryEnabled = true;
+      saveState();
+      syncGallerySettings();
+    }
+    openGalleryManageModal(personId);
   });
 
   elements.itemPersonSelect.addEventListener('change', () => syncGroupOptions());

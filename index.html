@@ -46,6 +46,7 @@
 
         <section id="athleteView" class="view-panel" hidden>
           <section id="athleteDetailHero" class="athlete-detail-hero"></section>
+          <section id="athleteGallery" class="athlete-gallery" hidden></section>
           <section id="athleteGroupedContent" class="grouped-content"></section>
         </section>
 
@@ -189,6 +190,24 @@
                     </div>
                   </div>
                 </form>
+            </section>
+
+            <section class="settings-block wide-block" id="gallerySettingsBlock" hidden>
+              <div class="section-heading left">
+                <h2>画廊设置</h2>
+              </div>
+              <div class="gallery-settings-row">
+                <div class="toggle-row">
+                  <span class="toggle-label">启用画廊</span>
+                  <button id="galleryToggleBtn" class="toggle-switch" type="button" role="switch" aria-checked="false">
+                    <span class="toggle-knob"></span>
+                  </button>
+                </div>
+                <p id="galleryPhotoCount" class="gallery-photo-count"></p>
+              </div>
+              <div class="person-photo-actions" style="margin-top: 12px;">
+                <button id="galleryManageBtn" class="primary-button action-button-wide" type="button">管理画廊图片</button>
+              </div>
             </section>
 
             <section class="settings-block wide-block">
@@ -449,6 +468,14 @@
               </button>
             </div>
           </div>
+        </div>
+      </article>
+    </template>
+
+    <template id="galleryCardTemplate">
+      <article class="gallery-card rail-card">
+        <div class="gallery-card-image-wrap">
+          <img class="gallery-card-image" alt="画廊图片" draggable="false" />
         </div>
       </article>
     </template>
