@@ -876,7 +876,6 @@ async function updateItemPhotos(itemId, photoUrls) {
   const item = state.items.find((i) => i.id === itemId);
   if (item) {
     item.photoUrls = photoUrls;
-    moveItemToFront(item);
   }
   await saveState();
 }
