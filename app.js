@@ -1275,7 +1275,7 @@ function renderGroupSection(personId, group) {
   for (const category of categoriesInGroup) {
     const categoryItems = state.items
       .filter((item) => item.personId === personId && item.categoryId === category.id)
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      .sort((a, b) => (b.date || '').localeCompare(a.date || '') || (a.order ?? 0) - (b.order ?? 0));
 
     const subFragment = elements.templates.subcategory.content.cloneNode(true);
     const block = subFragment.querySelector('.subcategory-block');
