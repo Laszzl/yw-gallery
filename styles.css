@@ -1870,9 +1870,9 @@ select:focus {
     margin: 0 auto;
   }
 
-  .switcher-scroll-area,
-  .athlete-switcher.scrollable .switcher-scroll-area {
+  .switcher-scroll-area {
     display: flex;
+    justify-content: center;
     width: 100%;
     gap: 8px;
     overflow-x: auto;
@@ -1883,6 +1883,7 @@ select:focus {
   }
 
   .athlete-switcher.scrollable .switcher-scroll-area {
+    justify-content: flex-start;
     padding: 2px 2px 4px;
     margin: 0;
   }
@@ -1924,9 +1925,7 @@ select:focus {
       0 0 0 0.5px rgba(255, 255, 255, 0.28);
   }
 
-  .athlete-switcher.few-chips .switcher-scroll-area {
-    justify-content: center;
-  }
+
 
   /* ═══════════════════════════════════════════════
      View Panels — edge-to-edge, no desktop glass

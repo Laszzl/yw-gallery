@@ -1068,7 +1068,6 @@ function renderSwitcher() {
   elements.switcherScrollArea.innerHTML = '';
   const overflow = state.people.length > 3;
   elements.athleteSwitcher.classList.toggle('scrollable', overflow);
-  elements.athleteSwitcher.classList.toggle('few-chips', state.people.length > 0 && state.people.length < 3);
   for (const person of state.people) {
     const fragment = elements.templates.switcherChip.content.cloneNode(true);
     const button = fragment.querySelector('.switcher-chip');
