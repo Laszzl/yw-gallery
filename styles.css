@@ -1924,6 +1924,13 @@ select:focus {
       0 0 0 0.5px rgba(255, 255, 255, 0.28);
   }
 
+  .athlete-switcher.few-chips .switcher-scroll-area {
+    justify-content: center;
+  }
+  .athlete-switcher.few-chips .switcher-chip {
+    flex: 0 0 auto;
+  }
+
   /* ═══════════════════════════════════════════════
      View Panels — edge-to-edge, no desktop glass
      ═══════════════════════════════════════════════ */
