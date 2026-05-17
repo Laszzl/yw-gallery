@@ -358,11 +358,6 @@ button,
   font-weight: 600;
 }
 
-.category-section-title {
-  font-size: var(--text-xl);
-  font-weight: 600;
-}
-
 .empty-state-panel {
   display: grid;
   justify-items: center;
@@ -625,8 +620,6 @@ button,
 
 .gallery-title {
   margin: 0;
-  font-size: var(--text-xl);
-  font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text);
 }
