@@ -1363,6 +1363,8 @@ function renderGroupSection(personId, group) {
 
 function renderGallery(person) {
   const savedScrollY = window.scrollY;
+  const oldRail = elements.athleteGallery.querySelector('.gallery-rail');
+  const savedRailScrollLeft = oldRail ? oldRail.scrollLeft : 0;
   elements.athleteGallery.innerHTML = '';
 
   if (!person.galleryEnabled || !person.galleryPhotos || person.galleryPhotos.length === 0) {
@@ -1406,6 +1408,10 @@ function renderGallery(person) {
 
   railBlock.append(railList);
   elements.athleteGallery.append(railBlock);
+
+  if (savedRailScrollLeft > 0) {
+    railList.scrollLeft = Math.min(savedRailScrollLeft, railList.scrollWidth - railList.clientWidth);
+  }
 
   requestAnimationFrame(() => {
     window.scrollTo({ top: savedScrollY, behavior: 'instant' });
@@ -1839,6 +1845,7 @@ function openGalleryManageModal(personId) {
     }
     await saveState();
     renderGallery(person);
+    setupRailMasks();
     syncGallerySettings();
     await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${newPhotos.length} 张图片`);
     renderThumbGrid();
@@ -1872,6 +1879,7 @@ function openGalleryManageModal(personId) {
     person.galleryPhotos = [];
     await saveState();
     renderGallery(person);
+    setupRailMasks();
     syncGallerySettings();
     await showModal('画廊图片已删除');
     renderThumbGrid();
