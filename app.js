@@ -1530,11 +1530,32 @@ function refreshItemCard(itemId) {
   const currentCard = findItemCard(itemId);
   const nextCard = (item.photoUrls || []).length > 0 ? buildImageItemCard(item) : buildTextItemCard(item);
   if (currentCard) currentCard.replaceWith(nextCard);
-  targetRail.prepend(nextCard);
+  insertCardSorted(targetRail, nextCard, item);
 
   refreshCategoryCounts(item.personId, item.categoryId);
   updateRailVisibility(block);
   setupRailMasks();
+}
+
+function insertCardSorted(rail, card, item) {
+  const existingCards = Array.from(rail.querySelectorAll('.rail-card[data-item-id]'));
+  const otherCards = existingCards.filter((c) => c.dataset.itemId !== item.id);
+
+  let insertBeforeCard = null;
+  for (const otherCard of otherCards) {
+    const otherItem = state.items.find((i) => i.id === otherCard.dataset.itemId);
+    if (!otherItem) continue;
+    const dateCmp = (otherItem.date || '').localeCompare(item.date || '');
+    if (dateCmp > 0) continue;
+    if (dateCmp < 0) { insertBeforeCard = otherCard; break; }
+    if ((otherItem.order ?? 0) > (item.order ?? 0)) { insertBeforeCard = otherCard; break; }
+  }
+
+  if (insertBeforeCard) {
+    rail.insertBefore(card, insertBeforeCard);
+  } else {
+    rail.appendChild(card);
+  }
 }
 
 function removeItemCard(itemId, removedItem) {
