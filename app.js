@@ -1598,12 +1598,14 @@ function closeItemActionsModal() {
 
 function closePhotoManageModal() {
   const modal = document.getElementById('photoManageModal');
+  const thumbGrid = document.getElementById('photoThumbGrid');
   const fileInput = document.getElementById('modalPhotoInput');
   const addBtn = document.getElementById('modalPhotoAddBtn');
   const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
   if (!modal.hidden) {
     modal.hidden = true;
     modal.onclick = null;
+    thumbGrid.classList.remove('gallery-thumb-grid');
     fileInput.onchange = null;
     addBtn.onclick = null;
     deleteBtn.onclick = null;
@@ -1641,6 +1643,7 @@ function openPhotoManageModal(itemId) {
   const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
   const fileInput = document.getElementById('modalPhotoInput');
   fileInput.value = '';
+  thumbGrid.classList.remove('gallery-thumb-grid');
   modal.hidden = false;
   photoManageState = { itemId, mode: null, replaceIndex: null };
 
@@ -1674,6 +1677,7 @@ function openPhotoManageModal(itemId) {
   const cleanup = () => {
     modal.hidden = true;
     modal.onclick = null;
+    thumbGrid.classList.remove('gallery-thumb-grid');
     fileInput.onchange = null;
     addBtn.onclick = null;
     deleteBtn.onclick = null;
@@ -1752,6 +1756,7 @@ function openGalleryManageModal(personId) {
   const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
   const fileInput = document.getElementById('modalPhotoInput');
   fileInput.value = '';
+  thumbGrid.classList.add('gallery-thumb-grid');
   modal.hidden = false;
   photoManageState = { itemId: null, mode: null, replaceIndex: null, galleryPersonId: personId };
 
@@ -1785,6 +1790,7 @@ function openGalleryManageModal(personId) {
   const cleanup = () => {
     modal.hidden = true;
     modal.onclick = null;
+    thumbGrid.classList.remove('gallery-thumb-grid');
     fileInput.onchange = null;
     addBtn.onclick = null;
     deleteBtn.onclick = null;

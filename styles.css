@@ -1485,6 +1485,7 @@ select:focus {
 .photo-thumb-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
   gap: 12px;
   max-height: 360px;
   overflow-y: auto;
@@ -1511,6 +1512,7 @@ select:focus {
 .photo-thumb-replace {
   position: absolute;
   inset: 0;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1525,6 +1527,27 @@ select:focus {
   min-height: unset;
   padding: 0;
   box-shadow: none;
+}
+
+.gallery-thumb-grid .photo-thumb-item {
+  aspect-ratio: 4 / 5;
+}
+
+.gallery-thumb-grid .photo-thumb-replace {
+  inset: auto 8px 8px;
+  width: calc(100% - 16px);
+  max-width: calc(100% - 16px);
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.52);
+}
+
+.gallery-thumb-grid .photo-thumb-replace span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .item-actions-list button {
@@ -3565,6 +3588,7 @@ select:focus {
   .photo-thumb-replace {
     inset: auto 8px 8px;
     width: calc(100% - 16px);
+    max-width: calc(100% - 16px);
     min-height: 34px;
     padding: 0 12px;
     gap: 6px;
