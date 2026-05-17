@@ -1535,23 +1535,6 @@ select:focus {
   padding-bottom: 125%;
 }
 
-.gallery-thumb-grid .photo-thumb-replace {
-  inset: auto 8px 8px;
-  width: calc(100% - 16px);
-  max-width: calc(100% - 16px);
-  min-height: 32px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.52);
-  opacity: 1;
-}
-
-.gallery-thumb-grid .photo-thumb-replace span {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 .item-actions-list button {
   width: 100%;
@@ -3576,30 +3559,6 @@ select:focus {
     background: var(--ios-fill);
   }
 
-  .gallery-thumb-grid .photo-thumb-replace {
-    inset: auto 8px 8px;
-    width: calc(100% - 16px);
-    max-width: calc(100% - 16px);
-    min-height: 34px;
-    padding: 0 12px;
-    gap: 6px;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.58);
-    opacity: 1;
-    font-size: 14px;
-  }
-
-  .gallery-thumb-grid .photo-thumb-replace span {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .gallery-thumb-grid .photo-thumb-replace .button-icon {
-    width: 15px;
-    height: 15px;
-  }
 }
 
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
