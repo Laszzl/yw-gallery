@@ -1362,6 +1362,7 @@ function renderGroupSection(personId, group) {
 }
 
 function renderGallery(person) {
+  const savedScrollY = window.scrollY;
   elements.athleteGallery.innerHTML = '';
 
   if (!person.galleryEnabled || !person.galleryPhotos || person.galleryPhotos.length === 0) {
@@ -1405,6 +1406,10 @@ function renderGallery(person) {
 
   railBlock.append(railList);
   elements.athleteGallery.append(railBlock);
+
+  requestAnimationFrame(() => {
+    window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+  });
 }
 
 function hydrateItemCard(card, item, type, { titleSelector, dateSelector, statusSelector }) {
