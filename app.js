@@ -971,6 +971,26 @@ function reorderItemsByDrag(draggedItemId, targetItemId) {
   reorderRailCardsByItemList(sameTypeItems);
 }
 
+function reorderGalleryPhotosByDrag(personId, draggedIndexValue, targetIndexValue) {
+  const person = state.people.find((p) => p.id === personId);
+  const draggedIndex = Number(draggedIndexValue);
+  const targetIndex = Number(targetIndexValue);
+  if (!person || !Array.isArray(person.galleryPhotos)) return;
+  if (!Number.isInteger(draggedIndex) || !Number.isInteger(targetIndex)) return;
+  if (draggedIndex === targetIndex) return;
+  if (draggedIndex < 0 || targetIndex < 0) return;
+  if (draggedIndex >= person.galleryPhotos.length || targetIndex >= person.galleryPhotos.length) return;
+
+  const nextPhotos = [...person.galleryPhotos];
+  const [moved] = nextPhotos.splice(draggedIndex, 1);
+  nextPhotos.splice(targetIndex, 0, moved);
+  person.galleryPhotos = nextPhotos;
+
+  saveState(); // fire-and-forget
+  renderGallery(person);
+  setupRailMasks();
+}
+
 function reorderRailCardsByItemList(itemsInOrder) {
   if (!itemsInOrder.length) return;
   const firstCard = document.querySelector('.rail-card[data-item-id="' + itemsInOrder[0].id + '"]');
@@ -1367,10 +1387,19 @@ function renderGallery(person) {
   const railList = document.createElement('div');
   railList.className = 'rail-list gallery-rail';
 
-  for (const photoUrl of person.galleryPhotos) {
+  const attachGalleryDrag = createDragHandler({
+    dragOverClass: 'gallery-card',
+    onDrop: (draggedIndex, targetIndex) => reorderGalleryPhotosByDrag(person.id, draggedIndex, targetIndex),
+  });
+
+  for (let i = 0; i < person.galleryPhotos.length; i++) {
+    const photoUrl = person.galleryPhotos[i];
     const frag = elements.templates.galleryCard.content.cloneNode(true);
+    const card = frag.querySelector('.gallery-card');
     const image = frag.querySelector('.gallery-card-image');
     image.src = photoUrl;
+    card.dataset.galleryIndex = String(i);
+    attachGalleryDrag(card, String(i));
     railList.append(frag);
   }
 
