@@ -1981,6 +1981,7 @@ select:focus {
     gap: 0;
   }
 
+
   /* ═══════════════════════════════════════════════
      Athlete Switcher — row 2 chips
      ═══════════════════════════════════════════════ */
@@ -2429,9 +2430,9 @@ select:focus {
   input[type="date"]:focus,
   select:focus,
   .date-display-button:focus-visible {
-    background-color: #ffffff;
-    border-color: rgba(17, 17, 17, 0.28);
-    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.62);
+    border-color: var(--ios-separator);
+    box-shadow: none;
   }
 
   .checkbox-panel {
@@ -3406,6 +3407,7 @@ select:focus {
       box-shadow: none;
     }
 
+
     .primary-button,
     .secondary-button,
     .file-picker.primary-button,
@@ -3468,9 +3470,9 @@ select:focus {
     input[type="date"]:focus,
     select:focus,
     .date-display-button:focus-visible {
-      background-color: #3a3a3c;
-      border-color: rgba(235, 235, 245, 0.24);
-      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.07);
+      background: rgba(44, 44, 46, 0.72);
+      border-color: var(--ios-separator);
+      box-shadow: none;
     }
 
     .modal-content {
