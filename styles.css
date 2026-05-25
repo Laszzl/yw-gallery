@@ -1935,7 +1935,7 @@ select:focus {
     height: 50px;
     min-height: 50px;
     border-radius: 999px;
-    border: 0.5px solid rgba(255, 255, 255, 0.32);
+    border: 0.5px solid rgba(255, 255, 255, 0.50);
     background:
       linear-gradient(
         135deg,
