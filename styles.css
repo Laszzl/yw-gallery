@@ -3031,6 +3031,37 @@ select:focus {
   }
 }
 
+/* iPhone / iPad: buttons keep their state, but do not animate tap feedback. */
+@media (max-width: 1366px) {
+  button,
+  .primary-button,
+  .secondary-button,
+  .mini-button,
+  .mini-file-button,
+  .file-picker,
+  .danger-button,
+  .danger-lite-button,
+  .switcher-chip,
+  .date-display-button {
+    transition: none !important;
+  }
+
+  button:active,
+  .primary-button:active,
+  .secondary-button:active,
+  .mini-button:active,
+  .mini-file-button:active,
+  .file-picker:active,
+  .danger-button:active,
+  .danger-lite-button:active,
+  .switcher-chip:active,
+  .date-display-button:active {
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}
+
 /* ═══════════════════════════════════════════════
    Dark Mode
    ═══════════════════════════════════════════════ */
