@@ -2053,9 +2053,7 @@ select:focus {
     border: 0.5px solid rgba(255, 255, 255, 0.28);
     background: rgba(255, 255, 255, 0.18);
     color: rgba(17, 17, 17, 0.76);
-    box-shadow:
-      0 1px 8px rgba(15, 23, 42, 0.04),
-      0 0 0 0.5px rgba(255, 255, 255, 0.18);
+    box-shadow: none;
     -webkit-backdrop-filter: saturate(170%) blur(16px);
     backdrop-filter: saturate(170%) blur(16px);
     font-size: 0.92rem;
@@ -2070,9 +2068,7 @@ select:focus {
     background: rgba(255, 255, 255, 0.18);
     color: rgba(17, 17, 17, 0.76);
     border: 0.5px solid rgba(255, 255, 255, 0.28);
-    box-shadow:
-      0 1px 8px rgba(15, 23, 42, 0.04),
-      0 0 0 0.5px rgba(255, 255, 255, 0.18);
+    box-shadow: none;
   }
 
 
