@@ -216,7 +216,6 @@ button,
 .yw-card,
 .text-item-row,
 .empty-state-panel,
-.empty-inline,
 .settings-block,
 .manager-row,
 .overview-group-card,
@@ -229,7 +228,6 @@ button,
 .view-panel,
 .category-section,
 .empty-state-panel,
-.empty-inline,
 .settings-block,
 .glass-form,
 .overview-group-card,
@@ -696,8 +694,7 @@ button,
   margin-bottom: 6px;
 }
 
-.manager-row,
-.order-row {
+.manager-row {
   padding: 16px 20px;
   border-radius: var(--radius-md);
   margin-bottom: 8px;
@@ -706,10 +703,6 @@ button,
 .manager-row {
   background: rgba(255, 255, 255, 0.84);
   border: 1px solid rgba(15, 23, 42, 0.06);
-}
-
-.order-row .order-actions {
-  margin-left: auto;
 }
 
 .manager-copy {
@@ -1529,6 +1522,20 @@ select:focus {
   box-shadow: none;
 }
 
+@media (hover: none), (max-width: 768px) {
+  .photo-thumb-replace {
+    inset: auto 8px 8px auto;
+    min-height: 32px;
+    height: 32px;
+    padding: 0 11px;
+    border-radius: 999px;
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.58);
+    font-size: 0.82rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  }
+}
+
 .gallery-thumb-grid .photo-thumb-item {
   padding-bottom: 125%;
 }
@@ -1683,8 +1690,7 @@ select:focus {
     width: 100%;
   }
 
-  .manager-row .order-actions,
-  .order-row .order-actions {
+  .manager-row .order-actions {
     margin-left: 0 !important;
     margin-top: 12px;
   }
@@ -2129,7 +2135,6 @@ select:focus {
   .yw-card,
   .text-item-row,
   .empty-state-panel,
-  .empty-inline,
   .settings-block,
   .manager-row,
   .overview-group-card,
@@ -2585,8 +2590,7 @@ select:focus {
     border-radius: 16px;
   }
 
-  .manager-row .order-actions,
-  .order-row .order-actions {
+  .manager-row .order-actions {
     margin-left: auto;
     margin-top: 0;
   }
@@ -2913,21 +2917,11 @@ select:focus {
   pointer-events: none;
 }
 
-.yw-card-image-wrap.has-multi-photos {
-}
-
 /* ── 数据管理 ── */
 .data-manage-actions {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-}
-
-.data-manage-hint {
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--text-sm);
-  line-height: 1.6;
 }
 
 /* ═══════════════════════════════════════════════
@@ -3145,7 +3139,6 @@ select:focus {
   .yw-card,
   .text-item-row,
   .empty-state-panel,
-  .empty-inline,
   .settings-block,
   .manager-row,
   .overview-group-card,

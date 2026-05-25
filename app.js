@@ -90,9 +90,16 @@ async function saveState() {
       tx.oncomplete = resolve;
       tx.onerror = () => reject(tx.error);
     });
+    return { ok: true, storage: 'indexedDB' };
   } catch (e) {
     console.error('IndexedDB 保存失败，回退到 localStorage:', e);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      return { ok: true, storage: 'localStorage' };
+    } catch (storageError) {
+      console.error('localStorage 保存失败:', storageError);
+      return { ok: false, storage: null };
+    }
   }
 }
 
@@ -106,6 +113,100 @@ function restoreStateFromData(data) {
   state.groupOrderByPerson = data.groupOrderByPerson || {};
   state.categoryOrderByPerson = data.categoryOrderByPerson || {};
   return normalizeState();
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isValidDateString(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
+function validateImportedState(data) {
+  if (!isPlainObject(data)) return { ok: false, message: '备份文件根数据格式错误' };
+
+  const requiredKeys = ['people', 'groups', 'categories', 'items'];
+  const missingKeys = requiredKeys.filter((key) => !Array.isArray(data[key]));
+  if (missingKeys.length > 0) {
+    return { ok: false, message: '备份文件数据不完整，缺少关键字段：' + missingKeys.join('、') };
+  }
+
+  const optionalObjectKeys = ['collapsedSubcategories', 'collapsedSettingsGroups', 'groupOrderByPerson', 'categoryOrderByPerson'];
+  for (const key of optionalObjectKeys) {
+    if (data[key] !== undefined && !isPlainObject(data[key])) {
+      return { ok: false, message: `备份文件字段 ${key} 格式错误` };
+    }
+  }
+
+  const personIds = new Set();
+  for (const person of data.people) {
+    if (!isPlainObject(person) || typeof person.id !== 'string' || !person.id || typeof person.name !== 'string') {
+      return { ok: false, message: '备份文件中的体育生数据格式错误' };
+    }
+    if (personIds.has(person.id)) return { ok: false, message: `备份文件存在重复体育生 ID：${person.id}` };
+    personIds.add(person.id);
+    if (person.galleryEnabled !== undefined && typeof person.galleryEnabled !== 'boolean') {
+      return { ok: false, message: `体育生"${person.name}"的画廊状态格式错误` };
+    }
+    if (person.galleryPhotos !== undefined && (!Array.isArray(person.galleryPhotos) || person.galleryPhotos.some((url) => typeof url !== 'string'))) {
+      return { ok: false, message: `体育生"${person.name}"的画廊图片格式错误` };
+    }
+  }
+
+  const groupIds = new Set();
+  for (const group of data.groups) {
+    if (!isPlainObject(group) || typeof group.id !== 'string' || !group.id || typeof group.name !== 'string') {
+      return { ok: false, message: '备份文件中的大品类数据格式错误' };
+    }
+    if (groupIds.has(group.id)) return { ok: false, message: `备份文件存在重复大品类 ID：${group.id}` };
+    groupIds.add(group.id);
+  }
+
+  const categoriesById = new Map();
+  for (const category of data.categories) {
+    if (!isPlainObject(category) || typeof category.id !== 'string' || !category.id || typeof category.name !== 'string' || typeof category.groupId !== 'string') {
+      return { ok: false, message: '备份文件中的小品类数据格式错误' };
+    }
+    if (categoriesById.has(category.id)) return { ok: false, message: `备份文件存在重复小品类 ID：${category.id}` };
+    if (!groupIds.has(category.groupId)) return { ok: false, message: `小品类"${category.name}"引用了不存在的大品类` };
+    categoriesById.set(category.id, category);
+  }
+
+  const itemIds = new Set();
+  for (const item of data.items) {
+    if (!isPlainObject(item) || typeof item.id !== 'string' || !item.id || typeof item.personId !== 'string' || typeof item.categoryId !== 'string' || typeof item.label !== 'string' || typeof item.unit !== 'string') {
+      return { ok: false, message: '备份文件中的 YW 数据格式错误' };
+    }
+    if (itemIds.has(item.id)) return { ok: false, message: `备份文件存在重复 YW ID：${item.id}` };
+    itemIds.add(item.id);
+    if (!personIds.has(item.personId)) return { ok: false, message: `YW"${item.label}"引用了不存在的体育生` };
+    if (!categoriesById.has(item.categoryId)) return { ok: false, message: `YW"${item.label}"引用了不存在的小品类` };
+    if (!Number.isInteger(item.quantity) || item.quantity < 1) return { ok: false, message: `YW"${item.label}"的数量格式错误` };
+    if (!isValidDateString(item.date || '1998-03-25')) return { ok: false, message: `YW"${item.label}"的日期格式错误` };
+    if (item.isGift !== undefined && typeof item.isGift !== 'boolean') return { ok: false, message: `YW"${item.label}"的赠送状态格式错误` };
+    if (item.isOwnedNow !== undefined && typeof item.isOwnedNow !== 'boolean') return { ok: false, message: `YW"${item.label}"的现存状态格式错误` };
+    if (item.photoUrls !== undefined && (!Array.isArray(item.photoUrls) || item.photoUrls.some((url) => typeof url !== 'string'))) {
+      return { ok: false, message: `YW"${item.label}"的图片格式错误` };
+    }
+  }
+
+  return {
+    ok: true,
+    data: {
+      people: data.people,
+      groups: data.groups,
+      categories: data.categories,
+      items: data.items,
+      collapsedSubcategories: data.collapsedSubcategories || {},
+      collapsedSettingsGroups: data.collapsedSettingsGroups || {},
+      groupOrderByPerson: data.groupOrderByPerson || {},
+      categoryOrderByPerson: data.categoryOrderByPerson || {},
+    },
+  };
 }
 
 function normalizeOrderList(currentOrder, validIds) {
@@ -148,6 +249,38 @@ function normalizeState() {
   if (!state.categoryOrderByPerson || typeof state.categoryOrderByPerson !== 'object') {
     state.categoryOrderByPerson = {};
     changed = true;
+  }
+
+  if (!Array.isArray(state.items)) {
+    state.items = [];
+    changed = true;
+  }
+
+  for (const item of state.items) {
+    if (!Number.isInteger(item.quantity) || item.quantity < 1) {
+      item.quantity = 1;
+      changed = true;
+    }
+    if (!isValidDateString(item.date)) {
+      item.date = '1998-03-25';
+      changed = true;
+    }
+    if (typeof item.isGift !== 'boolean') {
+      item.isGift = false;
+      changed = true;
+    }
+    if (typeof item.isOwnedNow !== 'boolean') {
+      item.isOwnedNow = true;
+      changed = true;
+    }
+    if (!Array.isArray(item.photoUrls)) {
+      item.photoUrls = [];
+      changed = true;
+    }
+    if (!Number.isFinite(item.order)) {
+      item.order = 0;
+      changed = true;
+    }
   }
 
   for (const personId of Object.keys(state.groupOrderByPerson)) {
@@ -235,7 +368,8 @@ async function loadState() {
       const data = JSON.parse(raw);
       restoreStateFromData(data);
       // 迁移到 IndexedDB，完成后清理 localStorage
-      saveState().then(() => {
+      saveState().then((result) => {
+        if (!result || result.storage !== 'indexedDB') return;
         localStorage.removeItem(STORAGE_KEY);
       });
       return true;
@@ -276,10 +410,9 @@ async function importData(file) {
     return;
   }
 
-  const requiredKeys = ['people', 'groups', 'categories', 'items'];
-  const missingKeys = requiredKeys.filter((k) => !(k in data) || !Array.isArray(data[k]));
-  if (missingKeys.length > 0) {
-    await showModal('备份文件数据不完整，缺少关键字段：' + missingKeys.join('、'));
+  const validation = validateImportedState(data);
+  if (!validation.ok) {
+    await showModal(validation.message);
     return;
   }
 
@@ -289,7 +422,7 @@ async function importData(file) {
   );
   if (!confirmed) return;
 
-  restoreStateFromData(data);
+  restoreStateFromData(validation.data);
   await saveState();
   viewState.selectedPersonId = state.people[0]?.id ?? null;
   viewState.settingsActivePersonId = state.people[0]?.id ?? null;
@@ -561,12 +694,6 @@ function handleDateItemClick(colType, value, scrollEl) {
   }
   scrollToSelectedItem(scrollEl, value);
   updateColumnSelection(scrollEl, value);
-}
-
-function getScrollEl(colType) {
-  if (colType === 'year') return elements.dateYearScroll;
-  if (colType === 'month') return elements.dateMonthScroll;
-  return elements.dateDayScroll;
 }
 
 function onColumnScroll(e) {
@@ -857,6 +984,13 @@ function moveItemToFront(item) {
 }
 
 async function createItem(itemData) {
+  const personExists = state.people.some((person) => person.id === itemData.personId);
+  const groupExists = state.groups.some((group) => group.id === itemData.groupId);
+  const category = state.categories.find((entry) => entry.id === itemData.categoryId);
+  if (!personExists || !groupExists || !category || category.groupId !== itemData.groupId) {
+    throw new Error('Invalid item references');
+  }
+
   const item = {
     id: crypto.randomUUID(),
     personId: itemData.personId,
@@ -950,13 +1084,15 @@ function reorderItemsByDrag(draggedItemId, targetItemId) {
   if (!draggedItem || !targetItem) return;
   if (draggedItem.personId !== targetItem.personId || draggedItem.categoryId !== targetItem.categoryId) return;
   if ((draggedItem.photoUrls?.length > 0) !== (targetItem.photoUrls?.length > 0)) return;
+  if ((draggedItem.date || '1998-03-25') !== (targetItem.date || '1998-03-25')) return;
 
   const sameTypeItems = state.items
     .filter(
       (i) =>
         i.personId === draggedItem.personId &&
         i.categoryId === draggedItem.categoryId &&
-        (i.photoUrls?.length > 0) === (draggedItem.photoUrls?.length > 0)
+        (i.photoUrls?.length > 0) === (draggedItem.photoUrls?.length > 0) &&
+        (i.date || '1998-03-25') === (draggedItem.date || '1998-03-25')
     )
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const draggedIndex = sameTypeItems.findIndex((i) => i.id === draggedItemId);
@@ -1101,6 +1237,9 @@ function renderSwitcher() {
     const button = fragment.querySelector('.switcher-chip');
     button.textContent = person.name;
     button.setAttribute('aria-label', `查看${person.name}的图库`);
+    const active = person.id === viewState.selectedPersonId;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-current', active && viewState.currentView === 'athlete' ? 'page' : 'false');
     button.addEventListener('click', () => showAthleteView(person.id));
     elements.switcherScrollArea.append(fragment);
   }
@@ -1206,7 +1345,13 @@ function renderAthleteView() {
   elements.athleteDetailHero.innerHTML = '';
   elements.athleteGallery.innerHTML = '';
   elements.athleteGroupedContent.innerHTML = '';
-  if (!person) { viewState.currentView = 'home'; return; }
+  if (!person) {
+    viewState.currentView = 'home';
+    viewState.selectedPersonId = state.people[0]?.id ?? null;
+    renderSwitcher();
+    renderCurrentView();
+    return;
+  }
 
   const heroFragment = elements.templates.detailHero.content.cloneNode(true);
   const heroImage = heroFragment.querySelector('.detail-hero-image');
@@ -1656,147 +1801,40 @@ async function handleDeleteItem(itemId) {
   await showModal('YW 已删除');
 }
 
-async function applyPhotoUpdate(itemId, item, photoUrls) {
-  if (!photoUrls.length) return;
-  if (photoManageState.mode === 'replace') {
-    const current = [...(item.photoUrls || [])];
-    current[photoManageState.replaceIndex] = photoUrls[0];
-    await updateItemPhotos(itemId, current);
-  } else {
-    await updateItemPhotos(itemId, [...(item.photoUrls || []), ...photoUrls]);
-  }
-  refreshItemCard(itemId);
-}
-
-function openPhotoManageModal(itemId) {
+function openPhotoCollectionManager(config) {
   const modal = document.getElementById('photoManageModal');
   const thumbGrid = document.getElementById('photoThumbGrid');
   const addBtn = document.getElementById('modalPhotoAddBtn');
   const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
   const fileInput = document.getElementById('modalPhotoInput');
   fileInput.value = '';
-  thumbGrid.classList.remove('gallery-thumb-grid');
+  thumbGrid.classList.toggle('gallery-thumb-grid', Boolean(config.galleryGrid));
   modal.hidden = false;
-  photoManageState = { itemId, mode: null, replaceIndex: null };
+  photoManageState = { itemId: config.itemId || null, mode: null, replaceIndex: null, galleryPersonId: config.galleryPersonId || null };
+
+  const getRecord = () => config.getRecord();
+  const getPhotos = () => config.getPhotos(getRecord()) || [];
+  const setPhotos = async (photos) => {
+    const record = getRecord();
+    if (!record) return false;
+    await config.setPhotos(record, photos);
+    if (config.afterPhotosChange) config.afterPhotosChange(record);
+    return true;
+  };
+
+  const applyPhotos = async (photoUrls) => {
+    if (!photoUrls.length) return false;
+    const current = [...getPhotos()];
+    if (photoManageState.mode === 'replace') {
+      current[photoManageState.replaceIndex] = photoUrls[0];
+      return setPhotos(current);
+    }
+    return setPhotos([...current, ...photoUrls]);
+  };
 
   const renderThumbGrid = () => {
     thumbGrid.innerHTML = '';
-    const item = state.items.find((i) => i.id === itemId);
-    if (!item) return;
-    deleteBtn.hidden = !item.photoUrls || item.photoUrls.length === 0;
-    const photoCount = (item.photoUrls || []).length;
-    if (photoCount === 0) {
-      thumbGrid.style.display = 'none';
-      return;
-    }
-    thumbGrid.style.display = '';
-    for (let i = 0; i < photoCount; i++) {
-      const frag = elements.templates.photoThumb.content.cloneNode(true);
-      const thumbImg = frag.querySelector('.photo-thumb-img');
-      const replaceBtn = frag.querySelector('.photo-thumb-replace');
-      thumbImg.src = item.photoUrls[i];
-      replaceBtn.addEventListener('click', () => {
-        photoManageState.mode = 'replace';
-        photoManageState.replaceIndex = i;
-        fileInput.multiple = false;
-        fileInput.value = '';
-        fileInput.click();
-      });
-      thumbGrid.append(frag);
-    }
-  };
-
-  const cleanup = () => {
-    modal.hidden = true;
-    modal.onclick = null;
-    thumbGrid.classList.remove('gallery-thumb-grid');
-    fileInput.onchange = null;
-    addBtn.onclick = null;
-    deleteBtn.onclick = null;
-    photoManageState = { itemId: null, mode: null, replaceIndex: null };
-  };
-
-  modal.onclick = (e) => { if (e.target === modal) cleanup(); };
-
-  const handleFiles = async (files) => {
-    modal.hidden = true;
-    if (!files.length) { modal.hidden = false; return; }
-    const item = state.items.find((i) => i.id === itemId);
-    if (!item) { modal.hidden = false; return; }
-    const photoUrls = [];
-    for (const file of files) {
-      const cropResult = await showCropModal(file, 1);
-      const finalFile = resolveCroppedFile(file, cropResult);
-      if (!finalFile) {
-        if (photoUrls.length) {
-          await applyPhotoUpdate(itemId, item, photoUrls);
-          await showModal(`已更新 ${photoUrls.length} 张，剩余已取消`);
-        } else {
-          await showModal('已取消本次图片更新');
-        }
-        renderThumbGrid();
-        modal.hidden = false;
-        return;
-      }
-      photoUrls.push(await readFileAsDataURL(finalFile));
-    }
-
-    await applyPhotoUpdate(itemId, item, photoUrls);
-    await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${photoUrls.length} 张图片`);
-    renderThumbGrid();
-    modal.hidden = false;
-  };
-
-  fileInput.onchange = async (event) => {
-    const rawFiles = [...(event.target.files ?? [])].filter((f) => f.size > 0);
-    await handleFiles(rawFiles);
-  };
-
-  addBtn.onclick = () => {
-    photoManageState.mode = 'add';
-    photoManageState.replaceIndex = null;
-    fileInput.multiple = true;
-    fileInput.value = '';
-    fileInput.click();
-  };
-
-  deleteBtn.onclick = async () => {
-    const item = state.items.find((i) => i.id === itemId);
-    if (!item || !item.photoUrls?.length) {
-      modal.hidden = true;
-      await showModal('当前 YW 没有图片可删除');
-      modal.hidden = false;
-      return;
-    }
-    modal.hidden = true;
-    const confirmed = await showModal('确认删除所有图片吗？', { showCancel: true });
-    if (!confirmed) { modal.hidden = false; return; }
-    await updateItemPhotos(itemId, []);
-    refreshItemCard(itemId);
-    await showModal('图片已删除');
-    renderThumbGrid();
-    modal.hidden = false;
-  };
-
-  renderThumbGrid();
-}
-
-function openGalleryManageModal(personId) {
-  const modal = document.getElementById('photoManageModal');
-  const thumbGrid = document.getElementById('photoThumbGrid');
-  const addBtn = document.getElementById('modalPhotoAddBtn');
-  const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
-  const fileInput = document.getElementById('modalPhotoInput');
-  fileInput.value = '';
-  thumbGrid.classList.add('gallery-thumb-grid');
-  modal.hidden = false;
-  photoManageState = { itemId: null, mode: null, replaceIndex: null, galleryPersonId: personId };
-
-  const renderThumbGrid = () => {
-    thumbGrid.innerHTML = '';
-    const person = state.people.find((p) => p.id === personId);
-    if (!person) return;
-    const photos = person.galleryPhotos || [];
+    const photos = getPhotos();
     deleteBtn.hidden = photos.length === 0;
     if (photos.length === 0) {
       thumbGrid.style.display = 'none';
@@ -1827,7 +1865,7 @@ function openGalleryManageModal(personId) {
     addBtn.onclick = null;
     deleteBtn.onclick = null;
     photoManageState = { itemId: null, mode: null, replaceIndex: null };
-    syncGallerySettings();
+    if (config.onClose) config.onClose();
   };
 
   modal.onclick = (e) => { if (e.target === modal) cleanup(); };
@@ -1835,40 +1873,32 @@ function openGalleryManageModal(personId) {
   const handleFiles = async (files) => {
     modal.hidden = true;
     if (!files.length) { modal.hidden = false; return; }
-    const person = state.people.find((p) => p.id === personId);
-    if (!person) { modal.hidden = false; return; }
-    const newPhotos = [];
+    if (!getRecord()) { modal.hidden = false; return; }
+    const photoUrls = [];
     for (const file of files) {
-      const cropResult = await showCropModal(file, 4 / 5);
+      const cropResult = await showCropModal(file, config.aspectRatio);
       const finalFile = resolveCroppedFile(file, cropResult);
       if (!finalFile) {
-        if (newPhotos.length) {
-          person.galleryPhotos = [...(person.galleryPhotos || []), ...newPhotos];
-          await saveState();
-          await showModal(`已更新 ${newPhotos.length} 张，剩余已取消`);
+        if (cropResult?.type === 'error') {
+          renderThumbGrid();
+          modal.hidden = false;
+          return;
+        }
+        if (photoUrls.length) {
+          await applyPhotos(photoUrls);
+          await showModal(`已更新 ${photoUrls.length} 张，剩余已取消`);
         } else {
           await showModal('已取消本次图片更新');
         }
-        syncGallerySettings();
         renderThumbGrid();
         modal.hidden = false;
         return;
       }
-      newPhotos.push(await readFileAsDataURL(finalFile));
+      photoUrls.push(await readFileAsDataURL(finalFile));
     }
 
-    if (photoManageState.mode === 'replace') {
-      const current = [...(person.galleryPhotos || [])];
-      current[photoManageState.replaceIndex] = newPhotos[0];
-      person.galleryPhotos = current;
-    } else {
-      person.galleryPhotos = [...(person.galleryPhotos || []), ...newPhotos];
-    }
-    await saveState();
-    renderGallery(person);
-    setupRailMasks();
-    syncGallerySettings();
-    await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${newPhotos.length} 张图片`);
+    await applyPhotos(photoUrls);
+    await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${photoUrls.length} 张图片`);
     renderThumbGrid();
     modal.hidden = false;
   };
@@ -1887,27 +1917,63 @@ function openGalleryManageModal(personId) {
   };
 
   deleteBtn.onclick = async () => {
-    const person = state.people.find((p) => p.id === personId);
-    if (!person || !person.galleryPhotos?.length) {
+    if (!getRecord() || !getPhotos().length) {
       modal.hidden = true;
-      await showModal('当前画廊没有图片可删除');
+      await showModal(config.emptyDeleteMessage);
       modal.hidden = false;
       return;
     }
     modal.hidden = true;
-    const confirmed = await showModal('确认删除所有画廊图片吗？', { showCancel: true });
+    const confirmed = await showModal(config.confirmDeleteMessage, { showCancel: true });
     if (!confirmed) { modal.hidden = false; return; }
-    person.galleryPhotos = [];
-    await saveState();
-    renderGallery(person);
-    setupRailMasks();
-    syncGallerySettings();
-    await showModal('画廊图片已删除');
+    await setPhotos([]);
+    await showModal(config.deleteSuccessMessage);
     renderThumbGrid();
     modal.hidden = false;
   };
 
   renderThumbGrid();
+}
+
+function openPhotoManageModal(itemId) {
+  openPhotoCollectionManager({
+    itemId,
+    aspectRatio: 1,
+    emptyDeleteMessage: '当前 YW 没有图片可删除',
+    confirmDeleteMessage: '确认删除所有图片吗？',
+    deleteSuccessMessage: '图片已删除',
+    getRecord: () => state.items.find((i) => i.id === itemId),
+    getPhotos: (item) => item?.photoUrls || [],
+    setPhotos: async (item, photos) => {
+      await updateItemPhotos(item.id, photos);
+    },
+    afterPhotosChange: (item) => {
+      refreshItemCard(item.id);
+    },
+  });
+}
+
+function openGalleryManageModal(personId) {
+  openPhotoCollectionManager({
+    galleryPersonId: personId,
+    galleryGrid: true,
+    aspectRatio: 4 / 5,
+    emptyDeleteMessage: '当前画廊没有图片可删除',
+    confirmDeleteMessage: '确认删除所有画廊图片吗？',
+    deleteSuccessMessage: '画廊图片已删除',
+    getRecord: () => state.people.find((p) => p.id === personId),
+    getPhotos: (person) => person?.galleryPhotos || [],
+    setPhotos: async (person, photos) => {
+      person.galleryPhotos = photos;
+      await saveState();
+    },
+    afterPhotosChange: (person) => {
+      renderGallery(person);
+      setupRailMasks();
+      syncGallerySettings();
+    },
+    onClose: syncGallerySettings,
+  });
 }
 
 // ═══════════════════════════════════════════════
@@ -1916,6 +1982,11 @@ function openGalleryManageModal(personId) {
 let cropResolve = null;
 let cropState = { file: null, aspectRatio: 1, imgNaturalW: 0, imgNaturalH: 0, imgX: 0, imgY: 0, imgW: 0, imgH: 0, cx: 0, cy: 0, cw: 0, ch: 0, containerW: 0, containerH: 0 };
 let cropDrag = { active: false, mode: null, handle: null, startX: 0, startY: 0, snapCX: 0, snapCY: 0, snapCW: 0, snapCH: 0 };
+
+function failCropRead() {
+  closeCropModal(createCropResult('error'));
+  showModal('图片无法读取，请更换图片');
+}
 
 function showCropModal(file, aspectRatio) {
   return new Promise((resolve) => {
@@ -1928,11 +1999,13 @@ function showCropModal(file, aspectRatio) {
     else if (Math.abs(aspectRatio - 0.8) < 0.01) container.classList.add('portrait-45');
     else container.classList.add('portrait-34');
     const reader = new FileReader();
+    reader.onerror = failCropRead;
     reader.onload = function (e) {
-      elements.cropImage.src = e.target.result;
+      elements.cropImage.onerror = failCropRead;
       elements.cropImage.onload = function () {
         requestAnimationFrame(function () { initCropLayout(); renderCropOverlay(); });
       };
+      elements.cropImage.src = e.target.result;
     };
     reader.readAsDataURL(file);
     elements.cropModal.hidden = false;
@@ -2026,6 +2099,7 @@ async function performCrop() {
   canvas.width = canvasW;
   canvas.height = canvasH;
   const ctx = canvas.getContext('2d');
+  if (!ctx || sw <= 0 || sh <= 0) return null;
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, canvasW, canvasH);
   ctx.drawImage(img, Math.round(sx), Math.round(sy), Math.round(sw), Math.round(sh), 0, 0, canvasW, canvasH);
@@ -2036,6 +2110,7 @@ function prepareCropModalClose() {
   elements.cropModal.hidden = true;
   endCropDrag();
   elements.cropImage.onload = null;
+  elements.cropImage.onerror = null;
   elements.cropImage.src = '';
 }
 
@@ -2096,7 +2171,18 @@ function bindCropModalEvents() {
   document.addEventListener('touchend', endCropDrag);
 
   elements.cropConfirmBtn.addEventListener('click', async () => {
-    const blob = await performCrop();
+    let blob;
+    try {
+      blob = await performCrop();
+    } catch (err) {
+      console.error(err);
+      failCropRead();
+      return;
+    }
+    if (!blob) {
+      failCropRead();
+      return;
+    }
     closeCropModal(createCropResult('crop', blob));
   });
   elements.cropSkipBtn.addEventListener('click', () => { closeCropModal(createCropResult('original')); });
@@ -2378,7 +2464,7 @@ function bindEvents() {
       const formData = new FormData(elements.itemForm);
       const personId = String(formData.get('personId'));
       const groupId = String(formData.get('groupId'));
-      let categoryId = String(formData.get('categoryId'));
+      const categoryId = String(formData.get('categoryId'));
       const label = String(formData.get('label')).trim();
       const quantityRaw = String(formData.get('quantity')).trim();
       const quantity = Number(quantityRaw);
@@ -2388,13 +2474,22 @@ function bindEvents() {
       const isOwnedNow = formData.has('isOwnedNow');
       const rawFiles = formData.getAll('photos').filter((f) => f instanceof File && f.size > 0);
 
-      const groupHasCategories = getOrderedCategoriesForPersonGroup(personId, groupId).length > 0;
-      if (!groupHasCategories) categoryId = '';
-      if (!personId || !groupId || (groupHasCategories && !categoryId) || !label || !quantityRaw || !unit) {
+      const categoryOptions = getOrderedCategoriesForPersonGroup(personId, groupId);
+      if (!personId || !groupId || !label || !quantityRaw || !unit) {
         await showModal('请把 YW 信息填写完整'); return;
+      }
+      if (!categoryOptions.length) {
+        await showModal('请先为当前大品类添加小品类'); return;
+      }
+      const selectedCategory = categoryOptions.find((category) => category.id === categoryId);
+      if (!selectedCategory) {
+        await showModal('请选择有效的小品类'); return;
       }
       if (!Number.isInteger(quantity) || quantity < 1) {
         await showModal('数量必须是大于 0 的整数'); return;
+      }
+      if (!isValidDateString(date)) {
+        await showModal('日期格式错误，请重新选择日期'); return;
       }
 
       const photoUrls = [];
@@ -2402,7 +2497,7 @@ function bindEvents() {
         photoUrls.push(await readFileAsDataURL(file));
       }
 
-      await createItem({ personId, categoryId, label, quantity, unit, date, isGift, isOwnedNow, photoUrls });
+      await createItem({ personId, groupId, categoryId, label, quantity, unit, date, isGift, isOwnedNow, photoUrls });
 
       elements.itemForm.reset();
       elements.itemOwnedNowInput.checked = true;
@@ -2421,10 +2516,15 @@ function bindEvents() {
   });
 
   // Prevent double-submit for forms
-  const lockNames = { [elements.groupForm]: 'group', [elements.categoryForm]: 'category', [elements.personForm]: 'person', [elements.itemForm]: 'item' };
+  const lockNames = new Map([
+    [elements.groupForm, 'group'],
+    [elements.categoryForm, 'category'],
+    [elements.personForm, 'person'],
+    [elements.itemForm, 'item'],
+  ]);
   [elements.groupForm, elements.categoryForm, elements.personForm, elements.itemForm].forEach((form) => {
     form.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' && formLocks[lockNames[form]]) event.preventDefault();
+      if (event.key === 'Enter' && formLocks[lockNames.get(form)]) event.preventDefault();
     });
   });
 }
