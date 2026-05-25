@@ -1820,14 +1820,6 @@ select:focus {
     font-size: 16px;
   }
 
-  /* Override global button transition — exclude transform to prevent
-     :active scale flicker on iPhone (finger lifts faster than 0.22s) */
-  button,
-  .mini-file-button,
-  .file-picker {
-    transition: background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
-  }
-
   /* ═══════════════════════════════════════════════
      Page Shell — edge-to-edge
      ═══════════════════════════════════════════════ */
@@ -1956,8 +1948,6 @@ select:focus {
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
     transform: translateZ(0);
-    transition: background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
-    touch-action: manipulation;
   }
 
   .brand-button {
@@ -1989,20 +1979,6 @@ select:focus {
 
   .nav-icon-button {
     gap: 0;
-  }
-
-  .brand-button:active,
-  #addButton:active,
-  #settingsButton:active {
-    transform: scale(0.96) translateZ(0);
-    background:
-      linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.50) 0%,
-        rgba(255, 255, 255, 0.30) 55%,
-        rgba(255, 255, 255, 0.14) 100%
-      );
-    box-shadow: none;
   }
 
   /* ═══════════════════════════════════════════════
@@ -2072,7 +2048,6 @@ select:focus {
     text-overflow: ellipsis;
     white-space: nowrap;
     scroll-snap-align: center;
-    touch-action: manipulation;
   }
 
   .switcher-chip.active {
@@ -2462,7 +2437,6 @@ select:focus {
   .checkbox-panel {
     padding: 12px 14px;
     border-radius: 16px;
-    will-change: auto;
   }
 
   .checkbox-inline-group {
@@ -3430,22 +3404,6 @@ select:focus {
         );
       color: rgba(255, 255, 255, 0.93);
       box-shadow: none;
-      transition: background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
-      touch-action: manipulation;
-    }
-
-    .brand-button:active,
-    #addButton:active,
-    #settingsButton:active {
-      transform: scale(0.96) translateZ(0);
-      background:
-        linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.16) 0%,
-          rgba(255, 255, 255, 0.09) 55%,
-          rgba(255, 255, 255, 0.04) 100%
-        );
-      box-shadow: none;
     }
 
     .primary-button,
@@ -3535,13 +3493,6 @@ select:focus {
     transition-duration: 0.001ms !important;
   }
 
-  #addButton:active,
-  #settingsButton:active,
-  #homeButton:active,
-  .switcher-chip:active,
-  .image-items-rail .rail-card:active {
-    transform: none;
-  }
 }
 
 @media (max-width: 768px) and (prefers-reduced-transparency: reduce) {
