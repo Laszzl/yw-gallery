@@ -2922,12 +2922,20 @@ select:focus {
     cursor: grabbing;
   }
 
+  .brand-button,
+  .primary-button,
+  .secondary-button,
+  .file-picker.primary-button {
+    border: 1px solid transparent;
+  }
+
   .brand-button:hover,
   .primary-button:hover,
   .secondary-button:hover,
   .file-picker.primary-button:hover {
     transform: translateY(-0.5px);
     background: linear-gradient(180deg, #242426 0%, #151517 100%);
+    border-color: var(--hover-control-border);
     box-shadow: var(--hover-primary-shadow);
   }
 
