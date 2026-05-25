@@ -1820,6 +1820,14 @@ select:focus {
     font-size: 16px;
   }
 
+  /* Override global button transition — exclude transform to prevent
+     :active scale flicker on iPhone (finger lifts faster than 0.22s) */
+  button,
+  .mini-file-button,
+  .file-picker {
+    transition: background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+  }
+
   /* ═══════════════════════════════════════════════
      Page Shell — edge-to-edge
      ═══════════════════════════════════════════════ */
@@ -2454,6 +2462,7 @@ select:focus {
   .checkbox-panel {
     padding: 12px 14px;
     border-radius: 16px;
+    will-change: auto;
   }
 
   .checkbox-inline-group {
@@ -3421,6 +3430,8 @@ select:focus {
         );
       color: rgba(255, 255, 255, 0.93);
       box-shadow: none;
+      transition: background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      touch-action: manipulation;
     }
 
     .brand-button:active,
