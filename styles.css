@@ -17,16 +17,17 @@
   --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.05);
   --shadow-control: 0 8px 20px rgba(15, 23, 42, 0.05);
   --shadow-topbar: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 8px rgba(15, 23, 42, 0.04);
-  --hover-control-bg: rgba(255, 255, 255, 0.94);
-  --hover-control-border: rgba(15, 23, 42, 0.13);
-  --hover-control-shadow: 0 8px 18px rgba(15, 23, 42, 0.07);
-  --hover-primary-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+  --hover-control-bg: rgba(255, 255, 255, 0.96);
+  --hover-control-border: rgba(15, 23, 42, 0.10);
+  --hover-control-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+  --hover-primary-shadow: 0 8px 18px rgba(15, 23, 42, 0.09);
   --hover-field-bg: rgba(255, 255, 255, 0.96);
-  --hover-field-border: rgba(17, 17, 17, 0.16);
-  --hover-panel-shadow: 0 14px 30px rgba(15, 23, 42, 0.09);
+  --hover-field-border: rgba(17, 17, 17, 0.15);
+  --hover-panel-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
   --hover-date-item-bg: rgba(17, 17, 17, 0.04);
-  --hover-danger-bg: rgba(192, 54, 44, 0.12);
+  --hover-danger-bg: rgba(192, 54, 44, 0.10);
   --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  --ease-apple: cubic-bezier(0.16, 0, 0.22, 1);
   --radius-xl: 28px;
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -98,7 +99,7 @@ button,
 .file-picker {
   border: 0;
   border-radius: 999px;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease, background-color 0.22s ease, border-color 0.22s ease;
+  transition: transform 0.22s var(--ease-apple), box-shadow 0.22s var(--ease-apple), opacity 0.22s var(--ease-apple), background-color 0.22s var(--ease-apple), border-color 0.22s var(--ease-apple), filter 0.22s var(--ease-apple);
   font-weight: 500;
 }
 
@@ -159,7 +160,7 @@ button,
 
 .brand-button {
   min-width: 56px;
-  background: linear-gradient(180deg, #151515 0%, #000000 100%);
+  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #050505 100%);
   color: var(--primary-fg);
   font-size: 1.05rem;
   letter-spacing: 0.08em;
@@ -168,7 +169,7 @@ button,
 
 .primary-button,
 .secondary-button {
-  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #0a0a0a 100%);
   color: var(--primary-fg);
   box-shadow: var(--shadow-control);
 }
@@ -303,7 +304,7 @@ button,
 }
 
 .switcher-chip.active {
-  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #0a0a0a 100%);
   color: #ffffff;
   box-shadow: var(--shadow-control);
 }
@@ -392,7 +393,7 @@ button,
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-xl);
-  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  transition: transform 0.28s var(--ease-apple), box-shadow 0.28s var(--ease-apple);
 }
 
 .selector-image-wrap,
@@ -486,8 +487,7 @@ button,
   border: 1px solid var(--line);
   background: #ffffff;
   box-shadow: var(--shadow-control);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-  will-change: transform;
+  transition: transform 0.22s var(--ease-apple), box-shadow 0.22s var(--ease-apple), border-color 0.22s var(--ease-apple);
 }
 
 .checkbox-panel-inline {
@@ -674,7 +674,9 @@ button,
   font-size: var(--text-sm);
 }
 
-
+.gallery-actions {
+  margin-top: 12px;
+}
 
 .category-section {
   padding: 28px;
@@ -822,7 +824,7 @@ button,
 .text-item-row {
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  transition: transform 0.28s var(--ease-apple), box-shadow 0.28s var(--ease-apple);
   border: 1px solid rgba(15, 23, 42, 0.04);
   box-shadow: none;
 }
@@ -1148,7 +1150,7 @@ select,
   background: rgba(255, 255, 255, 0.92);
   color: var(--text);
   box-shadow: var(--shadow-control);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, border-color 0.22s ease;
+  transition: transform 0.22s var(--ease-apple), box-shadow 0.22s var(--ease-apple), background-color 0.22s var(--ease-apple), border-color 0.22s var(--ease-apple);
 }
 
 input[type="text"],
@@ -1493,7 +1495,7 @@ select:focus {
   border-radius: var(--radius-md);
   overflow: hidden;
   background: rgba(15, 23, 42, 0.04);
-  transition: box-shadow 0.22s ease, transform 0.22s ease;
+  transition: box-shadow 0.22s var(--ease-apple), transform 0.22s var(--ease-apple);
 }
 
 .photo-thumb-img {
@@ -1538,7 +1540,9 @@ select:focus {
   }
 }
 
-
+.gallery-thumb-grid .photo-thumb-item {
+  padding-bottom: 125%;
+}
 
 
 .item-actions-list button {
@@ -2913,6 +2917,7 @@ select:focus {
 
 /* ═══════════════════════════════════════════════
    Mac Desktop Only — hover (触摸设备不生效)
+   Apple-inspired: luminance/scale, no translateY lift
    ═══════════════════════════════════════════════ */
 @media (hover: hover) and (pointer: fine) {
   .rail-card[draggable="true"],
@@ -2927,56 +2932,62 @@ select:focus {
     cursor: grabbing;
   }
 
-  .brand-button,
-  .primary-button,
-  .secondary-button,
-  .file-picker.primary-button {
-    border: 1px solid transparent;
-  }
-
-  /* 统一按钮 hover：共享 transform + border + shadow */
-  .brand-button:hover,
-  .primary-button:hover,
-  .secondary-button:hover,
-  .mini-button:hover,
-  .mini-file-button:hover,
-  .subtle-icon-btn:hover,
-  .file-picker:hover,
-  .switcher-chip:hover {
-    transform: translateY(-0.5px);
-    border-color: var(--hover-control-border);
-    box-shadow: var(--hover-control-shadow);
-  }
-
-  /* 深色渐变背景 */
+  /* ── Filled Buttons: illuminate via brightness ── */
   .brand-button:hover,
   .primary-button:hover,
   .secondary-button:hover,
   .file-picker.primary-button:hover {
-    background: linear-gradient(180deg, #242426 0%, #151517 100%);
+    filter: brightness(1.10);
+    box-shadow: var(--hover-primary-shadow);
   }
 
-  /* 浅色半透明背景 */
+  .brand-button:active,
+  .primary-button:active,
+  .secondary-button:active,
+  .file-picker.primary-button:active {
+    filter: brightness(0.94);
+    transition: filter 0.08s var(--ease-apple);
+  }
+
+  /* ── Ghost Buttons: surface brightens, border surfaces ── */
   .mini-button:hover,
   .mini-file-button:hover,
   .subtle-icon-btn:hover,
   .file-picker:not(.primary-button):hover,
   .switcher-chip:hover {
     background: var(--hover-control-bg);
+    border-color: var(--hover-control-border);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  .mini-button:active,
+  .mini-file-button:active,
+  .subtle-icon-btn:active,
+  .file-picker:not(.primary-button):active,
+  .switcher-chip:active {
+    background: rgba(17, 17, 17, 0.06);
+    transition: background 0.08s var(--ease-apple);
   }
 
   .switcher-chip.active:hover {
-    background: linear-gradient(180deg, #242426 0%, #151517 100%);
+    filter: brightness(1.08);
   }
 
+  /* ── Danger Buttons ── */
   .danger-button:hover,
   .danger-lite-button:hover {
-    transform: translateY(-0.5px);
     background: var(--hover-danger-bg);
     border-color: rgba(192, 54, 44, 0.18);
     box-shadow: var(--hover-control-shadow);
   }
 
+  .danger-button:active,
+  .danger-lite-button:active {
+    filter: brightness(0.94);
+    transition: filter 0.08s var(--ease-apple);
+  }
+
+  /* ── Form Fields ── */
   input[type="text"]:hover,
   input[type="number"]:hover,
   input[type="date"]:hover,
@@ -2988,9 +2999,10 @@ select:focus {
   }
 
   .date-display-button:hover .date-chevron {
-    transform: translateY(1px);
+    opacity: 0.6;
   }
 
+  /* ── Checkbox / Toggle ── */
   .checkbox-panel:hover {
     border-color: var(--hover-field-border);
     box-shadow: var(--hover-control-shadow);
@@ -3009,14 +3021,16 @@ select:focus {
     filter: brightness(1.03);
   }
 
+  /* ── Date Picker Items ── */
   .date-col-item:hover {
     color: var(--text);
     background: var(--hover-date-item-bg);
     font-weight: 500;
   }
 
+  /* ── Cards: subtle scale lift ── */
   .selector-card:hover {
-    transform: translateY(-1.5px);
+    transform: scale(1.006);
     border-color: var(--hover-control-border);
     box-shadow: var(--hover-panel-shadow);
   }
@@ -3026,16 +3040,17 @@ select:focus {
   }
 
   .gallery-card:hover {
-    transform: translateY(-2px);
+    transform: scale(1.008);
     box-shadow: var(--hover-panel-shadow);
   }
 
+  /* ── Photo Thumbnails ── */
   .photo-thumb-item:hover .photo-thumb-replace {
     opacity: 1;
   }
 
   .photo-thumb-item:hover {
-    transform: translateY(-0.5px);
+    transform: scale(1.015);
     box-shadow: var(--hover-control-shadow);
   }
 
@@ -3043,6 +3058,7 @@ select:focus {
     background: rgba(0, 0, 0, 0.5);
   }
 
+  /* ── Crop ── */
   .crop-rect:hover {
     border-color: #9ed0f5;
     box-shadow: 0 0 0 3px rgba(124, 184, 228, 0.14);
@@ -3051,6 +3067,21 @@ select:focus {
   .crop-handle:hover {
     transform: scale(1.04);
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.32);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════
+   Reduced Motion — respect OS preference
+   ═══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 }
 
@@ -3077,15 +3108,15 @@ select:focus {
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
     --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
     --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
-    --hover-control-bg: rgba(255, 255, 255, 0.10);
-    --hover-control-border: rgba(255, 255, 255, 0.14);
-    --hover-control-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
-    --hover-primary-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
-    --hover-field-bg: rgba(255, 255, 255, 0.10);
-    --hover-field-border: rgba(255, 255, 255, 0.18);
-    --hover-panel-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
-    --hover-date-item-bg: rgba(255, 255, 255, 0.06);
-    --hover-danger-bg: rgba(255, 105, 97, 0.15);
+    --hover-control-bg: rgba(255, 255, 255, 0.08);
+    --hover-control-border: rgba(255, 255, 255, 0.12);
+    --hover-control-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    --hover-primary-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+    --hover-field-bg: rgba(255, 255, 255, 0.08);
+    --hover-field-border: rgba(255, 255, 255, 0.15);
+    --hover-panel-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
+    --hover-date-item-bg: rgba(255, 255, 255, 0.05);
+    --hover-danger-bg: rgba(255, 105, 97, 0.12);
     --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
