@@ -321,7 +321,7 @@ function normalizeState() {
     }
 
     for (const group of state.groups) {
-      const categoryIds = state.categories.filter((c) => c.groupId === group.id).map((c) => c.id);
+      const categoryIds = getCategoriesByGroupId(group.id).map((category) => category.id);
       if (!categoryIds.length) {
         if (categoryOrderMap[group.id]) {
           delete categoryOrderMap[group.id];
@@ -832,9 +832,29 @@ function formatCategoryCounts(items) {
   return `总数量 ${totalQty} · 现存 ${ownedQty}`;
 }
 
+function findPersonById(personId) {
+  return state.people.find((person) => person.id === personId);
+}
+
+function findItemById(itemId) {
+  return state.items.find((item) => item.id === itemId);
+}
+
+function findCategoryById(categoryId) {
+  return state.categories.find((category) => category.id === categoryId);
+}
+
+function getCategoriesByGroupId(groupId) {
+  return state.categories.filter((category) => category.groupId === groupId);
+}
+
+function getItemsByPersonCategory(personId, categoryId) {
+  return state.items.filter((item) => item.personId === personId && item.categoryId === categoryId);
+}
+
 function hasGroupContent(personId, groupId) {
-  return state.categories.some(
-    (c) => c.groupId === groupId && state.items.some((item) => item.personId === personId && item.categoryId === c.id)
+  return getCategoriesByGroupId(groupId).some(
+    (category) => getItemsByPersonCategory(personId, category.id).length > 0
   );
 }
 
@@ -847,7 +867,7 @@ function getGroupOrderIdsForPerson(personId) {
 
 function getCategoryOrderIdsForPersonGroup(personId, groupId) {
   return state.categoryOrderByPerson[personId]?.[groupId] ||
-    state.categories.filter((c) => c.groupId === groupId).map((c) => c.id);
+    getCategoriesByGroupId(groupId).map((category) => category.id);
 }
 
 function getOrderedGroupsForPerson(personId) {
@@ -860,11 +880,11 @@ function getOrderedGroupsForPerson(personId) {
 function getOrderedCategoriesForPersonGroup(personId, groupId) {
   if (!groupId) return [];
   if (!personId) {
-    return state.categories.filter((c) => c.groupId === groupId);
+    return getCategoriesByGroupId(groupId);
   }
   const orderIds = getCategoryOrderIdsForPersonGroup(personId, groupId);
   const categoryMap = new Map(
-    state.categories.filter((c) => c.groupId === groupId).map((c) => [c.id, c])
+    getCategoriesByGroupId(groupId).map((category) => [category.id, category])
   );
   return orderIds.map((id) => categoryMap.get(id)).filter(Boolean);
 }
@@ -879,6 +899,14 @@ function readFileAsDataURL(file) {
     reader.onerror = () => reject(reader.error);
     reader.readAsDataURL(file);
   });
+}
+
+async function readFilesAsDataURLs(files) {
+  const photoUrls = [];
+  for (const file of files) {
+    photoUrls.push(await readFileAsDataURL(file));
+  }
+  return photoUrls;
 }
 
 
@@ -905,7 +933,7 @@ async function createPerson(name, homePhotoFile, detailPhotoFile) {
 
 async function updatePersonPhoto(personId, field, file) {
   const photoUrlValue = await readFileAsDataURL(file);
-  const person = state.people.find((p) => p.id === personId);
+  const person = findPersonById(personId);
   if (person) person[field] = photoUrlValue;
   await saveState();
 }
@@ -936,7 +964,7 @@ async function createGroup(name) {
 }
 
 async function deleteGroup(groupId) {
-  const categoryIds = state.categories.filter((c) => c.groupId === groupId).map((c) => c.id);
+  const categoryIds = getCategoriesByGroupId(groupId).map((category) => category.id);
   state.groups = state.groups.filter((g) => g.id !== groupId);
   state.categories = state.categories.filter((c) => c.groupId !== groupId);
   state.items = state.items.filter((item) => !categoryIds.includes(item.categoryId));
@@ -972,7 +1000,7 @@ async function createCategory(groupId, name) {
 }
 
 async function deleteCategory(categoryId) {
-  const category = state.categories.find((c) => c.id === categoryId);
+  const category = findCategoryById(categoryId);
   if (!category) return;
   state.categories = state.categories.filter((c) => c.id !== categoryId);
   state.items = state.items.filter((item) => item.categoryId !== categoryId);
@@ -993,8 +1021,8 @@ async function deleteCategory(categoryId) {
 // CRUD: Items
 // ═══════════════════════════════════════════════
 function moveItemToFront(item) {
-  const siblings = state.items
-    .filter((i) => i.personId === item.personId && i.categoryId === item.categoryId && i.id !== item.id)
+  const siblings = getItemsByPersonCategory(item.personId, item.categoryId)
+    .filter((entry) => entry.id !== item.id)
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   item.order = 0;
   siblings.forEach((sib, i) => { sib.order = i + 1; });
@@ -1003,7 +1031,7 @@ function moveItemToFront(item) {
 async function createItem(itemData) {
   const personExists = state.people.some((person) => person.id === itemData.personId);
   const groupExists = state.groups.some((group) => group.id === itemData.groupId);
-  const category = state.categories.find((entry) => entry.id === itemData.categoryId);
+  const category = findCategoryById(itemData.categoryId);
   if (!personExists || !groupExists || !category || category.groupId !== itemData.groupId) {
     throw new Error('Invalid item references');
   }
@@ -1033,7 +1061,7 @@ async function deleteItem(itemId) {
 }
 
 async function updateItemPhotos(itemId, photoUrls) {
-  const item = state.items.find((i) => i.id === itemId);
+  const item = findItemById(itemId);
   if (item) {
     item.photoUrls = photoUrls;
   }
@@ -1056,7 +1084,7 @@ function ensureCategoryOrderForPersonGroup(personId, groupId) {
   if (!state.categoryOrderByPerson[personId]) state.categoryOrderByPerson[personId] = {};
   let order = state.categoryOrderByPerson[personId][groupId];
   if (!Array.isArray(order)) {
-    order = state.categories.filter((c) => c.groupId === groupId).map((c) => c.id);
+    order = getCategoriesByGroupId(groupId).map((category) => category.id);
     state.categoryOrderByPerson[personId][groupId] = order;
     saveState(); // fire-and-forget
   }
@@ -1096,18 +1124,16 @@ function reorderCategoriesByDrag(personId, groupId, draggedCategoryId, targetCat
 }
 
 function reorderItemsByDrag(draggedItemId, targetItemId) {
-  const draggedItem = state.items.find((i) => i.id === draggedItemId);
-  const targetItem = state.items.find((i) => i.id === targetItemId);
+  const draggedItem = findItemById(draggedItemId);
+  const targetItem = findItemById(targetItemId);
   if (!draggedItem || !targetItem) return;
   if (draggedItem.personId !== targetItem.personId || draggedItem.categoryId !== targetItem.categoryId) return;
   if (itemHasPhotos(draggedItem) !== itemHasPhotos(targetItem)) return;
   if ((draggedItem.date || '1998-03-25') !== (targetItem.date || '1998-03-25')) return;
 
-  const sameTypeItems = state.items
+  const sameTypeItems = getItemsByPersonCategory(draggedItem.personId, draggedItem.categoryId)
     .filter(
       (i) =>
-        i.personId === draggedItem.personId &&
-        i.categoryId === draggedItem.categoryId &&
         itemHasPhotos(i) === itemHasPhotos(draggedItem) &&
         (i.date || '1998-03-25') === (draggedItem.date || '1998-03-25')
     )
@@ -1125,7 +1151,7 @@ function reorderItemsByDrag(draggedItemId, targetItemId) {
 }
 
 function reorderGalleryPhotosByDrag(personId, draggedIndexValue, targetIndexValue) {
-  const person = state.people.find((p) => p.id === personId);
+  const person = findPersonById(personId);
   const draggedIndex = Number(draggedIndexValue);
   const targetIndex = Number(targetIndexValue);
   if (!person || !Array.isArray(person.galleryPhotos)) return;
@@ -1196,7 +1222,7 @@ function createDragHandler({ dragOverClass, onDrop }) {
       element.classList.remove('drag-over');
       const draggedId = event.dataTransfer.getData('text/plain');
       if (!draggedId || draggedId === id) return;
-      onDrop(draggedId, id);
+      onDrop(draggedId, id, element, event);
     });
   };
 }
@@ -1204,6 +1230,23 @@ function createDragHandler({ dragOverClass, onDrop }) {
 const attachItemDrag = createDragHandler({
   dragOverClass: 'rail-card',
   onDrop: (draggedId, targetId) => reorderItemsByDrag(draggedId, targetId),
+});
+
+const attachOverviewGroupDrag = createDragHandler({
+  dragOverClass: 'overview-group-card',
+  onDrop: (draggedId, targetId, targetEl) => {
+    const personId = targetEl.dataset.personId || viewState.overviewPersonId;
+    if (personId) reorderGroupsByDrag(personId, draggedId, targetId);
+  },
+});
+
+const attachOverviewCategoryDrag = createDragHandler({
+  dragOverClass: 'overview-category-row',
+  onDrop: (draggedId, targetId, targetEl) => {
+    const personId = targetEl.dataset.personId || viewState.overviewPersonId;
+    const groupId = targetEl.dataset.groupId;
+    if (personId && groupId) reorderCategoriesByDrag(personId, groupId, draggedId, targetId);
+  },
 });
 
 // ═══════════════════════════════════════════════
@@ -1306,7 +1349,7 @@ function syncFormOptions() {
 function syncGallerySettings() {
   if (viewState.currentView !== 'settings') return;
   const personId = viewState.settingsActivePersonId;
-  const person = state.people.find((p) => p.id === personId);
+  const person = findPersonById(personId);
 
   if (!person) {
     elements.gallerySettingsBlock.hidden = true;
@@ -1365,7 +1408,7 @@ function renderHomeView() {
 }
 
 function renderAthleteView() {
-  const person = state.people.find((p) => p.id === viewState.selectedPersonId);
+  const person = findPersonById(viewState.selectedPersonId);
   elements.athleteDetailHero.innerHTML = '';
   elements.athleteGallery.innerHTML = '';
   elements.athleteGroupedContent.innerHTML = '';
@@ -1412,6 +1455,7 @@ function renderCategoryOverview() {
     const content = fragment.querySelector('.overview-group-content');
     const groupToggle = fragment.querySelector('[data-group-toggle]');
     const remove = fragment.querySelector('[data-group-delete]');
+    card.dataset.personId = personId;
     card.dataset.groupId = group.id;
     const categories = getOrderedCategoriesForPersonGroup(personId, group.id);
     const isCollapsed = Boolean(state.collapsedSettingsGroups[group.id]);
@@ -1419,11 +1463,7 @@ function renderCategoryOverview() {
     title.textContent = group.name;
     meta.textContent = categories.length ? `${categories.length} 个小品类` : '暂无小品类';
     if (isCollapsed) card.classList.add('collapsed');
-    const attachGroupDrag = createDragHandler({
-      dragOverClass: 'overview-group-card',
-      onDrop: (draggedId, targetId) => reorderGroupsByDrag(personId, draggedId, targetId),
-    });
-    attachGroupDrag(card, group.id);
+    attachOverviewGroupDrag(card, group.id);
 
     groupToggle.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -1446,13 +1486,11 @@ function renderCategoryOverview() {
       const row = catFragment.querySelector('.overview-category-row');
       const name = catFragment.querySelector('.manager-row-title');
       const catDelete = catFragment.querySelector('[data-category-delete]');
+      row.dataset.personId = personId;
+      row.dataset.groupId = group.id;
       row.dataset.categoryId = category.id;
       name.textContent = category.name;
-      const attachCategoryDrag = createDragHandler({
-        dragOverClass: 'overview-category-row',
-        onDrop: (draggedId, targetId) => reorderCategoriesByDrag(personId, group.id, draggedId, targetId),
-      });
-      attachCategoryDrag(row, category.id);
+      attachOverviewCategoryDrag(row, category.id);
       catDelete.addEventListener('click', () => handleDeleteCategory(category.id));
       content.appendChild(row);
     }
@@ -1475,14 +1513,14 @@ async function handleDeleteGroup(groupId) {
 }
 
 async function handleDeleteCategory(categoryId) {
-  const category = state.categories.find((c) => c.id === categoryId);
+  const category = findCategoryById(categoryId);
   if (!category) return;
   await confirmAndDelete(`确认删除小品类"${category.name}"及其关联的所有 YW 吗？`, () => deleteCategory(categoryId), '小品类已删除');
 }
 
 function renderGroupSection(personId, group) {
   const categoriesInGroup = getOrderedCategoriesForPersonGroup(personId, group.id).filter((c) =>
-    state.items.some((item) => item.personId === personId && item.categoryId === c.id)
+    getItemsByPersonCategory(personId, c.id).length > 0
   );
   const fragment = elements.templates.categorySection.content.cloneNode(true);
   const title = fragment.querySelector('.category-section-title');
@@ -1490,8 +1528,7 @@ function renderGroupSection(personId, group) {
   title.textContent = group.name;
 
   for (const category of categoriesInGroup) {
-    const categoryItems = state.items
-      .filter((item) => item.personId === personId && item.categoryId === category.id)
+    const categoryItems = getItemsByPersonCategory(personId, category.id)
       .sort((a, b) => (b.date || '').localeCompare(a.date || '') || (a.order ?? 0) - (b.order ?? 0));
 
     const subFragment = elements.templates.subcategory.content.cloneNode(true);
@@ -1590,7 +1627,7 @@ function hydrateItemCard(card, item, type, { titleSelector, dateSelector, status
 
   title.textContent = formatItemLabel(item);
   if (statusEl) statusEl.textContent = formatItemStatus(item);
-  dateEl.textContent = formatDate(item.date) || item.notes || '98/3/25';
+  dateEl.textContent = formatDate(item.date) || '98/3/25';
   menuToggle.addEventListener('click', () => openItemActionsModal(item.id, type));
   card.dataset.itemId = item.id;
   attachItemDrag(card, item.id);
@@ -1662,7 +1699,7 @@ function updateRailVisibility(block) {
 function refreshCategoryCounts(personId, categoryId) {
   const block = getRenderedSubcategoryBlock(personId, categoryId);
   if (!block) return;
-  const categoryItems = state.items.filter((item) => item.personId === personId && item.categoryId === categoryId);
+  const categoryItems = getItemsByPersonCategory(personId, categoryId);
   const countsNode = block.querySelector('.subcategory-counts');
   if (!countsNode) return;
   countsNode.textContent = formatCategoryCounts(categoryItems);
@@ -1679,7 +1716,7 @@ function removeEmptyRenderedSubcategory(personId, categoryId) {
 }
 
 function refreshItemCard(itemId) {
-  const item = state.items.find((i) => i.id === itemId);
+  const item = findItemById(itemId);
   if (!item) return;
   const block = getRenderedSubcategoryBlock(item.personId, item.categoryId);
   if (!block) return;
@@ -1705,7 +1742,7 @@ function insertCardSorted(rail, card, item) {
 
   let insertBeforeCard = null;
   for (const otherCard of otherCards) {
-    const otherItem = state.items.find((i) => i.id === otherCard.dataset.itemId);
+    const otherItem = findItemById(otherCard.dataset.itemId);
     if (!otherItem) continue;
     const dateCmp = (otherItem.date || '').localeCompare(item.date || '');
     if (dateCmp > 0) continue;
@@ -1742,7 +1779,7 @@ function openItemActionsModal(itemId, type) {
   activeItemAction = { itemId, type };
   elements.itemActionsModal.hidden = false;
 
-  const item = state.items.find((i) => i.id === itemId);
+  const item = findItemById(itemId);
 
   for (const toggle of elements.itemStatusToggles) {
     const key = toggle.dataset.statusToggle;
@@ -1752,7 +1789,7 @@ function openItemActionsModal(itemId, type) {
     toggle.onclick = async () => {
       const active = toggle.classList.toggle('active');
       toggle.setAttribute('aria-checked', String(active));
-      const currentItem = state.items.find((i) => i.id === itemId);
+      const currentItem = findItemById(itemId);
       if (currentItem) {
         currentItem[key] = active;
         await saveState();
@@ -1808,7 +1845,7 @@ function closePhotoManageModal() {
 }
 
 async function handleDeleteItem(itemId) {
-  const item = state.items.find((i) => i.id === itemId);
+  const item = findItemById(itemId);
   if (!item) return;
   const removedItem = { personId: item.personId, categoryId: item.categoryId };
   const confirmed = await showModal(`确认删除 YW"${item.label}"吗？`, { showCancel: true });
@@ -1959,7 +1996,7 @@ function openPhotoManageModal(itemId) {
     emptyDeleteMessage: '当前 YW 没有图片可删除',
     confirmDeleteMessage: '确认删除所有图片吗？',
     deleteSuccessMessage: '图片已删除',
-    getRecord: () => state.items.find((i) => i.id === itemId),
+    getRecord: () => findItemById(itemId),
     getPhotos: (item) => item?.photoUrls || [],
     setPhotos: async (item, photos) => {
       await updateItemPhotos(item.id, photos);
@@ -1978,7 +2015,7 @@ function openGalleryManageModal(personId) {
     emptyDeleteMessage: '当前画廊没有图片可删除',
     confirmDeleteMessage: '确认删除所有画廊图片吗？',
     deleteSuccessMessage: '画廊图片已删除',
-    getRecord: () => state.people.find((p) => p.id === personId),
+    getRecord: () => findPersonById(personId),
     getPhotos: (person) => person?.galleryPhotos || [],
     setPhotos: async (person, photos) => {
       person.galleryPhotos = photos;
@@ -2281,8 +2318,7 @@ function bindSettingsPhotoInput(input, { field, aspectRatio, successMsg, errorMs
   input.addEventListener('change', async (event) => {
     const file = event.target.files?.[0];
     if (!file || !viewState.settingsActivePersonId) return;
-    const cropResult = await showCropModal(file, aspectRatio);
-    const finalFile = resolveCroppedFile(file, cropResult);
+    const finalFile = await cropFile(file, aspectRatio);
     if (!finalFile) { event.target.value = ''; return; }
     try {
       await updatePersonPhoto(viewState.settingsActivePersonId, field, finalFile);
@@ -2295,6 +2331,140 @@ function bindSettingsPhotoInput(input, { field, aspectRatio, successMsg, errorMs
       event.target.value = '';
     }
   });
+}
+
+function formText(formData, key) {
+  return String(formData.get(key) ?? '').trim();
+}
+
+function hasDuplicateName(records, name, matchesScope = () => true) {
+  const normalized = normalizeName(name);
+  return records.some((record) => matchesScope(record) && normalizeName(record.name) === normalized);
+}
+
+function resetPersonFormAfterSave(person) {
+  elements.personForm.querySelector('input[name="name"]').value = '';
+  elements.personHomePhotoInput.value = '';
+  elements.personDetailPhotoInput.value = '';
+  syncFileSummaries();
+  viewState.settingsActivePersonId = person.id;
+  viewState.overviewPersonId = person.id;
+  if (!viewState.selectedPersonId) viewState.selectedPersonId = person.id;
+}
+
+async function handlePersonFormSubmit() {
+  const formData = new FormData(elements.personForm);
+  const name = formText(formData, 'name');
+  if (!name) { await showModal('请填写体育生姓名'); return; }
+  if (hasDuplicateName(state.people, name)) {
+    await showModal('体育生姓名已存在，请勿重复添加'); return;
+  }
+  const confirmed = await showModal('确认保存新体育生吗？', { showCancel: true });
+  if (!confirmed) return;
+
+  const person = await createPerson(name, formData.get('homePhoto'), formData.get('detailPhoto'));
+  resetPersonFormAfterSave(person);
+  renderAll();
+  await showModal(`体育生已保存：${person.name}`);
+}
+
+async function handleGroupFormSubmit() {
+  const formData = new FormData(elements.groupForm);
+  const name = formText(formData, 'name');
+  if (!name) { await showModal('请填写大品类名称'); return; }
+  if (hasDuplicateName(state.groups, name)) {
+    await showModal('大品类名称已存在，请勿重复添加'); return;
+  }
+  await createGroup(name);
+  elements.groupForm.reset();
+  renderAll();
+  await showModal(`大品类已保存：${name}`);
+}
+
+async function handleCategoryFormSubmit() {
+  const formData = new FormData(elements.categoryForm);
+  const groupId = formText(formData, 'groupId');
+  const name = formText(formData, 'name');
+  if (!groupId || !name) { await showModal('请填写完整的小品类信息'); return; }
+  if (hasDuplicateName(state.categories, name, (category) => category.groupId === groupId)) {
+    await showModal('该大品类下的小品类名称已存在，请勿重复添加'); return;
+  }
+  await createCategory(groupId, name);
+  elements.categoryForm.reset();
+  elements.categoryGroupSelect.value = groupId;
+  elements.itemGroupSelect.value = groupId;
+  syncCategoryOptions(groupId);
+  renderAll();
+  await showModal(`小品类已保存：${name}`);
+}
+
+function getItemFormData() {
+  const formData = new FormData(elements.itemForm);
+  const quantityRaw = formText(formData, 'quantity');
+  return {
+    personId: formText(formData, 'personId'),
+    groupId: formText(formData, 'groupId'),
+    categoryId: formText(formData, 'categoryId'),
+    label: formText(formData, 'label'),
+    quantityRaw,
+    quantity: Number(quantityRaw),
+    unit: formText(formData, 'unit'),
+    date: formText(formData, 'date') || '1998-03-25',
+    isGift: formData.has('isGift'),
+    isOwnedNow: formData.has('isOwnedNow'),
+    rawFiles: formData.getAll('photos').filter((file) => file instanceof File && file.size > 0),
+  };
+}
+
+async function validateItemFormData(itemData) {
+  const categoryOptions = getOrderedCategoriesForPersonGroup(itemData.personId, itemData.groupId);
+  if (!itemData.personId || !itemData.groupId || !itemData.label || !itemData.quantityRaw || !itemData.unit) {
+    await showModal('请把 YW 信息填写完整');
+    return false;
+  }
+  if (!categoryOptions.length) {
+    await showModal('请先为当前大品类添加小品类');
+    return false;
+  }
+  if (!categoryOptions.some((category) => category.id === itemData.categoryId)) {
+    await showModal('请选择有效的小品类');
+    return false;
+  }
+  if (!Number.isInteger(itemData.quantity) || itemData.quantity < 1) {
+    await showModal('数量必须是大于 0 的整数');
+    return false;
+  }
+  if (!isValidDateString(itemData.date)) {
+    await showModal('日期格式错误，请重新选择日期');
+    return false;
+  }
+  return true;
+}
+
+function resetItemFormAfterSave({ personId, groupId, categoryId }) {
+  elements.itemForm.reset();
+  elements.itemOwnedNowInput.checked = true;
+  elements.itemGiftInput.checked = false;
+  syncDateDisplay('1998-03-25');
+  elements.itemPhotosInput.value = '';
+  elements.itemPersonSelect.value = personId;
+  elements.itemGroupSelect.value = groupId;
+  syncCategoryOptions(groupId);
+  elements.itemCategorySelect.value = categoryId;
+  syncFileSummaries();
+}
+
+async function handleItemFormSubmit() {
+  const itemData = getItemFormData();
+  if (!(await validateItemFormData(itemData))) return;
+
+  const photoUrls = await readFilesAsDataURLs(itemData.rawFiles);
+  const { rawFiles, quantityRaw, ...payload } = itemData;
+  await createItem({ ...payload, photoUrls });
+
+  resetItemFormAfterSave(itemData);
+  renderAll();
+  await showModal(`YW 已成功保存：${itemData.label}`);
 }
 
 // ═══════════════════════════════════════════════
@@ -2318,13 +2488,13 @@ function bindEvents() {
   });
 
   elements.itemPhotosInput.addEventListener('change', async (event) => {
-    await cropMultipleInputFiles(event.target, 1);
+    await cropInputFiles(event.target, { aspectRatio: 1, multiple: true });
   });
   elements.personHomePhotoInput.addEventListener('change', async (event) => {
-    await cropSingleInputFile(event.target, 4 / 5);
+    await cropInputFiles(event.target, { aspectRatio: 4 / 5 });
   });
   elements.personDetailPhotoInput.addEventListener('change', async (event) => {
-    await cropSingleInputFile(event.target, 1);
+    await cropInputFiles(event.target, { aspectRatio: 1 });
   });
 
   elements.settingsPersonSelect.addEventListener('change', (event) => {
@@ -2366,7 +2536,7 @@ function bindEvents() {
   elements.galleryToggleBtn.addEventListener('click', async () => {
     const personId = viewState.settingsActivePersonId;
     if (!personId) return;
-    const person = state.people.find((p) => p.id === personId);
+    const person = findPersonById(personId);
     if (!person) return;
     person.galleryEnabled = !person.galleryEnabled;
     await saveState();
@@ -2377,7 +2547,7 @@ function bindEvents() {
   elements.galleryManageBtn.addEventListener('click', () => {
     const personId = viewState.settingsActivePersonId;
     if (!personId) return;
-    const person = state.people.find((p) => p.id === personId);
+    const person = findPersonById(personId);
     if (!person) return;
     if (!person.galleryEnabled) {
       person.galleryEnabled = true;
@@ -2395,30 +2565,7 @@ function bindEvents() {
   // Person form
   elements.personForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    withFormLock(elements.personForm, 'person', async () => {
-      const formData = new FormData(elements.personForm);
-      const name = String(formData.get('name')).trim();
-      if (!name) { await showModal('请填写体育生姓名'); return; }
-      if (state.people.some((p) => normalizeName(p.name) === normalizeName(name))) {
-        await showModal('体育生姓名已存在，请勿重复添加'); return;
-      }
-      const confirmed = await showModal('确认保存新体育生吗？', { showCancel: true });
-      if (!confirmed) return;
-
-      const homeFile = formData.get('homePhoto');
-      const detailFile = formData.get('detailPhoto');
-      const person = await createPerson(name, homeFile, detailFile);
-
-      elements.personForm.querySelector('input[name="name"]').value = '';
-      elements.personHomePhotoInput.value = '';
-      elements.personDetailPhotoInput.value = '';
-      syncFileSummaries();
-      viewState.settingsActivePersonId = person.id;
-      viewState.overviewPersonId = person.id;
-      if (!viewState.selectedPersonId) viewState.selectedPersonId = person.id;
-      renderAll();
-      await showModal(`体育生已保存：${person.name}`);
-    });
+    withFormLock(elements.personForm, 'person', handlePersonFormSubmit);
   });
 
   // Date picker
@@ -2439,97 +2586,19 @@ function bindEvents() {
   // Group form
   elements.groupForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    withFormLock(elements.groupForm, 'group', async () => {
-      const formData = new FormData(elements.groupForm);
-      const name = String(formData.get('name')).trim();
-      if (!name) { await showModal('请填写大品类名称'); return; }
-      if (state.groups.some((g) => normalizeName(g.name) === normalizeName(name))) {
-        await showModal('大品类名称已存在，请勿重复添加'); return;
-      }
-      await createGroup(name);
-      elements.groupForm.reset();
-      renderAll();
-      await showModal(`大品类已保存：${name}`);
-    });
+    withFormLock(elements.groupForm, 'group', handleGroupFormSubmit);
   });
 
   // Category form
   elements.categoryForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    withFormLock(elements.categoryForm, 'category', async () => {
-      const formData = new FormData(elements.categoryForm);
-      const groupId = String(formData.get('groupId')).trim();
-      const name = String(formData.get('name')).trim();
-      if (!groupId || !name) { await showModal('请填写完整的小品类信息'); return; }
-      if (state.categories.some((c) => c.groupId === groupId && normalizeName(c.name) === normalizeName(name))) {
-        await showModal('该大品类下的小品类名称已存在，请勿重复添加'); return;
-      }
-      await createCategory(groupId, name);
-      elements.categoryForm.reset();
-      elements.categoryGroupSelect.value = groupId;
-      elements.itemGroupSelect.value = groupId;
-      syncCategoryOptions(groupId);
-      renderAll();
-      await showModal(`小品类已保存：${name}`);
-    });
+    withFormLock(elements.categoryForm, 'category', handleCategoryFormSubmit);
   });
 
   // Item form
   elements.itemForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    withFormLock(elements.itemForm, 'item', async () => {
-      const formData = new FormData(elements.itemForm);
-      const personId = String(formData.get('personId'));
-      const groupId = String(formData.get('groupId'));
-      const categoryId = String(formData.get('categoryId'));
-      const label = String(formData.get('label')).trim();
-      const quantityRaw = String(formData.get('quantity')).trim();
-      const quantity = Number(quantityRaw);
-      const unit = String(formData.get('unit')).trim();
-      const date = String(formData.get('date')).trim() || '1998-03-25';
-      const isGift = formData.has('isGift');
-      const isOwnedNow = formData.has('isOwnedNow');
-      const rawFiles = formData.getAll('photos').filter((f) => f instanceof File && f.size > 0);
-
-      const categoryOptions = getOrderedCategoriesForPersonGroup(personId, groupId);
-      if (!personId || !groupId || !label || !quantityRaw || !unit) {
-        await showModal('请把 YW 信息填写完整'); return;
-      }
-      if (!categoryOptions.length) {
-        await showModal('请先为当前大品类添加小品类'); return;
-      }
-      const selectedCategory = categoryOptions.find((category) => category.id === categoryId);
-      if (!selectedCategory) {
-        await showModal('请选择有效的小品类'); return;
-      }
-      if (!Number.isInteger(quantity) || quantity < 1) {
-        await showModal('数量必须是大于 0 的整数'); return;
-      }
-      if (!isValidDateString(date)) {
-        await showModal('日期格式错误，请重新选择日期'); return;
-      }
-
-      const photoUrls = [];
-      for (const file of rawFiles) {
-        photoUrls.push(await readFileAsDataURL(file));
-      }
-
-      await createItem({ personId, groupId, categoryId, label, quantity, unit, date, isGift, isOwnedNow, photoUrls });
-
-      elements.itemForm.reset();
-      elements.itemOwnedNowInput.checked = true;
-      elements.itemGiftInput.checked = false;
-      syncDateDisplay('1998-03-25');
-      // 确保文件 input 彻底清空
-      elements.itemPhotosInput.value = '';
-      elements.itemPersonSelect.value = personId;
-      elements.itemGroupSelect.value = groupId;
-      syncCategoryOptions(groupId);
-      elements.itemCategorySelect.value = categoryId;
-      syncFileSummaries();
-      renderAll();
-      await showModal(`YW 已成功保存：${label}`);
-    });
+    withFormLock(elements.itemForm, 'item', handleItemFormSubmit);
   });
 
   // Prevent double-submit for forms
@@ -2549,7 +2618,7 @@ function bindEvents() {
 async function handleDeleteCurrentPerson() {
   const personId = viewState.settingsActivePersonId;
   if (!personId) return;
-  const person = state.people.find((p) => p.id === personId);
+  const person = findPersonById(personId);
   if (!person) return;
   const confirmed = await showModal(`确认删除体育生"${person.name}"及其所有 YW 吗？该操作无法恢复。`, { showCancel: true });
   if (!confirmed) return;
@@ -2565,35 +2634,27 @@ async function handleDeleteCurrentPerson() {
 // ═══════════════════════════════════════════════
 // File input helpers
 // ═══════════════════════════════════════════════
-async function cropSingleInputFile(input, aspectRatio) {
-  const file = input.files?.[0];
-  if (!file) { syncFileSummaries(); return; }
+async function cropFile(file, aspectRatio) {
   const cropResult = await showCropModal(file, aspectRatio);
-  const finalFile = resolveCroppedFile(file, cropResult);
-  if (!finalFile) { input.value = ''; syncFileSummaries(); return; }
-  setInputFiles(input, [finalFile]);
-  syncFileSummaries();
+  return resolveCroppedFile(file, cropResult);
 }
 
-async function cropMultipleInputFiles(input, aspectRatio) {
-  const files = [...(input.files ?? [])].filter((f) => f.size > 0);
+async function cropInputFiles(input, { aspectRatio, multiple = false }) {
+  const files = [...(input.files ?? [])].filter((file) => file.size > 0);
   if (!files.length) { syncFileSummaries(); return; }
+
   const cropped = [];
-  for (const file of files) {
-    const cropResult = await showCropModal(file, aspectRatio);
-    const finalFile = resolveCroppedFile(file, cropResult);
+  for (const file of multiple ? files : files.slice(0, 1)) {
+    const finalFile = await cropFile(file, aspectRatio);
     if (!finalFile) {
-      if (cropped.length) {
-        setInputFiles(input, cropped);
-        syncFileSummaries();
-      } else {
-        input.value = '';
-        syncFileSummaries();
-      }
+      if (cropped.length) setInputFiles(input, cropped);
+      else input.value = '';
+      syncFileSummaries();
       return;
     }
     cropped.push(finalFile);
   }
+
   setInputFiles(input, cropped);
   syncFileSummaries();
 }

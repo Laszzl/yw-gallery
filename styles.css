@@ -31,6 +31,9 @@
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 8px;
+  --control-height: 46px;
+  --field-height: 52px;
+  --icon-button-size: 44px;
   --text-hero: clamp(3rem, 6vw, 4.8rem);
   --text-xxl: 1.75rem;
   --text-xl: 1.25rem;
@@ -148,7 +151,7 @@ button,
 .mini-button,
 .mini-file-button,
 .file-picker {
-  min-height: 46px;
+  min-height: var(--control-height);
   padding: 0 20px;
   display: inline-flex;
   align-items: center;
@@ -298,12 +301,12 @@ button,
 .topbar .primary-button,
 .topbar .secondary-button {
   min-width: 72px;
-  height: 46px;
+  height: var(--control-height);
 }
 
 .switcher-chip {
   min-width: 72px;
-  height: 46px;
+  height: var(--control-height);
   padding: 0 20px;
   display: inline-flex;
   align-items: center;
@@ -481,7 +484,6 @@ button,
 }
 
 .add-row-grid > label,
-.add-row-grid > .notes-checkbox-field,
 .add-row-grid > .form-spacer {
   min-height: 100%;
 }
@@ -494,7 +496,7 @@ button,
   display: grid;
   align-content: center;
   gap: 12px;
-  min-height: 52px;
+  min-height: var(--field-height);
   padding: 12px 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
@@ -505,7 +507,7 @@ button,
 }
 
 .checkbox-panel-inline {
-  min-height: 52px;
+  min-height: var(--field-height);
   align-items: center;
 }
 
@@ -686,6 +688,10 @@ button,
   margin: 0;
   color: var(--muted);
   font-size: var(--text-sm);
+}
+
+.gallery-actions {
+  margin-top: 12px;
 }
 
 .category-section {
@@ -961,8 +967,8 @@ button,
   flex: 1;
   padding: 0 20px;
   min-width: 0;
-  min-height: 52px;
-  height: 52px;
+  min-height: var(--field-height);
+  height: var(--field-height);
   font-size: 0.88rem;
   font-weight: 500;
   white-space: nowrap;
@@ -974,12 +980,12 @@ button,
 }
 
 .select-only-field select {
-  min-height: 52px;
-  height: 52px;
+  min-height: var(--field-height);
+  height: var(--field-height);
 }
 
 .overview-person-filter select {
-  min-height: 52px;
+  min-height: var(--field-height);
 }
 
 .grow-field {
@@ -995,7 +1001,7 @@ button,
 
 .person-name-field input,
 .person-manager-layout .select-only-field select {
-  height: 52px;
+  height: var(--field-height);
 }
 
 .person-create-actions {
@@ -1005,7 +1011,7 @@ button,
 
 .person-create-actions .primary-button,
 .person-create-actions .mini-file-button {
-  height: 52px;
+  height: var(--field-height);
   padding: 0 20px;
   font-size: 0.88rem;
   font-weight: 500;
@@ -1047,7 +1053,7 @@ button,
 }
 
 .form-spacer {
-  min-height: 52px;
+  min-height: var(--field-height);
   grid-column: 3;
 }
 
@@ -1056,7 +1062,7 @@ button,
 }
 
 .overview-person-filter select {
-  height: 52px;
+  height: var(--field-height);
 }
 
 .overview-list {
@@ -1153,7 +1159,7 @@ input[type="date"],
 select,
 .date-display-button {
   width: 100%;
-  min-height: 52px;
+  min-height: var(--field-height);
   border-radius: var(--radius-md);
   border: 1px solid rgba(15, 23, 42, 0.08);
   padding: 0 40px 0 16px;
@@ -1179,8 +1185,8 @@ select {
 }
 
 .add-item-form select {
-  min-height: 52px;
-  height: 52px;
+  min-height: var(--field-height);
+  height: var(--field-height);
 }
 
 
@@ -1373,9 +1379,9 @@ select:focus {
 
 .icon-btn {
   padding: 0;
-  width: 44px;
-  height: 44px;
-  min-height: 44px;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
+  min-height: var(--icon-button-size);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1662,7 +1668,6 @@ select:focus {
 /* ── iPad 竖版 ── */
 @media (max-width: 1024px) {
   /* 表单：3/4 列 → 2 列 */
-  .form-grid.four-columns,
   .form-grid.three-columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3536,6 +3541,7 @@ select:focus {
       background: rgba(255, 255, 255, 0.05);
     }
   }
+}
 
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
   *,
