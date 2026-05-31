@@ -674,9 +674,7 @@ button,
   font-size: var(--text-sm);
 }
 
-.gallery-actions {
-  margin-top: 12px;
-}
+
 
 .category-section {
   padding: 28px;
@@ -1540,9 +1538,7 @@ select:focus {
   }
 }
 
-.gallery-thumb-grid .photo-thumb-item {
-  padding-bottom: 125%;
-}
+
 
 
 .item-actions-list button {
@@ -2321,8 +2317,6 @@ select:focus {
   }
 
   .gallery-settings-row {
-    flex-direction: column;
-    align-items: flex-start;
     gap: 8px;
   }
 
