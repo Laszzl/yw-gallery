@@ -102,22 +102,6 @@ button,
   font-weight: 500;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  button:active,
-  .mini-file-button:active,
-  .file-picker:active,
-  input[type="text"]:active,
-  input[type="number"]:active,
-  input[type="date"]:active,
-  select:active,
-  .checkbox-panel:active,
-  .date-display-button:active {
-    transform: translateY(0);
-    opacity: 0.9;
-    box-shadow: var(--active-inset-shadow);
-  }
-}
-
 .page-shell {
   width: min(1440px, calc(100% - 48px));
   margin: 0 auto;
@@ -2948,30 +2932,39 @@ select:focus {
     border: 1px solid transparent;
   }
 
+  /* 统一按钮 hover：共享 transform + border + shadow */
+  .brand-button:hover,
+  .primary-button:hover,
+  .secondary-button:hover,
+  .mini-button:hover,
+  .mini-file-button:hover,
+  .subtle-icon-btn:hover,
+  .file-picker:hover,
+  .switcher-chip:hover {
+    transform: translateY(-0.5px);
+    border-color: var(--hover-control-border);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  /* 深色渐变背景 */
   .brand-button:hover,
   .primary-button:hover,
   .secondary-button:hover,
   .file-picker.primary-button:hover {
-    transform: translateY(-0.5px);
     background: linear-gradient(180deg, #242426 0%, #151517 100%);
-    border-color: var(--hover-control-border);
-    box-shadow: var(--hover-primary-shadow);
   }
 
+  /* 浅色半透明背景 */
   .mini-button:hover,
   .mini-file-button:hover,
   .subtle-icon-btn:hover,
   .file-picker:not(.primary-button):hover,
   .switcher-chip:hover {
-    transform: translateY(-0.5px);
     background: var(--hover-control-bg);
-    border-color: var(--hover-control-border);
-    box-shadow: var(--hover-control-shadow);
   }
 
   .switcher-chip.active:hover {
     background: linear-gradient(180deg, #242426 0%, #151517 100%);
-    box-shadow: var(--hover-primary-shadow);
   }
 
   .danger-button:hover,
@@ -3059,48 +3052,6 @@ select:focus {
   }
 }
 
-/* iPhone / iPad: buttons keep their state, but do not animate tap feedback. */
-@media (max-width: 1366px) {
-  button,
-  .primary-button,
-  .secondary-button,
-  .mini-button,
-  .mini-file-button,
-  .file-picker,
-  .danger-button,
-  .danger-lite-button,
-  .switcher-chip,
-  .date-display-button {
-    transition: none !important;
-  }
-
-  .checkbox-panel,
-  .checkbox-label,
-  .checkbox-ui {
-    -webkit-tap-highlight-color: transparent;
-    transition: none !important;
-    touch-action: manipulation;
-  }
-
-  button:active,
-  .primary-button:active,
-  .secondary-button:active,
-  .mini-button:active,
-  .mini-file-button:active,
-  .file-picker:active,
-  .danger-button:active,
-  .danger-lite-button:active,
-  .switcher-chip:active,
-  .date-display-button:active,
-  .checkbox-panel:active,
-  .checkbox-label:active,
-  .checkbox-label:active .checkbox-ui,
-  .checkbox-ui:active {
-    transform: none !important;
-    filter: none !important;
-    opacity: 1 !important;
-  }
-}
 
 /* ═══════════════════════════════════════════════
    Dark Mode
