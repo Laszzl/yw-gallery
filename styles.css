@@ -1938,7 +1938,7 @@ select:focus {
     height: 50px;
     min-height: 50px;
     border-radius: 999px;
-    border: 0.5px solid rgba(255, 255, 255, 0.72);
+    border: 0.5px solid rgba(0, 0, 0, 0.10);
     background:
       linear-gradient(
         135deg,
@@ -2040,7 +2040,7 @@ select:focus {
     min-height: 38px;
     padding: 0 10px;
     border-radius: 999px;
-    border: 0.5px solid rgba(255, 255, 255, 0.28);
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
     background: rgba(255, 255, 255, 0.18);
     color: rgba(17, 17, 17, 0.76);
     box-shadow: none;
@@ -2063,7 +2063,7 @@ select:focus {
         rgba(255, 255, 255, 0.10) 100%
       );
     color: rgba(17, 17, 17, 0.88);
-    border: 0.5px solid rgba(255, 255, 255, 0.72);
+    border: 0.5px solid rgba(0, 0, 0, 0.10);
     box-shadow: none;
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
