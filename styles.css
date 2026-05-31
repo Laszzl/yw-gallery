@@ -26,6 +26,7 @@
   --hover-panel-shadow: 0 14px 30px rgba(15, 23, 42, 0.09);
   --hover-date-item-bg: rgba(17, 17, 17, 0.04);
   --hover-danger-bg: rgba(192, 54, 44, 0.12);
+  --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   --radius-xl: 28px;
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -74,6 +75,18 @@ input,
 select {
   font: inherit;
   outline: none;
+}
+
+button,
+input,
+select,
+label,
+.date-display-button,
+.mini-file-button,
+.file-picker,
+.checkbox-panel,
+.checkbox-label,
+.checkbox-ui {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -94,10 +107,11 @@ button,
   input[type="number"]:active,
   input[type="date"]:active,
   select:active,
-  .checkbox-panel:active {
+  .checkbox-panel:active,
+  .date-display-button:active {
     transform: translateY(0);
     opacity: 0.9;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--active-inset-shadow);
   }
 }
 
@@ -3055,6 +3069,14 @@ select:focus {
     transition: none !important;
   }
 
+  .checkbox-panel,
+  .checkbox-label,
+  .checkbox-ui {
+    -webkit-tap-highlight-color: transparent;
+    transition: none !important;
+    touch-action: manipulation;
+  }
+
   button:active,
   .primary-button:active,
   .secondary-button:active,
@@ -3064,7 +3086,11 @@ select:focus {
   .danger-button:active,
   .danger-lite-button:active,
   .switcher-chip:active,
-  .date-display-button:active {
+  .date-display-button:active,
+  .checkbox-panel:active,
+  .checkbox-label:active,
+  .checkbox-label:active .checkbox-ui,
+  .checkbox-ui:active {
     transform: none !important;
     filter: none !important;
     opacity: 1 !important;
@@ -3102,6 +3128,7 @@ select:focus {
     --hover-panel-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
     --hover-date-item-bg: rgba(255, 255, 255, 0.06);
     --hover-danger-bg: rgba(255, 105, 97, 0.15);
+    --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
   html {
@@ -3321,20 +3348,6 @@ select:focus {
   /* Photo thumb */
   .photo-thumb-item {
     background: rgba(255, 255, 255, 0.04);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    button:active,
-    .mini-file-button:active,
-    .file-picker:active,
-    input[type="text"]:active,
-    input[type="number"]:active,
-    input[type="date"]:active,
-    select:active,
-    .checkbox-panel:active,
-    .date-display-button:active {
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
   }
 
   /* Scrollbar */

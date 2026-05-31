@@ -815,6 +815,23 @@ function formatItemStatus(item) {
   return parts.join(' · ');
 }
 
+function itemHasPhotos(item) {
+  return (item.photoUrls || []).length > 0;
+}
+
+function splitItemsByPhotos(items) {
+  return items.reduce((groups, item) => {
+    groups[itemHasPhotos(item) ? 'imageItems' : 'textItems'].push(item);
+    return groups;
+  }, { imageItems: [], textItems: [] });
+}
+
+function formatCategoryCounts(items) {
+  const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
+  const ownedQty = items.reduce((sum, item) => sum + (item.isOwnedNow ? item.quantity : 0), 0);
+  return `总数量 ${totalQty} · 现存 ${ownedQty}`;
+}
+
 function hasGroupContent(personId, groupId) {
   return state.categories.some(
     (c) => c.groupId === groupId && state.items.some((item) => item.personId === personId && item.categoryId === c.id)
@@ -1083,7 +1100,7 @@ function reorderItemsByDrag(draggedItemId, targetItemId) {
   const targetItem = state.items.find((i) => i.id === targetItemId);
   if (!draggedItem || !targetItem) return;
   if (draggedItem.personId !== targetItem.personId || draggedItem.categoryId !== targetItem.categoryId) return;
-  if ((draggedItem.photoUrls?.length > 0) !== (targetItem.photoUrls?.length > 0)) return;
+  if (itemHasPhotos(draggedItem) !== itemHasPhotos(targetItem)) return;
   if ((draggedItem.date || '1998-03-25') !== (targetItem.date || '1998-03-25')) return;
 
   const sameTypeItems = state.items
@@ -1091,7 +1108,7 @@ function reorderItemsByDrag(draggedItemId, targetItemId) {
       (i) =>
         i.personId === draggedItem.personId &&
         i.categoryId === draggedItem.categoryId &&
-        (i.photoUrls?.length > 0) === (draggedItem.photoUrls?.length > 0) &&
+        itemHasPhotos(i) === itemHasPhotos(draggedItem) &&
         (i.date || '1998-03-25') === (draggedItem.date || '1998-03-25')
     )
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -1223,10 +1240,17 @@ function renderCurrentView() {
 
 }
 
-function showHomeView() { viewState.currentView = 'home'; renderAll(); window.scrollTo({ top: 0, behavior: 'instant' }); }
-function showAddView() { viewState.currentView = 'add'; renderAll(); window.scrollTo({ top: 0, behavior: 'instant' }); }
-function showAthleteView(personId) { viewState.currentView = 'athlete'; viewState.selectedPersonId = personId; renderAll(); window.scrollTo({ top: 0, behavior: 'instant' }); }
-function showSettingsView() { viewState.currentView = 'settings'; renderAll(); window.scrollTo({ top: 0, behavior: 'instant' }); }
+function showView(view, selectedPersonId) {
+  viewState.currentView = view;
+  if (selectedPersonId !== undefined) viewState.selectedPersonId = selectedPersonId;
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function showHomeView() { showView('home'); }
+function showAddView() { showView('add'); }
+function showAthleteView(personId) { showView('athlete', personId); }
+function showSettingsView() { showView('settings'); }
 
 function renderSwitcher() {
   elements.switcherScrollArea.innerHTML = '';
@@ -1388,7 +1412,6 @@ function renderCategoryOverview() {
     const content = fragment.querySelector('.overview-group-content');
     const groupToggle = fragment.querySelector('[data-group-toggle]');
     const remove = fragment.querySelector('[data-group-delete]');
-    if (isMacDevice) card.draggable = true;
     card.dataset.groupId = group.id;
     const categories = getOrderedCategoriesForPersonGroup(personId, group.id);
     const isCollapsed = Boolean(state.collapsedSettingsGroups[group.id]);
@@ -1423,7 +1446,6 @@ function renderCategoryOverview() {
       const row = catFragment.querySelector('.overview-category-row');
       const name = catFragment.querySelector('.manager-row-title');
       const catDelete = catFragment.querySelector('[data-category-delete]');
-      if (isMacDevice) row.draggable = true;
       row.dataset.categoryId = category.id;
       name.textContent = category.name;
       const attachCategoryDrag = createDragHandler({
@@ -1480,21 +1502,18 @@ function renderGroupSection(personId, group) {
     const textRail = subFragment.querySelector('.text-items-rail');
     const toggle = subFragment.querySelector('[data-subcategory-toggle]');
 
-    const totalQty = categoryItems.reduce((sum, item) => sum + item.quantity, 0);
-    const ownedQty = categoryItems.filter((item) => item.isOwnedNow).reduce((sum, item) => sum + item.quantity, 0);
     const collapseKey = `${personId}:${category.id}`;
     block.dataset.personId = personId;
     block.dataset.categoryId = category.id;
     if (state.collapsedSubcategories[collapseKey]) block.classList.add('collapsed');
     titleNode.textContent = category.name;
-    countsNode.textContent = `总数量 ${totalQty} · 现存 ${ownedQty}`;
+    countsNode.textContent = formatCategoryCounts(categoryItems);
     toggle.addEventListener('click', () => {
       toggleCollapsedState(collapseKey, state.collapsedSubcategories);
       block.classList.toggle('collapsed');
     });
 
-    const imageItems = categoryItems.filter((item) => (item.photoUrls || []).length > 0);
-    const textItems = categoryItems.filter((item) => (item.photoUrls || []).length === 0);
+    const { imageItems, textItems } = splitItemsByPhotos(categoryItems);
 
     for (const item of imageItems) appendImageItemCard(imageRail, item);
     for (const item of textItems) appendTextItemCard(textRail, item);
@@ -1646,9 +1665,7 @@ function refreshCategoryCounts(personId, categoryId) {
   const categoryItems = state.items.filter((item) => item.personId === personId && item.categoryId === categoryId);
   const countsNode = block.querySelector('.subcategory-counts');
   if (!countsNode) return;
-  const totalQty = categoryItems.reduce((sum, item) => sum + item.quantity, 0);
-  const ownedQty = categoryItems.filter((item) => item.isOwnedNow).reduce((sum, item) => sum + item.quantity, 0);
-  countsNode.textContent = `总数量 ${totalQty} · 现存 ${ownedQty}`;
+  countsNode.textContent = formatCategoryCounts(categoryItems);
 }
 
 function removeEmptyRenderedSubcategory(personId, categoryId) {
@@ -1667,13 +1684,13 @@ function refreshItemCard(itemId) {
   const block = getRenderedSubcategoryBlock(item.personId, item.categoryId);
   if (!block) return;
 
-  const targetRail = (item.photoUrls || []).length > 0
+  const targetRail = itemHasPhotos(item)
     ? block.querySelector('.image-items-rail')
     : block.querySelector('.text-items-rail');
   if (!targetRail) return;
 
   const currentCard = findItemCard(itemId);
-  const nextCard = (item.photoUrls || []).length > 0 ? buildImageItemCard(item) : buildTextItemCard(item);
+  const nextCard = itemHasPhotos(item) ? buildImageItemCard(item) : buildTextItemCard(item);
   if (currentCard) currentCard.replaceWith(nextCard);
   insertCardSorted(targetRail, nextCard, item);
 
