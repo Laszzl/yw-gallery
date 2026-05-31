@@ -2745,7 +2745,6 @@ async function initApp() {
   await loadState();
   await syncMissingGroupOrders();
   if (state.people.length > 0) {
-    viewState.selectedPersonId = state.people[0].id;
     viewState.settingsActivePersonId = state.people[0].id;
     viewState.overviewPersonId = state.people[0].id;
   }
