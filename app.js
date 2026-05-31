@@ -465,7 +465,7 @@ function cacheElements() {
     settingsPersonSelect: document.querySelector('#settingsPersonSelect'),
     gallerySettingsBlock: document.querySelector('#gallerySettingsBlock'),
     galleryToggleBtn: document.querySelector('#galleryToggleBtn'),
-
+    galleryManageBtn: document.querySelector('#galleryManageBtn'),
     galleryPhotoCount: document.querySelector('#galleryPhotoCount'),
     overviewPersonSelect: document.querySelector('#overviewPersonSelect'),
     settingsPersonHomePhotoInput: document.querySelector('#settingsPersonHomePhotoInput'),
@@ -1782,7 +1782,6 @@ function removeItemCard(itemId, removedItem) {
 function openItemActionsModal(itemId, type) {
   activeItemAction = { itemId, type };
   elements.itemActionsModal.hidden = false;
-  elements.itemActionsModal.onclick = (e) => { if (e.target === elements.itemActionsModal) closeItemActionsModal(); };
 
   const item = findItemById(itemId);
 
@@ -1824,7 +1823,6 @@ function openItemActionsModal(itemId, type) {
 
 function closeItemActionsModal() {
   elements.itemActionsModal.hidden = true;
-  elements.itemActionsModal.onclick = null;
   elements.itemActionManageBtn.onclick = null;
   elements.itemActionDeleteBtn.onclick = null;
   for (const toggle of elements.itemStatusToggles) {
@@ -1842,6 +1840,7 @@ function closePhotoManageModal() {
   if (!modal.hidden) {
     modal.hidden = true;
     modal.onclick = null;
+    thumbGrid.classList.remove('gallery-thumb-grid');
     fileInput.onchange = null;
     addBtn.onclick = null;
     deleteBtn.onclick = null;
@@ -1867,8 +1866,9 @@ function openPhotoCollectionManager(config) {
   const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
   const fileInput = document.getElementById('modalPhotoInput');
   fileInput.value = '';
+  thumbGrid.classList.toggle('gallery-thumb-grid', Boolean(config.galleryGrid));
   modal.hidden = false;
-  photoManageState = { itemId: config.itemId || null, mode: null, replaceIndex: null };
+  photoManageState = { itemId: config.itemId || null, mode: null, replaceIndex: null, galleryPersonId: config.galleryPersonId || null };
 
   const getRecord = () => config.getRecord();
   const getPhotos = () => config.getPhotos(getRecord()) || [];
@@ -1918,6 +1918,7 @@ function openPhotoCollectionManager(config) {
   const cleanup = () => {
     modal.hidden = true;
     modal.onclick = null;
+    thumbGrid.classList.remove('gallery-thumb-grid');
     fileInput.onchange = null;
     addBtn.onclick = null;
     deleteBtn.onclick = null;
@@ -2010,7 +2011,28 @@ function openPhotoManageModal(itemId) {
   });
 }
 
-
+function openGalleryManageModal(personId) {
+  openPhotoCollectionManager({
+    galleryPersonId: personId,
+    galleryGrid: true,
+    aspectRatio: 4 / 5,
+    emptyDeleteMessage: '当前画廊没有图片可删除',
+    confirmDeleteMessage: '确认删除所有画廊图片吗？',
+    deleteSuccessMessage: '画廊图片已删除',
+    getRecord: () => findPersonById(personId),
+    getPhotos: (person) => person?.galleryPhotos || [],
+    setPhotos: async (person, photos) => {
+      person.galleryPhotos = photos;
+      await saveState();
+    },
+    afterPhotosChange: (person) => {
+      renderGallery(person);
+      setupRailMasks();
+      syncGallerySettings();
+    },
+    onClose: syncGallerySettings,
+  });
+}
 
 // ═══════════════════════════════════════════════
 // Crop modal
@@ -2458,6 +2480,11 @@ function bindEvents() {
   elements.settingsButton.addEventListener('click', () => showSettingsView());
   elements.emptySettingsButton.addEventListener('click', () => showSettingsView());
 
+  document.addEventListener('click', (event) => {
+    if (!activeItemAction) return;
+    if (elements.itemActionsModal.hidden) { activeItemAction = null; return; }
+    if (event.target === elements.itemActionsModal) closeItemActionsModal();
+  });
 
   elements.clearItemFilesButton.addEventListener('click', async () => {
     elements.itemPhotosInput.value = ''; syncFileSummaries();
@@ -2518,7 +2545,19 @@ function bindEvents() {
     person.galleryEnabled = !person.galleryEnabled;
     await saveState();
     syncGallerySettings();
-    await showModal(person.galleryEnabled ? '画廊已启用' : '画廊已关闭');
+  });
+
+  elements.galleryManageBtn.addEventListener('click', () => {
+    const personId = viewState.settingsActivePersonId;
+    if (!personId) return;
+    const person = findPersonById(personId);
+    if (!person) return;
+    if (!person.galleryEnabled) {
+      person.galleryEnabled = true;
+      saveState();
+      syncGallerySettings();
+    }
+    openGalleryManageModal(personId);
   });
 
   elements.itemPersonSelect.addEventListener('change', () => syncGroupOptions());
