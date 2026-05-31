@@ -1281,7 +1281,11 @@ function renderCurrentView() {
 
 function showView(view, selectedPersonId) {
   viewState.currentView = view;
-  if (selectedPersonId !== undefined) viewState.selectedPersonId = selectedPersonId;
+  if (selectedPersonId !== undefined) {
+    viewState.selectedPersonId = selectedPersonId;
+  } else if (view !== 'athlete') {
+    viewState.selectedPersonId = null;
+  }
   renderAll();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
