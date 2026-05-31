@@ -1273,10 +1273,6 @@ function renderCurrentView() {
   elements.addView.hidden = viewState.currentView !== 'add';
   elements.settingsView.hidden = viewState.currentView !== 'settings';
 
-  elements.homeButton.setAttribute('aria-current', viewState.currentView === 'home' ? 'page' : 'false');
-  elements.addButton.setAttribute('aria-current', viewState.currentView === 'add' ? 'page' : 'false');
-  elements.settingsButton.setAttribute('aria-current', viewState.currentView === 'settings' ? 'page' : 'false');
-
   if (viewState.currentView === 'home') renderHomeView();
   if (viewState.currentView === 'athlete') renderAthleteView();
   if (viewState.currentView === 'settings') { renderCategoryOverview(); syncGallerySettings(); }
@@ -1306,7 +1302,6 @@ function renderSwitcher() {
     button.setAttribute('aria-label', `查看${person.name}的图库`);
     const active = person.id === viewState.selectedPersonId;
     button.classList.toggle('active', active);
-    button.setAttribute('aria-current', active && viewState.currentView === 'athlete' ? 'page' : 'false');
     button.addEventListener('click', () => showAthleteView(person.id));
     elements.switcherScrollArea.append(fragment);
   }

@@ -3561,9 +3561,6 @@ select:focus {
     border-color: var(--ios-separator);
   }
 
-  #addButton[aria-current="page"],
-  #settingsButton[aria-current="page"],
-  #homeButton[aria-current="page"],
   .switcher-chip.active {
     background: var(--ios-fill-strong);
     border-color: var(--ios-separator);
