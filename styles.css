@@ -25,7 +25,9 @@
   --hover-field-border: rgba(17, 17, 17, 0.15);
   --hover-panel-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
   --hover-date-item-bg: rgba(17, 17, 17, 0.04);
-  --hover-danger-bg: rgba(192, 54, 44, 0.10);
+  --hover-brand-brightness: 1.35;
+  --hover-danger-bg: rgba(192, 54, 44, 0.18);
+  --hover-danger-border: rgba(192, 54, 44, 0.18);
   --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   --ease-apple: cubic-bezier(0.16, 0, 0.22, 1);
   --radius-xl: 28px;
@@ -160,20 +162,18 @@ button,
 
 .brand-button {
   min-width: 56px;
-  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #050505 100%);
+  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: var(--primary-fg);
   font-size: 1.05rem;
   letter-spacing: 0.08em;
   box-shadow: var(--shadow-control);
-  border: 1px solid #151515;
 }
 
 .primary-button,
 .secondary-button {
-  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #0a0a0a 100%);
+  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: var(--primary-fg);
   box-shadow: var(--shadow-control);
-  border: 1px solid #1d1d1f;
 }
 
 .mini-button,
@@ -306,7 +306,7 @@ button,
 }
 
 .switcher-chip.active {
-  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #0a0a0a 100%);
+  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: #ffffff;
   box-shadow: var(--shadow-control);
 }
@@ -2493,7 +2493,6 @@ select:focus {
     background-image: none;
     color: var(--ios-primary-fg);
     box-shadow: none;
-    border-color: var(--ios-primary-bg);
   }
 
   .mini-button,
@@ -2935,14 +2934,22 @@ select:focus {
     cursor: grabbing;
   }
 
+  .brand-button,
+  .primary-button,
+  .secondary-button,
+  .danger-button,
+  .danger-lite-button,
+  .file-picker.primary-button {
+    border: 1px solid transparent;
+  }
+
   /* ── Filled Buttons: illuminate via brightness ── */
   .brand-button:hover,
   .primary-button:hover,
   .secondary-button:hover,
-  .file-picker.primary-button:hover,
-  .switcher-chip.active:hover {
-    filter: brightness(1.10);
-    box-shadow: var(--hover-primary-shadow);
+  .file-picker.primary-button:hover {
+    filter: brightness(var(--hover-brand-brightness));
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14);
   }
 
   .brand-button:active,
@@ -2951,6 +2958,10 @@ select:focus {
   .file-picker.primary-button:active {
     filter: brightness(0.94);
     transition: filter 0.08s var(--ease-apple);
+  }
+
+  .switcher-chip.active:hover {
+    background: linear-gradient(180deg, #242426 0%, #151517 100%);
   }
 
   /* ── Ghost Buttons: surface brightens, border surfaces ── */
@@ -2977,7 +2988,7 @@ select:focus {
   .danger-button:hover,
   .danger-lite-button:hover {
     background: var(--hover-danger-bg);
-    border-color: rgba(192, 54, 44, 0.18);
+    border-color: var(--hover-danger-border);
     box-shadow: var(--hover-control-shadow);
   }
 
@@ -3116,7 +3127,9 @@ select:focus {
     --hover-field-border: rgba(255, 255, 255, 0.15);
     --hover-panel-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
     --hover-date-item-bg: rgba(255, 255, 255, 0.05);
-    --hover-danger-bg: rgba(255, 105, 97, 0.12);
+    --hover-brand-brightness: 1.22;
+    --hover-danger-bg: rgba(255, 105, 97, 0.18);
+    --hover-danger-border: rgba(255, 105, 97, 0.24);
     --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
@@ -3457,7 +3470,6 @@ select:focus {
       background-image: none;
       color: var(--ios-primary-fg);
       box-shadow: none;
-      border-color: var(--ios-primary-bg);
     }
 
     .secondary-button {
