@@ -1,5 +1,4 @@
-(function (window) {
-  const YW = window.YW = window.YW || {};
+(function (YW) {
   YW.config = {
     DEFAULT_ITEM_DATE: '1998-03-25',
     DATE_MIN_YEAR: 1950,
@@ -20,4 +19,4 @@
     NAV_HEIGHT_NO_ATHLETES: '66px',
     isMacDevice: matchMedia('(hover: hover) and (pointer: fine)').matches,
   };
-})(window);
+})(window.YW);
