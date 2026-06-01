@@ -84,25 +84,22 @@
     if (!viewState.selectedPersonId) viewState.selectedPersonId = person.id;
   }
 
-  async function handleFormSubmit({ form, lockName, validate, save, reset, successMsg, confirmLabel }) {
-    return withFormLock(form, lockName, async () => {
-      if (validate && !(await validate())) return;
-      if (confirmLabel) {
-        const confirmed = await YW.modals.showModal(confirmLabel, { showCancel: true });
-        if (!confirmed) return;
-      }
-      const result = await save();
-      if (reset) reset(result);
-      YW.render.renderAll();
-      await YW.modals.showModal(typeof successMsg === 'function' ? successMsg(result) : successMsg);
-    });
+  async function handleFormSubmit({ validate, save, reset, successMsg, confirmLabel }) {
+    if (validate && !(await validate())) return;
+    if (confirmLabel) {
+      const confirmed = await YW.modals.showModal(confirmLabel, { showCancel: true });
+      if (!confirmed) return;
+    }
+    const result = await save();
+    if (reset) reset(result);
+    YW.render.renderAll();
+    await YW.modals.showModal(typeof successMsg === 'function' ? successMsg(result) : successMsg);
   }
 
   async function handlePersonFormSubmit() {
     const formData = new FormData(elements.personForm);
     const name = formText(formData, 'name');
     await handleFormSubmit({
-      form: elements.personForm, lockName: 'person',
       validate: async () => {
         if (!name) { await YW.modals.showModal('请填写体育生姓名'); return false; }
         if (hasDuplicateName(state.people, name)) {
@@ -121,7 +118,6 @@
     const formData = new FormData(elements.groupForm);
     const name = formText(formData, 'name');
     await handleFormSubmit({
-      form: elements.groupForm, lockName: 'group',
       validate: async () => {
         if (!name) { await YW.modals.showModal('请填写大品类名称'); return false; }
         if (hasDuplicateName(state.groups, name)) {
@@ -140,7 +136,6 @@
     const groupId = formText(formData, 'groupId');
     const name = formText(formData, 'name');
     await handleFormSubmit({
-      form: elements.categoryForm, lockName: 'category',
       validate: async () => {
         if (!groupId || !name) { await YW.modals.showModal('请填写完整的小品类信息'); return false; }
         if (hasDuplicateName(state.categories, name, (c) => c.groupId === groupId)) {

@@ -61,14 +61,19 @@
     }
   }
 
+  function resetPhotoManagerDom() {
+    const { photoManageModal, photoThumbGrid, modalPhotoInput, modalPhotoAddBtn, modalPhotoDeleteBtn } = elements;
+    photoManageModal.hidden = true;
+    photoManageModal.onclick = null;
+    photoThumbGrid.classList.remove('gallery-thumb-grid');
+    modalPhotoInput.onchange = null;
+    modalPhotoAddBtn.onclick = null;
+    modalPhotoDeleteBtn.onclick = null;
+    managerState = { itemId: null, mode: null, replaceIndex: null, galleryPersonId: null };
+  }
+
   function closePhotoManagerContext(ctx) {
-    ctx.modal.hidden = true;
-    ctx.modal.onclick = null;
-    ctx.thumbGrid.classList.remove('gallery-thumb-grid');
-    ctx.fileInput.onchange = null;
-    ctx.addBtn.onclick = null;
-    ctx.deleteBtn.onclick = null;
-    managerState = { itemId: null, mode: null, replaceIndex: null };
+    resetPhotoManagerDom();
     if (ctx.config.onClose) ctx.config.onClose();
   }
 
@@ -179,8 +184,7 @@
       getRecord: () => YW.data.findPersonById(personId),
       getPhotos: (person) => person?.galleryPhotos || [],
       setPhotos: async (person, photos) => {
-        person.galleryPhotos = photos;
-        await YW.storage.saveStateStrict();
+        await YW.data.updateGalleryPhotos(person.id, photos);
       },
       afterPhotosChange: (person) => {
         YW.render.renderGallery(person);
@@ -196,16 +200,7 @@
   }
 
   function closePhotoManageModal() {
-    const { photoManageModal, photoThumbGrid, modalPhotoInput, modalPhotoAddBtn, modalPhotoDeleteBtn } = elements;
-    if (!photoManageModal.hidden) {
-      photoManageModal.hidden = true;
-      photoManageModal.onclick = null;
-      photoThumbGrid.classList.remove('gallery-thumb-grid');
-      modalPhotoInput.onchange = null;
-      modalPhotoAddBtn.onclick = null;
-      modalPhotoDeleteBtn.onclick = null;
-      managerState = { itemId: null, mode: null, replaceIndex: null };
-    }
+    if (!elements.photoManageModal.hidden) resetPhotoManagerDom();
   }
 
   Object.assign(YW.photoManager, {

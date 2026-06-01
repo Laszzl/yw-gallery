@@ -464,6 +464,18 @@ button,
   text-shadow: 0 4px 14px rgba(0, 0, 0, 0.32);
 }
 
+.athlete-selector-grid.people-count-1 .selector-name {
+  font-size: 4rem;
+}
+
+.athlete-selector-grid.people-count-2 .selector-name {
+  font-size: 2.4rem;
+}
+
+.athlete-selector-grid.people-count-many .selector-name {
+  font-size: 1.6rem;
+}
+
 #addView {
   display: grid;
   gap: 12px;

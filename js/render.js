@@ -170,10 +170,9 @@
     elements.athleteSelectorGrid.replaceChildren();
 
     const count = state.people.length;
-    let fontSize;
-    if (count === 1) fontSize = '4rem';
-    else if (count === 2) fontSize = '2.4rem';
-    else fontSize = '1.6rem';
+    elements.athleteSelectorGrid.classList.toggle('people-count-1', count === 1);
+    elements.athleteSelectorGrid.classList.toggle('people-count-2', count === 2);
+    elements.athleteSelectorGrid.classList.toggle('people-count-many', count > 2);
 
     for (const person of state.people) {
       const fragment = elements.templates.selectorCard.content.cloneNode(true);
@@ -181,7 +180,6 @@
       const image = fragment.querySelector('.selector-image');
       const name = fragment.querySelector('.selector-name');
       name.textContent = person.name;
-      name.style.fontSize = fontSize;
       card.addEventListener('click', () => showAthleteView(person.id));
       if (person.homePhotoUrl) {
         image.src = person.homePhotoUrl;

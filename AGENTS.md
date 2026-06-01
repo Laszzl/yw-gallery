@@ -135,6 +135,7 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 - 不随意改变持久化 state key、数据结构、IndexedDB 名称、store、key 或 localStorage key。
 - 修改数据模型时必须同步更新 `serializeState()`、`normalizeState()`、`validateImportedState()`、导入导出兼容逻辑和本文件说明。
 - 状态变更优先通过 `js/data.js` 中的业务函数完成；通用 state 修复放在 `js/state.js`。
+- item/person/gallery 的状态切换与图片集合更新也必须通过 `js/data.js` API 完成，避免 UI 模块直接改持久化 state。
 - 数据写入必须使用 `saveStateStrict()` 或 `scheduleSave()`；不要绕过 `js/storage.js` 直接写 IndexedDB/localStorage。
 - `viewState` 只保存运行时 UI 状态，不加入持久化数据，除非明确需要跨会话保存并同步更新文档。
 
@@ -144,6 +145,7 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 - 长生命周期事件在 `js/events.js` 初始化时绑定；渲染生成的短生命周期节点可在对应 render 函数中绑定。
 - 事件绑定应避免重复注册；重新渲染前优先 `replaceChildren()` 重建局部节点。
 - 表单提交必须使用 `withFormLock()` 防止重复提交。
+- `withFormLock()` 只能由一层调用，禁止外层事件绑定和内部 handler 同时加锁。
 
 ### 复用与简洁
 - 优先复用已有 helper、模板、CSS 变量和数据查询函数，避免重复工具函数、重复 DOM 构造、重复样式常量。
@@ -175,7 +177,7 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 ## 开发
 - 修改代码后刷新浏览器即可生效
-- 每次修改代码后，自动提交并推送到 GitHub（git add + commit + push）
+- 完成验证并确认 `git status --short` 只包含本次任务预期文件后，自动提交并推送到 GitHub（git add + commit + push）
 - 代码变更导致 CLAUDE.md 描述不符时，询问用户是否更新 CLAUDE.md
 - 文档或代码修改后，提交前运行 `git diff -- AGENTS.md CLAUDE.md` 或对应文件 diff 审阅变更
 - 提交前确认 `git status --short` 只包含本次任务预期文件

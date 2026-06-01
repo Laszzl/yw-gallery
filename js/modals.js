@@ -62,10 +62,8 @@
       toggle.onclick = async () => {
         const active = !toggle.classList.contains('active');
         YW.utils.setSwitchState(toggle, active);
-        const currentItem = YW.data.findItemById(itemId);
+        const currentItem = await YW.data.updateItemStatus(itemId, key, active);
         if (currentItem) {
-          currentItem[key] = active;
-          await YW.storage.saveStateStrict();
           const card = document.querySelector(`[data-item-id="${itemId}"]`);
           if (card) {
             const title = card.querySelector('.yw-title, .text-item-title');

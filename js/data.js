@@ -229,6 +229,22 @@
     await saveStateStrict();
   }
 
+  async function setGalleryEnabled(personId, enabled) {
+    const person = findPersonById(personId);
+    if (!person) return null;
+    person.galleryEnabled = Boolean(enabled);
+    await saveStateStrict();
+    return person;
+  }
+
+  async function updateGalleryPhotos(personId, photos) {
+    const person = findPersonById(personId);
+    if (!person) return null;
+    person.galleryPhotos = Array.isArray(photos) ? photos : [];
+    await saveStateStrict();
+    return person;
+  }
+
   async function deletePerson(personId) {
     state.people = state.people.filter((p) => p.id !== personId);
     state.items = state.items.filter((item) => item.personId !== personId);
@@ -359,6 +375,17 @@
     await saveStateStrict();
   }
 
+  async function updateItemStatus(itemId, key, value) {
+    if (key !== 'isGift' && key !== 'isOwnedNow') {
+      throw new Error('Invalid item status key');
+    }
+    const item = findItemById(itemId);
+    if (!item) return null;
+    item[key] = Boolean(value);
+    await saveStateStrict();
+    return item;
+  }
+
   function toggleCollapsedState(id, storageObj) {
     storageObj[id] = !storageObj[id];
     scheduleSave();
@@ -409,6 +436,8 @@
     readFilesAsDataURLs,
     createPerson,
     updatePersonPhoto,
+    setGalleryEnabled,
+    updateGalleryPhotos,
     deletePerson,
     createGroup,
     deleteGroup,
@@ -417,6 +446,7 @@
     createItem,
     deleteItem,
     updateItemPhotos,
+    updateItemStatus,
     toggleCollapsedState,
     ensureCategoryOrderForPersonGroup,
     syncMissingGroupOrders,

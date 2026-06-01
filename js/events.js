@@ -83,17 +83,15 @@
     elements.galleryToggleBtn.addEventListener('click', async () => {
       const person = YW.data.findPersonById(YW.state.viewState.settingsActivePersonId);
       if (!person) return;
-      person.galleryEnabled = !person.galleryEnabled;
-      await YW.storage.scheduleSave();
+      await YW.data.setGalleryEnabled(person.id, !person.galleryEnabled);
       YW.render.syncGallerySettings();
     });
 
-    elements.galleryManageBtn.addEventListener('click', () => {
+    elements.galleryManageBtn.addEventListener('click', async () => {
       const person = YW.data.findPersonById(YW.state.viewState.settingsActivePersonId);
       if (!person) return;
       if (!person.galleryEnabled) {
-        person.galleryEnabled = true;
-        YW.storage.scheduleSave();
+        await YW.data.setGalleryEnabled(person.id, true);
         YW.render.syncGallerySettings();
       }
       YW.photoManager.openGalleryManageModal(person.id);
