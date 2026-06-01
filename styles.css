@@ -162,7 +162,7 @@ button,
 
 .brand-button {
   min-width: 56px;
-  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #050505 100%);
   color: var(--primary-fg);
   font-size: 1.05rem;
   letter-spacing: 0.08em;
@@ -171,7 +171,7 @@ button,
 
 .primary-button,
 .secondary-button {
-  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #0a0a0a 100%);
   color: var(--primary-fg);
   box-shadow: var(--shadow-control);
 }
@@ -306,7 +306,7 @@ button,
 }
 
 .switcher-chip.active {
-  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #0a0a0a 100%);
   color: #ffffff;
   box-shadow: var(--shadow-control);
 }
