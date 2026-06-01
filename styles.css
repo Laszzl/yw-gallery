@@ -29,6 +29,9 @@
   --hover-danger-bg: rgba(192, 54, 44, 0.18);
   --hover-danger-border: rgba(192, 54, 44, 0.18);
   --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  --dark-button-bg: linear-gradient(180deg, #242426 0%, #1b1b1d 48%, #111113 100%);
+  --dark-button-hover-bg: linear-gradient(180deg, #2a2a2c 0%, #202022 48%, #151517 100%);
+  --dark-button-shadow: var(--shadow-control), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   --ease-apple: cubic-bezier(0.16, 0, 0.22, 1);
   --radius-xl: 28px;
   --radius-lg: 24px;
@@ -99,6 +102,9 @@ label,
 button,
 .mini-file-button,
 .file-picker {
+  -webkit-appearance: none;
+  appearance: none;
+  background-clip: padding-box;
   border: 0;
   border-radius: 999px;
   transition: transform 0.22s var(--ease-apple), box-shadow 0.22s var(--ease-apple), opacity 0.22s var(--ease-apple), background-color 0.22s var(--ease-apple), border-color 0.22s var(--ease-apple), filter 0.22s var(--ease-apple);
@@ -162,18 +168,18 @@ button,
 
 .brand-button {
   min-width: 56px;
-  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  background: var(--dark-button-bg);
   color: var(--primary-fg);
   font-size: 1.05rem;
   letter-spacing: 0.08em;
-  box-shadow: var(--shadow-control);
+  box-shadow: var(--dark-button-shadow);
 }
 
 .primary-button,
 .secondary-button {
-  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  background: var(--dark-button-bg);
   color: var(--primary-fg);
-  box-shadow: var(--shadow-control);
+  box-shadow: var(--dark-button-shadow);
 }
 
 .mini-button,
@@ -306,9 +312,9 @@ button,
 }
 
 .switcher-chip.active {
-  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
+  background: var(--dark-button-bg);
   color: #ffffff;
-  box-shadow: var(--shadow-control);
+  box-shadow: var(--dark-button-shadow);
 }
 
 .app-main {
@@ -2933,9 +2939,12 @@ select:focus {
   .brand-button,
   .primary-button,
   .secondary-button,
-  .danger-button,
-  .danger-lite-button,
   .file-picker.primary-button {
+    border: 0;
+  }
+
+  .danger-button,
+  .danger-lite-button {
     border: 1px solid transparent;
   }
 
@@ -2945,7 +2954,7 @@ select:focus {
   .secondary-button:hover,
   .file-picker.primary-button:hover {
     filter: brightness(var(--hover-brand-brightness));
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   .brand-button:active,
@@ -2957,7 +2966,7 @@ select:focus {
   }
 
   .switcher-chip.active:hover {
-    background: linear-gradient(180deg, #242426 0%, #151517 100%);
+    background: var(--dark-button-hover-bg);
   }
 
   /* ── Ghost Buttons: surface brightens, border surfaces ── */
@@ -3145,7 +3154,7 @@ select:focus {
   .secondary-button,
   .file-picker.primary-button {
     color: #ffffff;
-    box-shadow: var(--shadow-control);
+    box-shadow: var(--dark-button-shadow);
   }
 
   .danger-button,
