@@ -314,7 +314,6 @@ button,
 .switcher-chip.active {
   background: var(--dark-button-bg);
   color: #ffffff;
-  box-shadow: var(--dark-button-shadow);
 }
 
 .app-main {
@@ -2980,6 +2979,11 @@ select:focus {
     box-shadow: var(--hover-control-shadow);
   }
 
+  /* Override: remove shadow from switcher-chip hover only */
+  .switcher-chip:hover {
+    box-shadow: none;
+  }
+
   .mini-button:active,
   .mini-file-button:active,
   .subtle-icon-btn:active,
@@ -3175,10 +3179,6 @@ select:focus {
   .switcher-chip {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.06);
-  }
-
-  .switcher-chip.active {
-    box-shadow: var(--shadow-control);
   }
 
   /* Status toggle — inactive track more visible on dark bg */
