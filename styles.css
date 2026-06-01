@@ -162,7 +162,7 @@ button,
 
 .brand-button {
   min-width: 56px;
-  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #050505 100%);
+  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: var(--primary-fg);
   font-size: 1.05rem;
   letter-spacing: 0.08em;
@@ -171,7 +171,7 @@ button,
 
 .primary-button,
 .secondary-button {
-  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #0a0a0a 100%);
+  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: var(--primary-fg);
   box-shadow: var(--shadow-control);
 }
@@ -306,7 +306,7 @@ button,
 }
 
 .switcher-chip.active {
-  background: linear-gradient(180deg, #3a3a3d 0%, #1c1c1f 40%, #0a0a0a 100%);
+  background: linear-gradient(180deg, #1d1d1f 0%, #111111 100%);
   color: #ffffff;
   box-shadow: var(--shadow-control);
 }
@@ -400,7 +400,6 @@ button,
 
 .selector-image-wrap,
 .yw-card-image-wrap {
-  background: linear-gradient(135deg, #eceef3 0%, #fafbfd 100%);
 }
 
 .selector-image-wrap {
@@ -632,7 +631,6 @@ button,
 
 .gallery-card-image-wrap {
   aspect-ratio: 4 / 5;
-  background: linear-gradient(135deg, #eceef3 0%, #fafbfd 100%);
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
@@ -646,8 +644,6 @@ button,
 .gallery-card {
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(15, 23, 42, 0.04);
 }
 
 /* ── Gallery settings ── */
@@ -3206,11 +3202,9 @@ select:focus {
 
   .selector-image-wrap,
   .yw-card-image-wrap {
-    background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
   }
 
   .gallery-card-image-wrap {
-    background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
   }
 
   .gallery-card {
