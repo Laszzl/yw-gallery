@@ -2975,14 +2975,14 @@ select:focus {
   .mini-file-button:hover,
   .subtle-icon-btn:hover,
   .file-picker:not(.primary-button):hover,
-  .switcher-chip:hover {
+  .switcher-chip:not(.active):hover {
     background: var(--hover-control-bg);
     border-color: var(--hover-control-border);
     box-shadow: var(--hover-control-shadow);
   }
 
   /* Override: remove shadow from switcher-chip hover only */
-  .switcher-chip:hover {
+  .switcher-chip:not(.active):hover {
     box-shadow: none;
   }
 
