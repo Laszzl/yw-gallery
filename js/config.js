@@ -1,6 +1,7 @@
 (function (YW) {
+  const today = new Date();
   YW.config = {
-    DEFAULT_ITEM_DATE: '1998-03-25',
+    DEFAULT_ITEM_DATE: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
     DATE_MIN_YEAR: 1950,
     DATE_PICKER_SCROLL_DEBOUNCE_MS: 150,
     DB_NAME: 'yw_gallery_v1',

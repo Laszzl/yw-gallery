@@ -202,6 +202,10 @@
         item.quantity = 1;
         changed = true;
       }
+      if (item.date === '1998-03-25') {
+        item.date = DEFAULT_ITEM_DATE;
+        changed = true;
+      }
       if (!isValidDateString(item.date)) {
         item.date = DEFAULT_ITEM_DATE;
         changed = true;

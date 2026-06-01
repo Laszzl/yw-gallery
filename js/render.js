@@ -397,7 +397,7 @@
 
     title.textContent = formatItemLabel(item);
     if (statusEl) statusEl.textContent = formatItemStatus(item);
-    dateEl.textContent = formatDate(item.date) || '98/3/25';
+    dateEl.textContent = formatDate(item.date) || YW.utils.formatDateShort(YW.config.DEFAULT_ITEM_DATE);
     menuToggle.addEventListener('click', () => YW.modals.openItemActionsModal(item.id, type));
     card.dataset.itemId = item.id;
     YW.drag.attachItemDrag(card, item.id);
