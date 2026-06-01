@@ -53,6 +53,14 @@
     element.setAttribute('aria-checked', String(active));
   }
 
+  function bindCollapseToggle(button, storageObj, key, collapsibleEl) {
+    button.addEventListener('click', () => {
+      YW.data.toggleCollapsedState(key, storageObj);
+      collapsibleEl.classList.toggle('collapsed');
+      YW.utils.setExpanded(button, !collapsibleEl.classList.contains('collapsed'));
+    });
+  }
+
   Object.assign(YW.utils, {
     isPlainObject,
     isValidDateString,
@@ -64,5 +72,6 @@
     createOption,
     setExpanded,
     setSwitchState,
+    bindCollapseToggle,
   });
 })(window.YW);

@@ -125,10 +125,22 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 **JS-7: Cached DOM access.** DOM 查询统一通过 `cacheElements()` 中的 `elements` 对象。动态创建的元素除外。
 > 静态 DOM 查询统一在 `cacheElements()` 中维护；动态渲染区域允许局部查询。
 
-**JS-8: Save semantics.** 非关键保存用 `scheduleSave()`(去重+自含错误弹窗)，仅在调用方必须确认写入成功时才用 `await saveStateStrict()`。
-> 14 处 `saveStateStrict` vs 6 处 `scheduleSave`，无一致规则。
+**JS-8: Save semantics.** 用户交互触发的 CUD 操作用 `await saveStateStrict()`（必须确认写入成功）；拖拽排序等高频非关键操作用 `scheduleSave()`（去重 + 自含错误弹窗，不阻塞 UI）。
+> 新增代码遵守此规则，现有违规在修改时逐步修复。
 
 **JS-9: Module boundaries (渐进式).** 新功能放入对应的 `js/*.js` 模块文件，不新增逻辑到 `events.js`。方向是逐步瘦身 `events.js` 使其只剩事件绑定和编排逻辑。
+
+**JS-10: No re-export aliases.** 不创建仅转发调用的包装函数或别名。模块函数应从其 canonical 位置引用（如 `YW.utils.formatDateShort` 而非 `YW.data.formatDate`）。这消除无价值的间接层，确保代码库中只有一个权威的引用路径。
+
+**JS-11: Shared delete confirmation.** 所有删除操作统一使用 `YW.modals.confirmAndDelete(confirmMsg, deleteFn, successMsg)`。不得手动展开 showModal→confirm→delete→renderAll→showModal 模式。
+
+**JS-12: Unified collapse toggle.** 折叠/展开 UI 使用共享的 `YW.utils.bindCollapseToggle(button, storageObj, key, collapsibleEl)` 绑定，不再手动内联 toggleCollapsedState + classList.toggle + setExpanded。
+
+**JS-13: Extracted UI widgets.** 自包含的 UI 组件（日期选择器、图片管理器）必须放在独立的 `js/*.js` 模块文件中，不嵌入 forms.js 或 modals.js。模块应在功能边界上分离，而非仅按行数分拆。
+
+**JS-14: CSS variable-first theming.** 暗色模式和设备端侧覆盖应优先修改 CSS 自定义属性值，而非在 `@media` 块中重新声明完整规则。避免选择器重复，使主题切换逻辑集中在 `:root` 变量定义处。
+
+**JS-15: Canonical import source.** 同一个函数只在一个模块中定义和导出。调用方始终从定义模块引用（`YW.utils.*` 优于 `YW.data.*` 别名）。如 render.js 需要 `YW.utils.formatDateShort`，直接解构 `YW.utils`，而非通过 `YW.data` 间接引用。
 
 ### CSS
 
@@ -146,6 +158,8 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 **CSS-5: No `!important`.** 靠特异性管理而非 `!important` 解决覆盖。仅 `.hidden` 等工具类除外。
 > 仅保留 `[hidden]` 和 reduced-motion 这类工具/无障碍场景的 `!important`。
+
+**CSS-6: Prefer variable overrides to rule duplication.** 在 `@media (prefers-color-scheme: dark)` 和 `@media (max-width: 768px)` 中，优先修改 `:root` 或 `body` 上的 CSS 自定义属性值，而非重新声明完整的选择器规则块。仅在变量无法覆盖的差异（如 `backdrop-filter`、`box-shadow` 替换需要不同值语义）时才写新规则。
 
 ### HTML
 

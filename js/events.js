@@ -20,7 +20,7 @@
     // app-lifetime
     document.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape') return;
-      if (!elements.datePickerModal.hidden) YW.forms.cancelDatePicker();
+      if (!elements.datePickerModal.hidden) YW.datePicker.cancelDatePicker();
       else if (!elements.cropModal.hidden) YW.crop.closeCropModal(YW.crop.createCropResult('cancel'));
       else if (!elements.itemActionsModal.hidden) YW.modals.closeItemActionsModal();
       else YW.modals.closePhotoManageModal();
@@ -96,7 +96,7 @@
         YW.storage.scheduleSave();
         YW.render.syncGallerySettings();
       }
-      YW.modals.openGalleryManageModal(person.id);
+      YW.photoManager.openGalleryManageModal(person.id);
     });
   }
 
@@ -117,21 +117,17 @@
   }
 
   function bindFormEvents(elements) {
-    bindSubmitForm(elements.personForm, 'person', YW.forms.handlePersonFormSubmit);
-    bindSubmitForm(elements.groupForm, 'group', YW.forms.handleGroupFormSubmit);
-    bindSubmitForm(elements.categoryForm, 'category', YW.forms.handleCategoryFormSubmit);
-    bindSubmitForm(elements.itemForm, 'item', YW.forms.handleItemFormSubmit);
-
-    const lockNames = new Map([
-      [elements.groupForm, 'group'],
-      [elements.categoryForm, 'category'],
-      [elements.personForm, 'person'],
-      [elements.itemForm, 'item'],
-    ]);
-    for (const form of lockNames.keys()) {
+    const formLockEntries = [
+      [elements.personForm, 'person', YW.forms.handlePersonFormSubmit],
+      [elements.groupForm, 'group', YW.forms.handleGroupFormSubmit],
+      [elements.categoryForm, 'category', YW.forms.handleCategoryFormSubmit],
+      [elements.itemForm, 'item', YW.forms.handleItemFormSubmit],
+    ];
+    for (const [form, lockName, handler] of formLockEntries) {
+      bindSubmitForm(form, lockName, handler);
       // app-lifetime
       form.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' && YW.forms.isFormLocked(lockNames.get(form))) event.preventDefault();
+        if (event.key === 'Enter' && YW.forms.isFormLocked(lockName)) event.preventDefault();
       });
     }
   }
@@ -139,16 +135,16 @@
   function bindDatePickerEvents(elements) {
     // app-lifetime
     elements.itemDateDisplay.addEventListener('click', () => {
-      YW.forms.openDatePicker(elements.itemDateHidden.value);
+      YW.datePicker.openDatePicker(elements.itemDateHidden.value);
     });
-    elements.datePickerConfirmBtn.addEventListener('click', YW.forms.confirmDatePicker);
-    elements.datePickerCancelBtn.addEventListener('click', YW.forms.cancelDatePicker);
+    elements.datePickerConfirmBtn.addEventListener('click', YW.datePicker.confirmDatePicker);
+    elements.datePickerCancelBtn.addEventListener('click', YW.datePicker.cancelDatePicker);
     elements.datePickerModal.addEventListener('click', (event) => {
-      if (event.target === elements.datePickerModal) YW.forms.cancelDatePicker();
+      if (event.target === elements.datePickerModal) YW.datePicker.cancelDatePicker();
     });
-    elements.dateYearScroll.addEventListener('scroll', YW.forms.onColumnScroll, { passive: true });
-    elements.dateMonthScroll.addEventListener('scroll', YW.forms.onColumnScroll, { passive: true });
-    elements.dateDayScroll.addEventListener('scroll', YW.forms.onColumnScroll, { passive: true });
+    elements.dateYearScroll.addEventListener('scroll', YW.datePicker.onColumnScroll, { passive: true });
+    elements.dateMonthScroll.addEventListener('scroll', YW.datePicker.onColumnScroll, { passive: true });
+    elements.dateDayScroll.addEventListener('scroll', YW.datePicker.onColumnScroll, { passive: true });
   }
 
   function bindEvents() {
@@ -189,7 +185,7 @@
     }
     bindEvents();
     YW.crop.bindCropModalEvents();
-    YW.forms.syncDateDisplay(YW.config.DEFAULT_ITEM_DATE);
+    YW.datePicker.syncDateDisplay(YW.config.DEFAULT_ITEM_DATE);
     YW.render.renderAll();
     YW.forms.syncFileSummaries();
   }

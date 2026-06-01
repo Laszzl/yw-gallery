@@ -13,7 +13,6 @@
     hasGroupContent,
     getOrderedGroupsForPerson,
     getOrderedCategoriesForPersonGroup,
-    formatDate,
     formatItemLabel,
     formatItemStatus,
     itemHasPhotos,
@@ -21,60 +20,7 @@
     compareItemsForDisplay,
     formatCategoryCounts,
   } = YW.data;
-
-  function reorderRailCardsByItemList(itemsInOrder) {
-    if (!itemsInOrder.length) return;
-    const firstCard = document.querySelector('.rail-card[data-item-id="' + itemsInOrder[0].id + '"]');
-    if (!firstCard || !firstCard.parentElement) return;
-    const rail = firstCard.parentElement;
-    const itemOrderMap = new Map(itemsInOrder.map(function (item, i) { return [item.id, i]; }));
-    const cards = Array.from(rail.querySelectorAll('.rail-card'));
-    cards.sort(function (a, b) {
-      const aOrder = itemOrderMap.get(a.dataset.itemId);
-      const bOrder = itemOrderMap.get(b.dataset.itemId);
-      return (aOrder != null ? aOrder : 999) - (bOrder != null ? bOrder : 999);
-    });
-    for (let i = 0; i < cards.length; i++) {
-      rail.appendChild(cards[i]);
-    }
-  }
-
-  const attachItemDrag = YW.drag.createDragHandler({
-    dragOverClass: 'rail-card',
-    onDrop: (draggedId, targetId) => {
-      const itemsInOrder = YW.data.reorderItemsByDrag(draggedId, targetId);
-      if (itemsInOrder) reorderRailCardsByItemList(itemsInOrder);
-    },
-  });
-
-  const attachOverviewGroupDrag = YW.drag.createDragHandler({
-    dragOverClass: 'overview-group-card',
-    onDrop: (draggedId, targetId, targetEl) => {
-      const personId = targetEl.dataset.personId || viewState.overviewPersonId;
-      if (personId && YW.data.reorderGroupsForPerson(personId, draggedId, targetId)) renderAll();
-    },
-  });
-
-  const attachOverviewCategoryDrag = YW.drag.createDragHandler({
-    dragOverClass: 'overview-category-row',
-    onDrop: (draggedId, targetId, targetEl) => {
-      const personId = targetEl.dataset.personId || viewState.overviewPersonId;
-      const groupId = targetEl.dataset.groupId;
-      if (personId && groupId && YW.data.reorderCategoriesForPersonGroup(personId, groupId, draggedId, targetId)) renderAll();
-    },
-  });
-
-  const attachGalleryDrag = YW.drag.createDragHandler({
-    dragOverClass: 'gallery-card',
-    onDrop: (draggedIndex, targetIndex, targetEl) => {
-      const rail = targetEl.closest('.gallery-rail');
-      const personId = rail ? rail.dataset.galleryPersonId : null;
-      const person = personId ? YW.data.reorderGalleryPhotos(personId, draggedIndex, targetIndex) : null;
-      if (!person) return;
-      renderGallery(person);
-      YW.railMask.setupRailMasks();
-    },
-  });
+  const { formatDateShort: formatDate } = YW.utils;
 
   // ═══════════════════════════════════════════════
   // Render
@@ -301,14 +247,12 @@
       meta.textContent = categories.length ? `${categories.length} 个小品类` : '暂无小品类';
       if (isCollapsed) card.classList.add('collapsed');
       YW.utils.setExpanded(groupToggle, !isCollapsed);
-      attachOverviewGroupDrag(card, group.id);
+      YW.drag.attachOverviewGroupDrag(card, group.id);
 
       groupToggle.addEventListener('click', (event) => {
         event.stopPropagation();
-        YW.data.toggleCollapsedState(group.id, state.collapsedSettingsGroups);
-        card.classList.toggle('collapsed');
-        YW.utils.setExpanded(groupToggle, !card.classList.contains('collapsed'));
       });
+      YW.utils.bindCollapseToggle(groupToggle, state.collapsedSettingsGroups, group.id, card);
       remove.addEventListener('click', (event) => {
         event.stopPropagation();
         handleDeleteGroup(group.id);
@@ -329,7 +273,7 @@
         row.dataset.groupId = group.id;
         row.dataset.categoryId = category.id;
         name.textContent = category.name;
-        attachOverviewCategoryDrag(row, category.id);
+        YW.drag.attachOverviewCategoryDrag(row, category.id);
         catDelete.addEventListener('click', () => handleDeleteCategory(category.id));
         content.appendChild(row);
       }
@@ -378,11 +322,7 @@
       YW.utils.setExpanded(toggle, !isCollapsed);
       titleNode.textContent = category.name;
       countsNode.textContent = formatCategoryCounts(categoryItems);
-      toggle.addEventListener('click', () => {
-        YW.data.toggleCollapsedState(collapseKey, state.collapsedSubcategories);
-        block.classList.toggle('collapsed');
-        YW.utils.setExpanded(toggle, !block.classList.contains('collapsed'));
-      });
+      YW.utils.bindCollapseToggle(toggle, state.collapsedSubcategories, collapseKey, block);
 
       const { imageItems, textItems } = splitItemsByPhotos(categoryItems);
 
@@ -433,7 +373,7 @@
       const image = frag.querySelector('.gallery-card-image');
       image.src = photoUrl;
       card.dataset.galleryIndex = String(i);
-      attachGalleryDrag(card, String(i));
+      YW.drag.attachGalleryDrag(card, String(i));
       railList.append(frag);
     }
 
@@ -460,7 +400,7 @@
     dateEl.textContent = formatDate(item.date) || '98/3/25';
     menuToggle.addEventListener('click', () => YW.modals.openItemActionsModal(item.id, type));
     card.dataset.itemId = item.id;
-    attachItemDrag(card, item.id);
+    YW.drag.attachItemDrag(card, item.id);
   }
 
   function buildImageItemCard(item) {

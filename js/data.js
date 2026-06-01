@@ -385,9 +385,6 @@
 
   Object.assign(YW.data, {
     normalizeName,
-    formatDate,
-    daysInMonth,
-    toDateDisplay,
     formatItemLabel,
     formatItemStatus,
     itemHasPhotos,

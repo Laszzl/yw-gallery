@@ -328,8 +328,6 @@
     state,
     viewState,
     createEmptyState,
-    isPlainObject,
-    isValidDateString,
     normalizeOrderList,
     arraysEqual,
     validateImportedState,
