@@ -173,6 +173,26 @@
     );
   }
 
+  async function handleDeleteGroup(groupId) {
+    const group = YW.state.state.groups.find((entry) => entry.id === groupId);
+    if (!group) return;
+    await YW.modals.confirmAndDelete(
+      `确认删除大品类"${group.name}"及其所有小品类和 YW 吗？`,
+      () => YW.data.deleteGroup(groupId),
+      '大品类已删除'
+    );
+  }
+
+  async function handleDeleteCategory(categoryId) {
+    const category = YW.data.findCategoryById(categoryId);
+    if (!category) return;
+    await YW.modals.confirmAndDelete(
+      `确认删除小品类"${category.name}"及其关联的所有 YW 吗？`,
+      () => YW.data.deleteCategory(categoryId),
+      '小品类已删除'
+    );
+  }
+
   async function initApp() {
     YW.dom.cacheElements();
     await YW.storage.loadState();
@@ -188,5 +208,10 @@
     YW.forms.syncFileSummaries();
   }
 
-  Object.assign(YW.events, { bindEvents, initApp });
+  Object.assign(YW.events, {
+    bindEvents,
+    handleDeleteCategory,
+    handleDeleteGroup,
+    initApp,
+  });
 })(window.YW);

@@ -7,20 +7,20 @@
   const {
     findPersonById,
     findItemById,
-    findCategoryById,
-    getCategoriesByGroupId,
     getItemsByPersonCategory,
     hasGroupContent,
     getOrderedGroupsForPerson,
     getOrderedCategoriesForPersonGroup,
-    formatItemLabel,
-    formatItemStatus,
     itemHasPhotos,
     splitItemsByPhotos,
     compareItemsForDisplay,
-    formatCategoryCounts,
   } = YW.data;
-  const { formatDateShort: formatDate } = YW.utils;
+  const {
+    itemLabel,
+    itemStatus,
+    categoryCounts,
+    shortDate,
+  } = YW.formatters;
 
   // ═══════════════════════════════════════════════
   // Render
@@ -72,6 +72,19 @@
   function showAddView() { showView('add'); }
   function showAthleteView(personId) { showView('athlete', personId); }
   function showSettingsView() { showView('settings'); }
+
+  function createEmptyText(text) {
+    const empty = document.createElement('p');
+    empty.className = 'overview-empty';
+    empty.textContent = text;
+    return empty;
+  }
+
+  function setDataset(element, values) {
+    for (const [key, value] of Object.entries(values)) {
+      element.dataset[key] = value;
+    }
+  }
 
   function renderSwitcher() {
     elements.switcherScrollArea.replaceChildren();
@@ -221,10 +234,7 @@
     const personId = viewState.overviewPersonId;
     elements.categoryOverviewList.replaceChildren();
     if (!personId) {
-      const empty = document.createElement('p');
-      empty.className = 'overview-empty';
-      empty.textContent = '请先添加体育生';
-      elements.categoryOverviewList.append(empty);
+      elements.categoryOverviewList.append(createEmptyText('请先添加体育生'));
       return;
     }
 
@@ -236,8 +246,7 @@
       const content = fragment.querySelector('.overview-group-content');
       const groupToggle = fragment.querySelector('[data-group-toggle]');
       const remove = fragment.querySelector('[data-group-delete]');
-      card.dataset.personId = personId;
-      card.dataset.groupId = group.id;
+      setDataset(card, { personId, groupId: group.id });
       const categories = getOrderedCategoriesForPersonGroup(personId, group.id);
       const isCollapsed = Boolean(state.collapsedSettingsGroups[group.id]);
 
@@ -253,42 +262,25 @@
       YW.utils.bindCollapseToggle(groupToggle, state.collapsedSettingsGroups, group.id, card);
       remove.addEventListener('click', (event) => {
         event.stopPropagation();
-        handleDeleteGroup(group.id);
+        YW.events.handleDeleteGroup(group.id);
       });
 
       if (!categories.length) {
-        const empty = document.createElement('p');
-        empty.className = 'overview-empty';
-        empty.textContent = '暂无小品类';
-        content.append(empty);
+        content.append(createEmptyText('暂无小品类'));
       }
       for (const category of categories) {
         const catFragment = elements.templates.overviewCategory.content.cloneNode(true);
         const row = catFragment.querySelector('.overview-category-row');
         const name = catFragment.querySelector('.manager-row-title');
         const catDelete = catFragment.querySelector('[data-category-delete]');
-        row.dataset.personId = personId;
-        row.dataset.groupId = group.id;
-        row.dataset.categoryId = category.id;
+        setDataset(row, { personId, groupId: group.id, categoryId: category.id });
         name.textContent = category.name;
         YW.drag.attachOverviewCategoryDrag(row, category.id);
-        catDelete.addEventListener('click', () => handleDeleteCategory(category.id));
+        catDelete.addEventListener('click', () => YW.events.handleDeleteCategory(category.id));
         content.appendChild(row);
       }
       elements.categoryOverviewList.append(fragment);
     }
-  }
-
-  async function handleDeleteGroup(groupId) {
-    const group = state.groups.find((g) => g.id === groupId);
-    if (!group) return;
-    await YW.modals.confirmAndDelete(`确认删除大品类"${group.name}"及其所有小品类和 YW 吗？`, () => YW.data.deleteGroup(groupId), '大品类已删除');
-  }
-
-  async function handleDeleteCategory(categoryId) {
-    const category = findCategoryById(categoryId);
-    if (!category) return;
-    await YW.modals.confirmAndDelete(`确认删除小品类"${category.name}"及其关联的所有 YW 吗？`, () => YW.data.deleteCategory(categoryId), '小品类已删除');
   }
 
   function renderGroupSection(personId, group) {
@@ -319,7 +311,7 @@
       if (isCollapsed) block.classList.add('collapsed');
       YW.utils.setExpanded(toggle, !isCollapsed);
       titleNode.textContent = category.name;
-      countsNode.textContent = formatCategoryCounts(categoryItems);
+      countsNode.textContent = categoryCounts(categoryItems);
       YW.utils.bindCollapseToggle(toggle, state.collapsedSubcategories, collapseKey, block);
 
       const { imageItems, textItems } = splitItemsByPhotos(categoryItems);
@@ -393,9 +385,9 @@
     const statusEl = card.querySelector(statusSelector);
     const menuToggle = card.querySelector('[data-item-menu-toggle]');
 
-    title.textContent = formatItemLabel(item);
-    if (statusEl) statusEl.textContent = formatItemStatus(item);
-    dateEl.textContent = formatDate(item.date) || YW.utils.formatDateShort(YW.config.DEFAULT_ITEM_DATE);
+    title.textContent = itemLabel(item);
+    if (statusEl) statusEl.textContent = itemStatus(item);
+    dateEl.textContent = shortDate(item.date);
     menuToggle.addEventListener('click', () => YW.modals.openItemActionsModal(item.id, type));
     card.dataset.itemId = item.id;
     YW.drag.attachItemDrag(card, item.id);
@@ -470,7 +462,7 @@
     const categoryItems = getItemsByPersonCategory(personId, categoryId);
     const countsNode = block.querySelector('.subcategory-counts');
     if (!countsNode) return;
-    countsNode.textContent = formatCategoryCounts(categoryItems);
+    countsNode.textContent = categoryCounts(categoryItems);
   }
 
   function removeEmptyRenderedSubcategory(personId, categoryId) {

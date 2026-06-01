@@ -64,13 +64,7 @@
         YW.utils.setSwitchState(toggle, active);
         const currentItem = await YW.data.updateItemStatus(itemId, key, active);
         if (currentItem) {
-          const card = document.querySelector(`[data-item-id="${itemId}"]`);
-          if (card) {
-            const title = card.querySelector('.yw-title, .text-item-title');
-            if (title) title.textContent = YW.data.formatItemLabel(currentItem);
-            const statusEl = card.querySelector('.yw-status, .text-item-status');
-            if (statusEl) statusEl.textContent = YW.data.formatItemStatus(currentItem);
-          }
+          YW.render.refreshItemCard(itemId);
           YW.render.refreshCategoryCounts(currentItem.personId, currentItem.categoryId);
         }
       };

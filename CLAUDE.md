@@ -19,6 +19,7 @@
 - `js/utils.js`：通用纯函数与轻量 DOM helper；避免放入具体业务流程。
 - `js/state.js`：state/viewState、序列化、导入校验、数据归一化和视图状态兜底。
 - `js/storage.js`：IndexedDB/localStorage 读写、迁移、导入导出、保存队列。
+- `js/formatters.js`：集中维护面向 UI 的展示文案与日期/数量状态格式化。
 - `js/data.js`：业务数据查询、创建、删除、排序、图片 Data URL 读取等数据层操作。
 - `js/dom.js`：集中缓存 DOM 节点和模板引用；新增 DOM 查询优先放这里。
 - `js/render.js`：所有视图渲染、列表生成、视图切换和 UI 同步。

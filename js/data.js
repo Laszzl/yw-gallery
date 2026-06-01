@@ -11,25 +11,6 @@
     return String(value).trim().replace(/\s+/g, '').toLowerCase();
   }
 
-  const formatDate = YW.utils.formatDateShort;
-  const daysInMonth = YW.utils.daysInMonth;
-  const toDateDisplay = YW.utils.formatDateDisplay;
-
-  function formatItemLabel(item) {
-    let text = item.label;
-    if (item.quantity && item.unit) {
-      text += ' · ' + item.quantity + item.unit;
-    }
-    return text;
-  }
-
-  function formatItemStatus(item) {
-    const parts = [];
-    if (item.isGift) parts.push('赠送');
-    parts.push(item.isOwnedNow ? '现存' : '非现存');
-    return parts.join(' · ');
-  }
-
   function itemHasPhotos(item) {
     return (item.photoUrls || []).length > 0;
   }
@@ -45,12 +26,6 @@
     return (b.date || DEFAULT_ITEM_DATE).localeCompare(a.date || DEFAULT_ITEM_DATE) ||
       (a.order ?? 0) - (b.order ?? 0) ||
       String(a.label || '').localeCompare(String(b.label || ''), 'zh-Hans-CN');
-  }
-
-  function formatCategoryCounts(items) {
-    const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
-    const ownedQty = items.reduce((sum, item) => sum + (item.isOwnedNow ? item.quantity : 0), 0);
-    return `总数量 ${totalQty} · 现存 ${ownedQty}`;
   }
 
   function findPersonById(personId) {
@@ -412,12 +387,9 @@
 
   Object.assign(YW.data, {
     normalizeName,
-    formatItemLabel,
-    formatItemStatus,
     itemHasPhotos,
     splitItemsByPhotos,
     compareItemsForDisplay,
-    formatCategoryCounts,
     findPersonById,
     findItemById,
     findCategoryById,

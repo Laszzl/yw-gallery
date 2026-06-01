@@ -117,6 +117,99 @@
     return { ok: true };
   }
 
+  function sanitizeStringArray(value) {
+    return Array.isArray(value) ? value.filter((entry) => typeof entry === 'string') : [];
+  }
+
+  function sanitizeBooleanMap(value) {
+    const result = {};
+    if (!isPlainObject(value)) return result;
+    for (const [key, entry] of Object.entries(value)) {
+      if (typeof key === 'string' && typeof entry === 'boolean') result[key] = entry;
+    }
+    return result;
+  }
+
+  function sanitizeOrderMap(value) {
+    const result = {};
+    if (!isPlainObject(value)) return result;
+    for (const [key, order] of Object.entries(value)) {
+      if (typeof key === 'string' && Array.isArray(order)) {
+        result[key] = order.filter((id) => typeof id === 'string');
+      }
+    }
+    return result;
+  }
+
+  function sanitizeNestedOrderMap(value) {
+    const result = {};
+    if (!isPlainObject(value)) return result;
+    for (const [personId, groupMap] of Object.entries(value)) {
+      if (typeof personId !== 'string' || !isPlainObject(groupMap)) continue;
+      result[personId] = sanitizeOrderMap(groupMap);
+    }
+    return result;
+  }
+
+  function sanitizePerson(person) {
+    return {
+      id: typeof person?.id === 'string' ? person.id : '',
+      name: typeof person?.name === 'string' ? person.name : '',
+      homePhotoUrl: typeof person?.homePhotoUrl === 'string' ? person.homePhotoUrl : null,
+      detailPhotoUrl: typeof person?.detailPhotoUrl === 'string' ? person.detailPhotoUrl : null,
+      galleryEnabled: person?.galleryEnabled === true,
+      galleryPhotos: sanitizeStringArray(person?.galleryPhotos),
+    };
+  }
+
+  function sanitizeGroup(group) {
+    const result = {
+      id: typeof group?.id === 'string' ? group.id : '',
+      name: typeof group?.name === 'string' ? group.name : '',
+    };
+    if (Number.isFinite(group?.order)) result.order = group.order;
+    return result;
+  }
+
+  function sanitizeCategory(category) {
+    const result = {
+      id: typeof category?.id === 'string' ? category.id : '',
+      groupId: typeof category?.groupId === 'string' ? category.groupId : '',
+      name: typeof category?.name === 'string' ? category.name : '',
+    };
+    if (Number.isFinite(category?.order)) result.order = category.order;
+    return result;
+  }
+
+  function sanitizeItem(item) {
+    return {
+      id: typeof item?.id === 'string' ? item.id : '',
+      personId: typeof item?.personId === 'string' ? item.personId : '',
+      categoryId: typeof item?.categoryId === 'string' ? item.categoryId : '',
+      label: typeof item?.label === 'string' ? item.label : '',
+      quantity: Number.isInteger(item?.quantity) && item.quantity >= 1 ? item.quantity : 1,
+      unit: typeof item?.unit === 'string' ? item.unit : '',
+      date: isValidDateString(item?.date) ? item.date : DEFAULT_ITEM_DATE,
+      isGift: item?.isGift === true,
+      isOwnedNow: item?.isOwnedNow !== false,
+      photoUrls: sanitizeStringArray(item?.photoUrls),
+      order: Number.isFinite(item?.order) ? item.order : 0,
+    };
+  }
+
+  function sanitizeStateData(data) {
+    return {
+      people: Array.isArray(data?.people) ? data.people.map(sanitizePerson) : [],
+      groups: Array.isArray(data?.groups) ? data.groups.map(sanitizeGroup) : [],
+      categories: Array.isArray(data?.categories) ? data.categories.map(sanitizeCategory) : [],
+      items: Array.isArray(data?.items) ? data.items.map(sanitizeItem) : [],
+      collapsedSubcategories: sanitizeBooleanMap(data?.collapsedSubcategories),
+      collapsedSettingsGroups: sanitizeBooleanMap(data?.collapsedSettingsGroups),
+      groupOrderByPerson: sanitizeOrderMap(data?.groupOrderByPerson),
+      categoryOrderByPerson: sanitizeNestedOrderMap(data?.categoryOrderByPerson),
+    };
+  }
+
   function validateImportedState(data) {
     const shape = validateStateShape(data);
     if (!shape.ok) return shape;
@@ -131,16 +224,7 @@
 
     return {
       ok: true,
-      data: {
-        people: data.people,
-        groups: data.groups,
-        categories: data.categories,
-        items: data.items,
-        collapsedSubcategories: data.collapsedSubcategories || {},
-        collapsedSettingsGroups: data.collapsedSettingsGroups || {},
-        groupOrderByPerson: data.groupOrderByPerson || {},
-        categoryOrderByPerson: data.categoryOrderByPerson || {},
-      },
+      data: sanitizeStateData(data),
     };
   }
 
@@ -167,14 +251,15 @@
   }
 
   function restoreStateFromData(data) {
-    state.people = data.people || [];
-    state.groups = data.groups || [];
-    state.categories = data.categories || [];
-    state.items = data.items || [];
-    state.collapsedSubcategories = data.collapsedSubcategories || {};
-    state.collapsedSettingsGroups = data.collapsedSettingsGroups || {};
-    state.groupOrderByPerson = data.groupOrderByPerson || {};
-    state.categoryOrderByPerson = data.categoryOrderByPerson || {};
+    const sanitized = sanitizeStateData(data);
+    state.people = sanitized.people;
+    state.groups = sanitized.groups;
+    state.categories = sanitized.categories;
+    state.items = sanitized.items;
+    state.collapsedSubcategories = sanitized.collapsedSubcategories;
+    state.collapsedSettingsGroups = sanitized.collapsedSettingsGroups;
+    state.groupOrderByPerson = sanitized.groupOrderByPerson;
+    state.categoryOrderByPerson = sanitized.categoryOrderByPerson;
     return normalizeState();
   }
 
@@ -334,6 +419,7 @@
     createEmptyState,
     normalizeOrderList,
     arraysEqual,
+    sanitizeStateData,
     validateImportedState,
     serializeState,
     restoreStateFromData,

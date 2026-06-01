@@ -47,18 +47,26 @@
     return result;
   }
 
-  let pendingSave = Promise.resolve();
+  let scheduledSave = null;
+  let needsSave = false;
   async function scheduleSave() {
-    pendingSave = (async () => {
+    needsSave = true;
+    if (scheduledSave) return scheduledSave;
+    scheduledSave = Promise.resolve().then(async () => {
       try {
-        await pendingSave;
-        await saveStateStrict();
+        while (needsSave) {
+          needsSave = false;
+          await saveStateStrict();
+        }
       } catch (err) {
+        needsSave = false;
         console.error(err);
         await YW.modals.showModal(SAVE_FAILURE_MESSAGE);
+      } finally {
+        scheduledSave = null;
       }
-    })();
-    return pendingSave;
+    });
+    return scheduledSave;
   }
 
   async function loadState() {
