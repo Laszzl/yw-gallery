@@ -98,6 +98,66 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 - **Form Lock**: `withFormLock(form, lockName, fn)` 防止重复提交
 - **Rail Mask**: `updateRailMask()` CSS mask-image 渐变 + ResizeObserver，横向滚动轨道两端淡出
 
+## Coding Standards
+
+所有新代码必须遵守。现有违规代码视为 grandfathered in，修改时逐步修复。
+
+### JavaScript
+
+**JS-1: No `var`.** 只用 `const` 和 `let`。`var` 的函数作用域提升是 bug 来源。
+> events.js 日期选择器(657-810行)和 rail-mask(2726-2797行)使用 `var`，待修复。
+
+**JS-2: Magic numbers must be named constants.** 除 0/1/-1 外的数字字面量定义为命名 `const`。跨作用域使用的放入 `config.js`。
+> events.js 中 `8`(滚动阈值), `32`(渐变宽度), `0.8`(裁剪比例), `20`(最小尺寸), `0.01`(宽高比容差) 均为硬编码。
+
+**JS-3: Event listeners must be cleaned up.** 每个 `addEventListener` 必须有对应的移除路径（模态框关闭、元素销毁），或标注 `// app-lifetime` 注释说明故意保留。
+> 裁剪拖拽的 `mousemove`/`mouseup` 监听器注册在 `document` 上但从未移除。
+
+**JS-4: async/await only.** 所有异步代码使用 `async/await`，不写 `.then()/.catch()` 链。混合风格容易隐藏错误传播路径。
+> `scheduleSave` 使用 `.then()/.catch()` 链，其余函数全部用 `await`。
+
+**JS-5: Functions max ~50 lines.** 超过 50 行的函数拆分为命名子函数。不是为了教条，而是长函数几乎总是做了多件事。
+> `openPhotoCollectionManager`(132行), `bindEvents`(150行), `validateImportedState`(81行)。
+
+**JS-6: DRY — Rule of Three.** 相同逻辑出现 3 次及以上才提取为共享函数。2 次重复可以容忍，过早抽象比重复更危险。
+> 模态框清理模式重复 5 次以上，应提取。
+
+**JS-7: Cached DOM access.** DOM 查询统一通过 `cacheElements()` 中的 `elements` 对象。动态创建的元素除外。
+> `closePhotoManageModal` 使用原始 `document.getElementById` 而非 `elements`。
+
+**JS-8: Save semantics.** 非关键保存用 `scheduleSave()`(去重+自含错误弹窗)，仅在调用方必须确认写入成功时才用 `await saveStateStrict()`。
+> 14 处 `saveStateStrict` vs 6 处 `scheduleSave`，无一致规则。
+
+**JS-9: Module boundaries (渐进式).** 新功能放入对应的 `js/*.js` 模块文件，不新增逻辑到 `events.js`。方向是逐步瘦身 `events.js` 使其只剩事件绑定和编排逻辑。
+
+### CSS
+
+**CSS-1: No duplicate selectors.** 每个选择器块只定义一次，追加属性合并到已有块。
+> `.switcher-chip`(行205+310), `.manager-row`(行709+715) 重复定义。
+
+**CSS-2: No empty declaration blocks.** 删除无属性的空规则块。
+> `.selector-image-wrap, .yw-card-image-wrap {}`(行411) 为空。
+
+**CSS-3: CSS variables for repeated values.** 同一值出现 3 次以上提取为 `:root` 自定义属性。
+> `letter-spacing: 0` ~20次, font-weight 650/620/560, 日期选择器高度 220/200/190px。
+
+**CSS-4: Max 2 descendant levels.** 选择器嵌套不超过 2 层。深层选择器依赖 DOM 结构，HTML 重构时容易断裂。
+> `.card-topline > div:first-child > .yw-date`(3层)。
+
+**CSS-5: No `!important`.** 靠特异性管理而非 `!important` 解决覆盖。仅 `.hidden` 等工具类除外。
+> 行1705(`margin`), 行2173(`font-size`) 使用 `!important`。
+
+### HTML
+
+**HTML-1: Complete ARIA on every modal.** 每个模态框必须具备 `role="dialog"` + `aria-modal="true"` + `aria-labelledby`(或 `aria-label`)。
+> `#customModal` 缺少 `aria-labelledby`。
+
+**HTML-2: Popup triggers have semantics.** 打开弹窗的元素必须有 `aria-haspopup` 和 `aria-expanded`。
+> 日期选择器触发器无 `aria-haspopup`/`aria-expanded`。
+
+**HTML-3: No duplicate SVG icons.** 每个 SVG 图标只定义一次，用 `<template>` 或 JS 复用。
+> 三点菜单图标(行461+488)，删除图标(行503+521)。
+
 ## 开发
 - 修改代码后刷新浏览器即可生效
 - 每次修改代码后，自动提交并推送到 GitHub（git add + commit + push）

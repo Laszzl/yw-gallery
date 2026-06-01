@@ -111,13 +111,16 @@ async function saveStateStrict() {
 }
 
 let pendingSave = Promise.resolve();
-function scheduleSave() {
-  pendingSave = pendingSave
-    .then(() => saveStateStrict())
-    .catch((err) => {
+async function scheduleSave() {
+  pendingSave = (async () => {
+    try {
+      await pendingSave;
+      await saveStateStrict();
+    } catch (err) {
       console.error(err);
-      showModal(SAVE_FAILURE_MESSAGE);
-    });
+      await showModal(SAVE_FAILURE_MESSAGE);
+    }
+  })();
   return pendingSave;
 }
 
@@ -543,6 +546,11 @@ function cacheElements() {
     overviewGroup: document.querySelector('#overviewGroupTemplate'),
     overviewCategory: document.querySelector('#overviewCategoryTemplate'),
     photoThumb: document.querySelector('#photoThumbTemplate'),
+    photoManageModal: document.getElementById('photoManageModal'),
+    photoThumbGrid: document.getElementById('photoThumbGrid'),
+    modalPhotoInput: document.getElementById('modalPhotoInput'),
+    modalPhotoAddBtn: document.getElementById('modalPhotoAddBtn'),
+    modalPhotoDeleteBtn: document.getElementById('modalPhotoDeleteBtn'),
   };
 }
 
@@ -641,13 +649,13 @@ function toDateDisplay(dateStr) {
 // Date picker
 // ═══════════════════════════════════════════════
 function syncDateDisplay(dateStr) {
-  var formatted;
+  let formatted;
   if (dateStr) {
     formatted = dateStr;
   } else {
-    var y = String(datePickerState.year);
-    var m = String(datePickerState.month).padStart(2, '0');
-    var d = String(datePickerState.day).padStart(2, '0');
+    const y = String(datePickerState.year);
+    const m = String(datePickerState.month).padStart(2, '0');
+    const d = String(datePickerState.day).padStart(2, '0');
     formatted = y + '-' + m + '-' + d;
   }
   elements.itemDateHidden.value = formatted;
@@ -655,19 +663,19 @@ function syncDateDisplay(dateStr) {
 }
 
 function renderColumnItems(scrollEl, items, selectedValue, colType) {
-  var existing = scrollEl.querySelectorAll('.date-col-item');
-  for (var i = 0; i < existing.length; i++) { existing[i].remove(); }
+  const existing = scrollEl.querySelectorAll('.date-col-item');
+  for (let i = 0; i < existing.length; i++) { existing[i].remove(); }
 
-  var spacerBottom = scrollEl.querySelector('.date-col-spacer:last-child');
-  var fragment = document.createDocumentFragment();
-  for (var j = 0; j < items.length; j++) {
-    var itemEl = document.createElement('div');
+  const spacerBottom = scrollEl.querySelector('.date-col-spacer:last-child');
+  const fragment = document.createDocumentFragment();
+  for (let j = 0; j < items.length; j++) {
+    const itemEl = document.createElement('div');
     itemEl.className = 'date-col-item';
     itemEl.textContent = String(items[j]);
     itemEl.dataset.value = String(items[j]);
     itemEl.dataset.col = colType;
     itemEl.addEventListener('click', function(e) {
-      var val = parseInt(e.currentTarget.dataset.value, 10);
+      const val = parseInt(e.currentTarget.dataset.value, 10);
       handleDateItemClick(colType, val, scrollEl);
     });
     fragment.appendChild(itemEl);
@@ -676,22 +684,22 @@ function renderColumnItems(scrollEl, items, selectedValue, colType) {
 }
 
 function renderYearColumn(scrollEl, selectedYear) {
-  var currentYear = new Date().getFullYear();
-  var items = [];
-  for (var y = currentYear; y >= DATE_MIN_YEAR; y--) { items.push(y); }
+  const currentYear = new Date().getFullYear();
+  const items = [];
+  for (let y = currentYear; y >= DATE_MIN_YEAR; y--) { items.push(y); }
   renderColumnItems(scrollEl, items, selectedYear, 'year');
 }
 
 function renderMonthColumn(scrollEl, selectedMonth) {
-  var items = [];
-  for (var m = 1; m <= 12; m++) { items.push(m); }
+  const items = [];
+  for (let m = 1; m <= 12; m++) { items.push(m); }
   renderColumnItems(scrollEl, items, selectedMonth, 'month');
 }
 
 function renderDayColumn(scrollEl, selectedDay, year, month) {
-  var maxDay = daysInMonth(year, month);
-  var items = [];
-  for (var d = 1; d <= maxDay; d++) { items.push(d); }
+  const maxDay = daysInMonth(year, month);
+  const items = [];
+  for (let d = 1; d <= maxDay; d++) { items.push(d); }
   renderColumnItems(scrollEl, items, selectedDay, 'day');
 }
 
@@ -708,15 +716,15 @@ function handleDateItemClick(colType, value, scrollEl) {
 }
 
 function onColumnScroll(e) {
-  var scrollEl = e.target;
+  const scrollEl = e.target;
   if (!scrollEl.classList.contains('date-col-scroll')) return;
 
   clearTimeout(datePickerState.scrollTimer);
   datePickerState.scrollTimer = setTimeout(function() {
-    var selectedValue = getClosestSnapItem(scrollEl);
+    const selectedValue = getClosestSnapItem(scrollEl);
     if (selectedValue === null) return;
 
-    var colType = scrollEl.dataset.col;
+    const colType = scrollEl.dataset.col;
     if (colType === 'year') datePickerState.year = selectedValue;
     else if (colType === 'month') datePickerState.month = selectedValue;
     else if (colType === 'day') datePickerState.day = selectedValue;
@@ -730,13 +738,13 @@ function onColumnScroll(e) {
 }
 
 function getClosestSnapItem(scrollEl) {
-  var items = scrollEl.querySelectorAll('.date-col-item');
-  var viewCenter = scrollEl.scrollTop + scrollEl.clientHeight / 2;
-  var closest = null;
-  var minDist = Infinity;
-  for (var i = 0; i < items.length; i++) {
-    var itemCenter = items[i].offsetTop + items[i].offsetHeight / 2;
-    var dist = Math.abs(itemCenter - viewCenter);
+  const items = scrollEl.querySelectorAll('.date-col-item');
+  const viewCenter = scrollEl.scrollTop + scrollEl.clientHeight / 2;
+  let closest = null;
+  let minDist = Infinity;
+  for (let i = 0; i < items.length; i++) {
+    const itemCenter = items[i].offsetTop + items[i].offsetHeight / 2;
+    const dist = Math.abs(itemCenter - viewCenter);
     if (dist < minDist) {
       minDist = dist;
       closest = parseInt(items[i].dataset.value, 10);
@@ -746,8 +754,8 @@ function getClosestSnapItem(scrollEl) {
 }
 
 function updateColumnSelection(scrollEl, value) {
-  var items = scrollEl.querySelectorAll('.date-col-item');
-  for (var i = 0; i < items.length; i++) {
+  const items = scrollEl.querySelectorAll('.date-col-item');
+  for (let i = 0; i < items.length; i++) {
     if (parseInt(items[i].dataset.value, 10) === value) {
       items[i].classList.add('selected');
     } else {
@@ -757,11 +765,11 @@ function updateColumnSelection(scrollEl, value) {
 }
 
 function scrollToSelectedItem(scrollEl, value) {
-  var items = scrollEl.querySelectorAll('.date-col-item');
-  for (var i = 0; i < items.length; i++) {
+  const items = scrollEl.querySelectorAll('.date-col-item');
+  for (let i = 0; i < items.length; i++) {
     if (parseInt(items[i].dataset.value, 10) === value) {
-      var itemTop = items[i].offsetTop;
-      var scrollTarget = itemTop - (scrollEl.clientHeight / 2) + (items[i].offsetHeight / 2);
+      const itemTop = items[i].offsetTop;
+      const scrollTarget = itemTop - (scrollEl.clientHeight / 2) + (items[i].offsetHeight / 2);
       scrollEl.scrollTop = scrollTarget;
       break;
     }
@@ -769,7 +777,7 @@ function scrollToSelectedItem(scrollEl, value) {
 }
 
 function refreshDayColumn() {
-  var maxDay = daysInMonth(datePickerState.year, datePickerState.month);
+  const maxDay = daysInMonth(datePickerState.year, datePickerState.month);
   if (datePickerState.day > maxDay) {
     datePickerState.day = maxDay;
   }
@@ -781,7 +789,7 @@ function refreshDayColumn() {
 }
 
 function openDatePicker(dateStr) {
-  var parts = dateStr.split('-');
+  const parts = dateStr.split('-');
   datePickerState.year = parseInt(parts[0], 10) || 1998;
   datePickerState.month = parseInt(parts[1], 10) || 3;
   datePickerState.day = parseInt(parts[2], 10) || 25;
@@ -800,15 +808,18 @@ function openDatePicker(dateStr) {
   });
 
   elements.datePickerModal.hidden = false;
+  elements.itemDateDisplay.setAttribute('aria-expanded', 'true');
 }
 
 function confirmDatePicker() {
   syncDateDisplay();
   elements.datePickerModal.hidden = true;
+  elements.itemDateDisplay.setAttribute('aria-expanded', 'false');
 }
 
 function cancelDatePicker() {
   elements.datePickerModal.hidden = true;
+  elements.itemDateDisplay.setAttribute('aria-expanded', 'false');
 }
 
 function formatItemLabel(item) {
@@ -1270,8 +1281,10 @@ const attachOverviewCategoryDrag = createDragHandler({
 // Render
 // ═══════════════════════════════════════════════
 function updateNavHeight() {
-  var hasAthletes = state.people.length > 0;
-  document.body.style.setProperty('--ios-nav-height', hasAthletes ? '120px' : '66px');
+  const hasAthletes = state.people.length > 0;
+  document.body.style.setProperty('--ios-nav-height', hasAthletes
+    ? YW.config.NAV_HEIGHT_WITH_ATHLETES
+    : YW.config.NAV_HEIGHT_NO_ATHLETES);
 }
 
 function ensureValidViewState() {
@@ -1882,18 +1895,14 @@ function closeItemActionsModal() {
 }
 
 function closePhotoManageModal() {
-  const modal = document.getElementById('photoManageModal');
-  const thumbGrid = document.getElementById('photoThumbGrid');
-  const fileInput = document.getElementById('modalPhotoInput');
-  const addBtn = document.getElementById('modalPhotoAddBtn');
-  const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
-  if (!modal.hidden) {
-    modal.hidden = true;
-    modal.onclick = null;
-    thumbGrid.classList.remove('gallery-thumb-grid');
-    fileInput.onchange = null;
-    addBtn.onclick = null;
-    deleteBtn.onclick = null;
+  const { photoManageModal, photoThumbGrid, modalPhotoInput, modalPhotoAddBtn, modalPhotoDeleteBtn } = elements;
+  if (!photoManageModal.hidden) {
+    photoManageModal.hidden = true;
+    photoManageModal.onclick = null;
+    photoThumbGrid.classList.remove('gallery-thumb-grid');
+    modalPhotoInput.onchange = null;
+    modalPhotoAddBtn.onclick = null;
+    modalPhotoDeleteBtn.onclick = null;
     photoManageState = { itemId: null, mode: null, replaceIndex: null };
   }
 }
@@ -1910,11 +1919,7 @@ async function handleDeleteItem(itemId) {
 }
 
 function openPhotoCollectionManager(config) {
-  const modal = document.getElementById('photoManageModal');
-  const thumbGrid = document.getElementById('photoThumbGrid');
-  const addBtn = document.getElementById('modalPhotoAddBtn');
-  const deleteBtn = document.getElementById('modalPhotoDeleteBtn');
-  const fileInput = document.getElementById('modalPhotoInput');
+  const { photoManageModal: modal, photoThumbGrid: thumbGrid, modalPhotoAddBtn: addBtn, modalPhotoDeleteBtn: deleteBtn, modalPhotoInput: fileInput } = elements;
   fileInput.value = '';
   thumbGrid.classList.toggle('gallery-thumb-grid', Boolean(config.galleryGrid));
   modal.hidden = false;
@@ -2104,7 +2109,7 @@ function showCropModal(file, aspectRatio) {
     const container = elements.cropPreviewContainer;
     container.className = 'crop-preview-container';
     if (aspectRatio === 1) container.classList.add('square');
-    else if (Math.abs(aspectRatio - 0.8) < 0.01) container.classList.add('portrait-45');
+    else if (Math.abs(aspectRatio - YW.config.CROP_INITIAL_RECT_RATIO) < YW.config.CROP_ASPECT_RATIO_TOLERANCE) container.classList.add('portrait-45');
     else container.classList.add('portrait-34');
     const reader = new FileReader();
     reader.onerror = failCropRead;
@@ -2116,6 +2121,7 @@ function showCropModal(file, aspectRatio) {
       elements.cropImage.src = e.target.result;
     };
     reader.readAsDataURL(file);
+    bindCropDocListeners();
     elements.cropModal.hidden = false;
   });
 }
@@ -2148,9 +2154,10 @@ function initCropLayout() {
   const ratio = cropState.aspectRatio;
   const maxW = cropState.imgW;
   const maxH = cropState.imgH;
-  let rectW = Math.round(maxW * 0.8);
+  const R = YW.config.CROP_INITIAL_RECT_RATIO;
+  let rectW = Math.round(maxW * R);
   let rectH = Math.round(rectW / ratio);
-  if (rectH > maxH * 0.8) { rectH = Math.round(maxH * 0.8); rectW = Math.round(rectH * ratio); }
+  if (rectH > maxH * R) { rectH = Math.round(maxH * R); rectW = Math.round(rectH * ratio); }
   cropState.cx = Math.round(cropState.imgX + (maxW - rectW) / 2);
   cropState.cy = Math.round(cropState.imgY + (maxH - rectH) / 2);
   cropState.cw = rectW;
@@ -2177,7 +2184,7 @@ function renderCropOverlay() {
 
 function clampCropRect() {
   const c = cropState;
-  const minSize = 20;
+  const minSize = YW.config.CROP_MIN_SIZE;
   if (c.cw < minSize) c.cw = minSize;
   if (c.ch < minSize) c.ch = minSize;
   if (c.cw > c.imgW) c.cw = c.imgW;
@@ -2214,9 +2221,25 @@ async function performCrop() {
   return new Promise((resolve) => { canvas.toBlob(resolve, 'image/jpeg', CROP_JPEG_QUALITY); });
 }
 
+function unbindCropDocListeners() {
+  document.removeEventListener('mousemove', moveCropDrag);
+  document.removeEventListener('touchmove', moveCropDrag);
+  document.removeEventListener('mouseup', endCropDrag);
+  document.removeEventListener('touchend', endCropDrag);
+}
+
+function bindCropDocListeners() {
+  unbindCropDocListeners(); // ensure no duplicates
+  document.addEventListener('mousemove', moveCropDrag);
+  document.addEventListener('touchmove', moveCropDrag, { passive: false });
+  document.addEventListener('mouseup', endCropDrag);
+  document.addEventListener('touchend', endCropDrag);
+}
+
 function prepareCropModalClose() {
   elements.cropModal.hidden = true;
   endCropDrag();
+  unbindCropDocListeners();
   elements.cropImage.onload = null;
   elements.cropImage.onerror = null;
   elements.cropImage.src = '';
@@ -2272,11 +2295,6 @@ function bindCropModalEvents() {
   const cropRect = document.getElementById('cropRect');
   cropRect.addEventListener('mousedown', (e) => { if (e.target !== cropRect) return; e.preventDefault(); startCropDrag(e, 'rect', null); });
   cropRect.addEventListener('touchstart', (e) => { if (e.target !== cropRect || e.touches.length !== 1) return; e.preventDefault(); startCropDrag(e, 'rect', null); });
-
-  document.addEventListener('mousemove', moveCropDrag);
-  document.addEventListener('touchmove', moveCropDrag, { passive: false });
-  document.addEventListener('mouseup', endCropDrag);
-  document.addEventListener('touchend', endCropDrag);
 
   elements.cropConfirmBtn.addEventListener('click', async () => {
     let blob;
@@ -2724,28 +2742,30 @@ async function cropInputFiles(input, { aspectRatio, multiple = false }) {
 // 滚动边界模糊
 // ═══════════════════════════════════════════════
 function updateRailMask(rail) {
-  var scrollLeft = rail.scrollLeft;
-  var maxScroll = rail.scrollWidth - rail.clientWidth;
-  var isPhone = matchMedia('(max-width: 768px)').matches;
+  const scrollLeft = rail.scrollLeft;
+  const maxScroll = rail.scrollWidth - rail.clientWidth;
+  const isPhone = matchMedia('(max-width: 768px)').matches;
+  const T = YW.config.RAIL_SCROLL_THRESHOLD;
+  const MAX_T = YW.config.RAIL_MAX_SCROLL_THRESHOLD;
+  const fadeWidth = YW.config.RAIL_FADE_WIDTH_PX + 'px';
 
   if (isPhone) {
-    var atStart = scrollLeft <= 8;
-    var atEnd = maxScroll <= 2 || scrollLeft >= maxScroll - 8;
+    const atStart = scrollLeft <= T;
+    const atEnd = maxScroll <= MAX_T || scrollLeft >= maxScroll - T;
     rail.style.setProperty('--rail-fade-l', atStart ? '0' : '1');
     rail.style.setProperty('--rail-fade-r', atEnd ? '0' : '1');
     return;
   }
 
-  if (maxScroll <= 2) {
+  if (maxScroll <= MAX_T) {
     rail.style.setProperty('--rail-mask-image', 'none');
     return;
   }
 
-  var atStart = scrollLeft <= 8;
-  var atEnd = scrollLeft >= maxScroll - 8;
-  var fadeWidth = '32px';
+  const atStart = scrollLeft <= T;
+  const atEnd = scrollLeft >= maxScroll - T;
 
-  var maskImage;
+  let maskImage;
   if (atStart && atEnd) {
     maskImage = 'none';
   } else if (atStart) {
@@ -2759,8 +2779,8 @@ function updateRailMask(rail) {
   rail.style.setProperty('--rail-mask-image', maskImage);
 }
 
-var _railMaskResizeObserver = null;
-var _railMaskPending = new WeakMap();
+let _railMaskResizeObserver = null;
+const _railMaskPending = new WeakMap();
 
 function scheduleRailMask(rail) {
   if (_railMaskPending.get(rail)) return;
@@ -2774,15 +2794,15 @@ function scheduleRailMask(rail) {
 function setupRailMasks() {
   if (!_railMaskResizeObserver) {
     _railMaskResizeObserver = new ResizeObserver(function (entries) {
-      for (var i = 0; i < entries.length; i++) {
+      for (let i = 0; i < entries.length; i++) {
         scheduleRailMask(entries[i].target);
       }
     });
   }
 
-  var rails = document.querySelectorAll('.rail-list');
-  for (var i = 0; i < rails.length; i++) {
-    var rail = rails[i];
+  const rails = document.querySelectorAll('.rail-list');
+  for (let i = 0; i < rails.length; i++) {
+    const rail = rails[i];
     if (rail.dataset.railMaskSetup) {
       updateRailMask(rail);
       continue;

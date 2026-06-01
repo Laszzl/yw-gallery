@@ -10,6 +10,14 @@
     STORAGE_KEY: 'yw_data',
     CROP_JPEG_QUALITY: 0.92,
     CROP_OUTPUT_BASE: 1200,
+    CROP_INITIAL_RECT_RATIO: 0.8,
+    CROP_MIN_SIZE: 20,
+    CROP_ASPECT_RATIO_TOLERANCE: 0.01,
+    RAIL_SCROLL_THRESHOLD: 8,
+    RAIL_MAX_SCROLL_THRESHOLD: 2,
+    RAIL_FADE_WIDTH_PX: 32,
+    NAV_HEIGHT_WITH_ATHLETES: '120px',
+    NAV_HEIGHT_NO_ATHLETES: '66px',
     isMacDevice: matchMedia('(hover: hover) and (pointer: fine)').matches,
   };
 })(window);

@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <svg style="display:none" aria-hidden="true">
+      <symbol id="icon-three-dots" viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/>
+      </symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+      </symbol>
+    </svg>
     <div class="page-shell">
       <header class="topbar">
         <div class="topbar-branding">
@@ -90,7 +98,7 @@
                   <span>日期</span>
                   <div class="date-picker-field">
                     <input type="hidden" name="date" value="1998-03-25" id="itemDateHidden" />
-                    <button type="button" class="date-display-button" id="itemDateDisplay">
+                    <button type="button" class="date-display-button" id="itemDateDisplay" aria-haspopup="dialog" aria-expanded="false">
                       <span class="date-display-text">1998/3/25</span>
                       <svg class="date-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
@@ -286,7 +294,7 @@
       </div>
     </div>
 
-    <div id="customModal" class="modal-overlay" role="dialog" aria-modal="true" aria-describedby="modalMessage" hidden>
+    <div id="customModal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="提示" aria-describedby="modalMessage" hidden>
       <div class="modal-content dialog-modal-content">
         <p id="modalMessage" class="modal-msg"></p>
         <div class="modal-actions">
@@ -450,7 +458,7 @@
         </div>
         <div class="yw-card-body">
           <div class="card-topline">
-            <div>
+            <div class="card-topline-info">
               <h3 class="yw-title"></h3>
               <div class="yw-meta-row">
                 <p class="yw-status"></p>
@@ -459,7 +467,7 @@
             </div>
             <div class="item-menu-wrap">
               <button class="mini-button icon-btn" data-item-menu-toggle type="button" title="更多操作" aria-label="更多操作">
-                <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><use href="#icon-three-dots"/></svg>
               </button>
             </div>
           </div>
@@ -486,7 +494,7 @@
         </div>
         <div class="item-menu-wrap compact-menu-wrap">
           <button class="mini-button icon-btn" data-item-menu-toggle type="button" title="更多操作" aria-label="更多操作">
-            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><use href="#icon-three-dots"/></svg>
           </button>
         </div>
       </article>
@@ -501,7 +509,7 @@
           </div>
           <div class="overview-group-actions">
             <button class="mini-button danger-lite-button icon-btn" data-group-delete type="button" title="删除" aria-label="删除大品类">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-trash"/></svg>
             </button>
             <button class="mini-button icon-btn subtle-icon-btn" data-group-toggle type="button" title="切换展开状态" aria-label="切换展开状态">
               <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -519,7 +527,7 @@
         </div>
         <div class="order-actions">
           <button class="mini-button danger-lite-button icon-btn" data-category-delete type="button" title="删除" aria-label="删除小品类">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-trash"/></svg>
           </button>
         </div>
       </div>
