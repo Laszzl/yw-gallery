@@ -2965,7 +2965,8 @@ select:focus {
   }
 
   .switcher-chip.active:hover {
-    background: var(--dark-button-hover-bg);
+    filter: brightness(var(--hover-brand-brightness));
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   /* ── Ghost Buttons: surface brightens, border surfaces ── */
