@@ -2934,7 +2934,8 @@ select:focus {
   .brand-button,
   .primary-button,
   .secondary-button,
-  .file-picker.primary-button {
+  .file-picker.primary-button,
+  .switcher-chip.active {
     border: 0;
   }
 
