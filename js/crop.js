@@ -2,7 +2,7 @@
   YW.crop = YW.crop || {};
 
   const elements = YW.dom.elements;
-  const { CROP_JPEG_QUALITY, CROP_OUTPUT_BASE } = YW.config;
+  const { CROP_JPEG_QUALITY, CROP_OUTPUT_BASE, CROP_MIN_SIZE } = YW.config;
 
   let cropResolve = null;
   let cropState = { file: null, aspectRatio: 1, imgNaturalW: 0, imgNaturalH: 0, imgX: 0, imgY: 0, imgW: 0, imgH: 0, cx: 0, cy: 0, cw: 0, ch: 0, containerW: 0, containerH: 0 };
@@ -96,7 +96,7 @@
 
   function clampCropRect() {
     const c = cropState;
-    const minSize = YW.config.CROP_MIN_SIZE;
+    const minSize = CROP_MIN_SIZE;
     if (c.cw < minSize) c.cw = minSize;
     if (c.ch < minSize) c.ch = minSize;
     if (c.cw > c.imgW) c.cw = c.imgW;
@@ -231,71 +231,76 @@
 
   function endCropDrag() { cropDrag.active = false; cropDrag.mode = null; }
 
-  function handleCornerDrag(clientX, clientY) {
+  function getCornerResizeStart(clientX, clientY) {
+    const snap = { x: cropDrag.snapCX, y: cropDrag.snapCY, w: cropDrag.snapCW, h: cropDrag.snapCH };
+    const h = cropDrag.handle;
     const dx = clientX - cropDrag.startX;
     const dy = clientY - cropDrag.startY;
-    const snap = { cx: cropDrag.snapCX, cy: cropDrag.snapCY, cw: cropDrag.snapCW, ch: cropDrag.snapCH };
-    const ratio = cropState.aspectRatio;
-    const h = cropDrag.handle;
-    const img = { x: cropState.imgX, y: cropState.imgY, w: cropState.imgW, h: cropState.imgH };
-    let anchorX, anchorY, newW, newH;
+    let anchorX, anchorY, width, height;
 
     if (h === 'tl') {
-      anchorX = snap.cx + snap.cw; anchorY = snap.cy + snap.ch;
-      newW = anchorX - (snap.cx + dx); newH = anchorY - (snap.cy + dy);
+      anchorX = snap.x + snap.w; anchorY = snap.y + snap.h;
+      width = anchorX - (snap.x + dx); height = anchorY - (snap.y + dy);
     } else if (h === 'tr') {
-      anchorX = snap.cx; anchorY = snap.cy + snap.ch;
-      newW = (snap.cx + snap.cw + dx) - anchorX; newH = anchorY - (snap.cy + dy);
+      anchorX = snap.x; anchorY = snap.y + snap.h;
+      width = (snap.x + snap.w + dx) - anchorX; height = anchorY - (snap.y + dy);
     } else if (h === 'bl') {
-      anchorX = snap.cx + snap.cw; anchorY = snap.cy;
-      newW = anchorX - (snap.cx + dx); newH = (snap.cy + snap.ch + dy) - anchorY;
+      anchorX = snap.x + snap.w; anchorY = snap.y;
+      width = anchorX - (snap.x + dx); height = (snap.y + snap.h + dy) - anchorY;
     } else {
-      anchorX = snap.cx; anchorY = snap.cy;
-      newW = (snap.cx + snap.cw + dx) - anchorX; newH = (snap.cy + snap.ch + dy) - anchorY;
+      anchorX = snap.x; anchorY = snap.y;
+      width = (snap.x + snap.w + dx) - anchorX; height = (snap.y + snap.h + dy) - anchorY;
+    }
+    return { anchorX, anchorY, width, height, handle: h };
+  }
+
+  function enforceAspectRatio(size, ratio) {
+    if (!isFinite(size.width) || !isFinite(size.height) || size.width <= 0 || size.height <= 0) {
+      return { width: CROP_MIN_SIZE, height: CROP_MIN_SIZE / ratio };
+    }
+    const currentRatio = size.width / size.height;
+    if (isFinite(currentRatio) && currentRatio > ratio) return { width: size.height * ratio, height: size.height };
+    if (isFinite(currentRatio)) return { width: size.width, height: size.width / ratio };
+    return size;
+  }
+
+  function constrainResizeToImage(resize, size, ratio) {
+    const h = resize.handle;
+    const img = { x: cropState.imgX, y: cropState.imgY, w: cropState.imgW, h: cropState.imgH };
+    const maxW = (h === 'tl' || h === 'bl') ? resize.anchorX - img.x : (img.x + img.w) - resize.anchorX;
+    const maxH = (h === 'tl' || h === 'tr') ? resize.anchorY - img.y : (img.y + img.h) - resize.anchorY;
+    let { width, height } = size;
+
+    if (width > maxW || height > maxH) {
+      const scale = Math.min(maxW / width, maxH / height);
+      width *= scale; height *= scale;
     }
 
-    if (!isFinite(newW) || !isFinite(newH) || newW <= 0 || newH <= 0) {
-      newW = YW.config.CROP_MIN_SIZE; newH = YW.config.CROP_MIN_SIZE / ratio;
-    }
-
-    // Apply crop aspect ratio before boundary clamping
-    if (isFinite(newW / newH) && newW / newH > ratio) newW = newH * ratio;
-    else if (isFinite(newW / newH)) newH = newW / ratio;
-
-    // Per-handle boundary clamping: anchor stays fixed, scale down to fit within image
-    let maxW, maxH;
-    if (h === 'tl' || h === 'bl') {
-      maxW = anchorX - img.x;
-    } else {
-      maxW = (img.x + img.w) - anchorX;
-    }
-    if (h === 'tl' || h === 'tr') {
-      maxH = anchorY - img.y;
-    } else {
-      maxH = (img.y + img.h) - anchorY;
-    }
-    if (newW > maxW || newH > maxH) {
-      const scale = Math.min(maxW / newW, maxH / newH);
-      newW *= scale; newH *= scale;
-    }
-
-    // Overall max size guard
     const maxSize = Math.max(img.w, img.h);
-    if (newW > maxSize || newH > maxSize) {
-      const scale = Math.min(maxSize / newW, maxSize / newH);
-      newW *= scale; newH *= scale;
+    if (width > maxSize || height > maxSize) {
+      const scale = Math.min(maxSize / width, maxSize / height);
+      width *= scale; height *= scale;
     }
 
-    // Min size guard (aspect-ratio aware)
-    if (newW < YW.config.CROP_MIN_SIZE) { newW = YW.config.CROP_MIN_SIZE; newH = YW.config.CROP_MIN_SIZE / ratio; }
-    if (newH < YW.config.CROP_MIN_SIZE) { newH = YW.config.CROP_MIN_SIZE; newW = YW.config.CROP_MIN_SIZE * ratio; }
+    if (width < CROP_MIN_SIZE) { width = CROP_MIN_SIZE; height = CROP_MIN_SIZE / ratio; }
+    if (height < CROP_MIN_SIZE) { height = CROP_MIN_SIZE; width = CROP_MIN_SIZE * ratio; }
+    return { width, height };
+  }
 
-    if (h === 'tl' || h === 'bl') cropState.cx = anchorX - newW;
-    else cropState.cx = anchorX;
-    if (h === 'tl' || h === 'tr') cropState.cy = anchorY - newH;
-    else cropState.cy = anchorY;
-    cropState.cw = newW;
-    cropState.ch = newH;
+  function applyCornerResize(resize, size) {
+    const h = resize.handle;
+    cropState.cx = (h === 'tl' || h === 'bl') ? resize.anchorX - size.width : resize.anchorX;
+    cropState.cy = (h === 'tl' || h === 'tr') ? resize.anchorY - size.height : resize.anchorY;
+    cropState.cw = size.width;
+    cropState.ch = size.height;
+  }
+
+  function handleCornerDrag(clientX, clientY) {
+    const ratio = cropState.aspectRatio;
+    const resize = getCornerResizeStart(clientX, clientY);
+    const ratioSize = enforceAspectRatio({ width: resize.width, height: resize.height }, ratio);
+    const boundedSize = constrainResizeToImage(resize, ratioSize, ratio);
+    applyCornerResize(resize, boundedSize);
   }
 
   async function cropFile(file, aspectRatio) {

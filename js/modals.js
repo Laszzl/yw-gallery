@@ -2,7 +2,6 @@
   YW.modals = YW.modals || {};
 
   const elements = YW.dom.elements;
-  const state = YW.state.state;
   let activeItemAction = null;
   let photoManageState = { itemId: null, mode: null, replaceIndex: null };
 
@@ -60,11 +59,10 @@
     for (const toggle of elements.itemStatusToggles) {
       const key = toggle.dataset.statusToggle;
       const value = item?.[key] ?? false;
-      toggle.classList.toggle('active', value);
-      toggle.setAttribute('aria-checked', String(value));
+      YW.utils.setSwitchState(toggle, value);
       toggle.onclick = async () => {
-        const active = toggle.classList.toggle('active');
-        toggle.setAttribute('aria-checked', String(active));
+        const active = !toggle.classList.contains('active');
+        YW.utils.setSwitchState(toggle, active);
         const currentItem = YW.data.findItemById(itemId);
         if (currentItem) {
           currentItem[key] = active;
@@ -127,134 +125,150 @@
     await showModal('YW 已删除');
   }
 
-  function openPhotoCollectionManager(config) {
+  function createPhotoManagerContext(config) {
     const { photoManageModal: modal, photoThumbGrid: thumbGrid, modalPhotoAddBtn: addBtn, modalPhotoDeleteBtn: deleteBtn, modalPhotoInput: fileInput } = elements;
+    const ctx = { config, modal, thumbGrid, addBtn, deleteBtn, fileInput };
     fileInput.value = '';
     thumbGrid.classList.toggle('gallery-thumb-grid', Boolean(config.galleryGrid));
     modal.hidden = false;
     photoManageState = { itemId: config.itemId || null, mode: null, replaceIndex: null, galleryPersonId: config.galleryPersonId || null };
+    return ctx;
+  }
 
-    const getRecord = () => config.getRecord();
-    const getPhotos = () => config.getPhotos(getRecord()) || [];
-    const setPhotos = async (photos) => {
-      const record = getRecord();
-      if (!record) return false;
-      await config.setPhotos(record, photos);
-      if (config.afterPhotosChange) config.afterPhotosChange(record);
-      return true;
-    };
+  function getManagedRecord(ctx) {
+    return ctx.config.getRecord();
+  }
 
-    const applyPhotos = async (photoUrls) => {
-      if (!photoUrls.length) return false;
-      const current = [...getPhotos()];
-      if (photoManageState.mode === 'replace') {
-        current[photoManageState.replaceIndex] = photoUrls[0];
-        return setPhotos(current);
-      }
-      return setPhotos([...current, ...photoUrls]);
-    };
+  function getManagedPhotos(ctx) {
+    return ctx.config.getPhotos(getManagedRecord(ctx)) || [];
+  }
 
-    const renderThumbGrid = () => {
-      thumbGrid.replaceChildren();
-      const photos = getPhotos();
-      deleteBtn.hidden = photos.length === 0;
-      if (photos.length === 0) {
-        thumbGrid.style.display = 'none';
+  async function setManagedPhotos(ctx, photos) {
+    const record = getManagedRecord(ctx);
+    if (!record) return false;
+    await ctx.config.setPhotos(record, photos);
+    if (ctx.config.afterPhotosChange) ctx.config.afterPhotosChange(record);
+    return true;
+  }
+
+  async function applyManagedPhotos(ctx, photoUrls) {
+    if (!photoUrls.length) return false;
+    const current = [...getManagedPhotos(ctx)];
+    if (photoManageState.mode === 'replace') {
+      current[photoManageState.replaceIndex] = photoUrls[0];
+      return setManagedPhotos(ctx, current);
+    }
+    return setManagedPhotos(ctx, [...current, ...photoUrls]);
+  }
+
+  function renderPhotoThumbGrid(ctx) {
+    ctx.thumbGrid.replaceChildren();
+    const photos = getManagedPhotos(ctx);
+    ctx.deleteBtn.hidden = photos.length === 0;
+    ctx.thumbGrid.style.display = photos.length ? '' : 'none';
+    for (let i = 0; i < photos.length; i++) {
+      const frag = elements.templates.photoThumb.content.cloneNode(true);
+      const thumbImg = frag.querySelector('.photo-thumb-img');
+      const replaceBtn = frag.querySelector('.photo-thumb-replace');
+      thumbImg.src = photos[i];
+      replaceBtn.addEventListener('click', () => {
+        photoManageState.mode = 'replace';
+        photoManageState.replaceIndex = i;
+        ctx.fileInput.multiple = false;
+        ctx.fileInput.value = '';
+        ctx.fileInput.click();
+      });
+      ctx.thumbGrid.append(frag);
+    }
+  }
+
+  function closePhotoManagerContext(ctx) {
+    ctx.modal.hidden = true;
+    ctx.modal.onclick = null;
+    ctx.thumbGrid.classList.remove('gallery-thumb-grid');
+    ctx.fileInput.onchange = null;
+    ctx.addBtn.onclick = null;
+    ctx.deleteBtn.onclick = null;
+    photoManageState = { itemId: null, mode: null, replaceIndex: null };
+    if (ctx.config.onClose) ctx.config.onClose();
+  }
+
+  async function handlePartialPhotoUpdate(ctx, photoUrls, cropResult) {
+    if (cropResult?.type === 'error') {
+      renderPhotoThumbGrid(ctx);
+      ctx.modal.hidden = false;
+      return;
+    }
+    if (photoUrls.length) {
+      await applyManagedPhotos(ctx, photoUrls);
+      await showModal(`已更新 ${photoUrls.length} 张，剩余已取消`);
+    } else {
+      await showModal('已取消本次图片更新');
+    }
+    renderPhotoThumbGrid(ctx);
+    ctx.modal.hidden = false;
+  }
+
+  async function handlePhotoManagerFiles(ctx, files) {
+    ctx.modal.hidden = true;
+    if (!files.length || !getManagedRecord(ctx)) {
+      ctx.modal.hidden = false;
+      return;
+    }
+
+    const photoUrls = [];
+    for (const file of files) {
+      const cropResult = await YW.crop.showCropModal(file, ctx.config.aspectRatio);
+      const finalFile = YW.crop.resolveCroppedFile(file, cropResult);
+      if (!finalFile) {
+        await handlePartialPhotoUpdate(ctx, photoUrls, cropResult);
         return;
       }
-      thumbGrid.style.display = '';
-      for (let i = 0; i < photos.length; i++) {
-        const frag = elements.templates.photoThumb.content.cloneNode(true);
-        const thumbImg = frag.querySelector('.photo-thumb-img');
-        const replaceBtn = frag.querySelector('.photo-thumb-replace');
-        thumbImg.src = photos[i];
-        replaceBtn.addEventListener('click', () => {
-          photoManageState.mode = 'replace';
-          photoManageState.replaceIndex = i;
-          fileInput.multiple = false;
-          fileInput.value = '';
-          fileInput.click();
-        });
-        thumbGrid.append(frag);
-      }
-    };
+      photoUrls.push(await YW.data.readFileAsDataURL(finalFile));
+    }
 
-    const cleanup = () => {
-      modal.hidden = true;
-      modal.onclick = null;
-      thumbGrid.classList.remove('gallery-thumb-grid');
-      fileInput.onchange = null;
-      addBtn.onclick = null;
-      deleteBtn.onclick = null;
-      photoManageState = { itemId: null, mode: null, replaceIndex: null };
-      if (config.onClose) config.onClose();
-    };
+    await applyManagedPhotos(ctx, photoUrls);
+    await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${photoUrls.length} 张图片`);
+    renderPhotoThumbGrid(ctx);
+    ctx.modal.hidden = false;
+  }
 
-    modal.onclick = (e) => { if (e.target === modal) cleanup(); };
-
-    const handleFiles = async (files) => {
-      modal.hidden = true;
-      if (!files.length) { modal.hidden = false; return; }
-      if (!getRecord()) { modal.hidden = false; return; }
-      const photoUrls = [];
-      for (const file of files) {
-        const cropResult = await YW.crop.showCropModal(file, config.aspectRatio);
-        const finalFile = YW.crop.resolveCroppedFile(file, cropResult);
-        if (!finalFile) {
-          if (cropResult?.type === 'error') {
-            renderThumbGrid();
-            modal.hidden = false;
-            return;
-          }
-          if (photoUrls.length) {
-            await applyPhotos(photoUrls);
-            await showModal(`已更新 ${photoUrls.length} 张，剩余已取消`);
-          } else {
-            await showModal('已取消本次图片更新');
-          }
-          renderThumbGrid();
-          modal.hidden = false;
-          return;
-        }
-        photoUrls.push(await YW.data.readFileAsDataURL(finalFile));
-      }
-
-      await applyPhotos(photoUrls);
-      await showModal(photoManageState.mode === 'replace' ? '图片已替换' : `已添加 ${photoUrls.length} 张图片`);
-      renderThumbGrid();
-      modal.hidden = false;
-    };
-
-    fileInput.onchange = async (event) => {
+  function bindPhotoManagerEvents(ctx) {
+    ctx.modal.onclick = (event) => { if (event.target === ctx.modal) closePhotoManagerContext(ctx); };
+    ctx.fileInput.onchange = async (event) => {
       const rawFiles = [...(event.target.files ?? [])].filter((f) => f.size > 0);
-      await handleFiles(rawFiles);
+      await handlePhotoManagerFiles(ctx, rawFiles);
     };
 
-    addBtn.onclick = () => {
+    ctx.addBtn.onclick = () => {
       photoManageState.mode = 'add';
       photoManageState.replaceIndex = null;
-      fileInput.multiple = true;
-      fileInput.value = '';
-      fileInput.click();
+      ctx.fileInput.multiple = true;
+      ctx.fileInput.value = '';
+      ctx.fileInput.click();
     };
 
-    deleteBtn.onclick = async () => {
-      if (!getRecord() || !getPhotos().length) {
-        modal.hidden = true;
-        await showModal(config.emptyDeleteMessage);
-        modal.hidden = false;
+    ctx.deleteBtn.onclick = async () => {
+      if (!getManagedRecord(ctx) || !getManagedPhotos(ctx).length) {
+        ctx.modal.hidden = true;
+        await showModal(ctx.config.emptyDeleteMessage);
+        ctx.modal.hidden = false;
         return;
       }
-      modal.hidden = true;
-      const confirmed = await showModal(config.confirmDeleteMessage, { showCancel: true });
-      if (!confirmed) { modal.hidden = false; return; }
-      await setPhotos([]);
-      await showModal(config.deleteSuccessMessage);
-      renderThumbGrid();
-      modal.hidden = false;
+      ctx.modal.hidden = true;
+      const confirmed = await showModal(ctx.config.confirmDeleteMessage, { showCancel: true });
+      if (!confirmed) { ctx.modal.hidden = false; return; }
+      await setManagedPhotos(ctx, []);
+      await showModal(ctx.config.deleteSuccessMessage);
+      renderPhotoThumbGrid(ctx);
+      ctx.modal.hidden = false;
     };
+  }
 
-    renderThumbGrid();
+  function openPhotoCollectionManager(config) {
+    const ctx = createPhotoManagerContext(config);
+    bindPhotoManagerEvents(ctx);
+    renderPhotoThumbGrid(ctx);
   }
 
   function openPhotoManageModal(itemId) {

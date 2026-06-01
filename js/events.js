@@ -1,20 +1,23 @@
 (function (YW) {
   YW.events = YW.events || {};
 
-  function bindEvents() {
-    const elements = YW.dom.elements;
-
+  function bindNavigationEvents(elements) {
+    // app-lifetime
     elements.homeButton.addEventListener('click', () => YW.render.showHomeView());
     elements.addButton.addEventListener('click', () => YW.render.showAddView());
     elements.settingsButton.addEventListener('click', () => YW.render.showSettingsView());
     elements.emptySettingsButton.addEventListener('click', () => YW.render.showSettingsView());
+  }
 
+  function bindGlobalModalEvents(elements) {
+    // app-lifetime
     document.addEventListener('click', (event) => {
       if (event.target === elements.itemActionsModal && !elements.itemActionsModal.hidden) {
         YW.modals.closeItemActionsModal();
       }
     });
 
+    // app-lifetime
     document.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape') return;
       if (!elements.datePickerModal.hidden) YW.forms.cancelDatePicker();
@@ -22,7 +25,10 @@
       else if (!elements.itemActionsModal.hidden) YW.modals.closeItemActionsModal();
       else YW.modals.closePhotoManageModal();
     });
+  }
 
+  function bindFileInputEvents(elements) {
+    // app-lifetime
     elements.clearItemFilesButton.addEventListener('click', async () => {
       elements.itemPhotosInput.value = '';
       YW.forms.syncFileSummaries();
@@ -38,7 +44,10 @@
     elements.personDetailPhotoInput.addEventListener('change', async (event) => {
       await YW.crop.cropInputFiles(event.target, { aspectRatio: 1 });
     });
+  }
 
+  function bindSettingsEvents(elements) {
+    // app-lifetime
     elements.settingsPersonSelect.addEventListener('change', (event) => {
       YW.state.viewState.settingsActivePersonId = event.target.value;
       YW.render.syncGallerySettings();
@@ -89,29 +98,46 @@
       }
       YW.modals.openGalleryManageModal(person.id);
     });
+  }
 
+  function bindFormOptionEvents(elements) {
+    // app-lifetime
     elements.itemPersonSelect.addEventListener('change', () => YW.render.syncGroupOptions());
     elements.itemGroupSelect.addEventListener('change', () => {
       YW.render.syncCategoryOptions(elements.itemGroupSelect.value);
     });
+  }
 
-    elements.personForm.addEventListener('submit', (event) => {
+  function bindSubmitForm(form, lockName, submitHandler) {
+    // app-lifetime
+    form.addEventListener('submit', (event) => {
       event.preventDefault();
-      YW.forms.withFormLock(elements.personForm, 'person', YW.forms.handlePersonFormSubmit);
+      YW.forms.withFormLock(form, lockName, submitHandler);
     });
-    elements.groupForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      YW.forms.withFormLock(elements.groupForm, 'group', YW.forms.handleGroupFormSubmit);
-    });
-    elements.categoryForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      YW.forms.withFormLock(elements.categoryForm, 'category', YW.forms.handleCategoryFormSubmit);
-    });
-    elements.itemForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      YW.forms.withFormLock(elements.itemForm, 'item', YW.forms.handleItemFormSubmit);
-    });
+  }
 
+  function bindFormEvents(elements) {
+    bindSubmitForm(elements.personForm, 'person', YW.forms.handlePersonFormSubmit);
+    bindSubmitForm(elements.groupForm, 'group', YW.forms.handleGroupFormSubmit);
+    bindSubmitForm(elements.categoryForm, 'category', YW.forms.handleCategoryFormSubmit);
+    bindSubmitForm(elements.itemForm, 'item', YW.forms.handleItemFormSubmit);
+
+    const lockNames = new Map([
+      [elements.groupForm, 'group'],
+      [elements.categoryForm, 'category'],
+      [elements.personForm, 'person'],
+      [elements.itemForm, 'item'],
+    ]);
+    for (const form of lockNames.keys()) {
+      // app-lifetime
+      form.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && YW.forms.isFormLocked(lockNames.get(form))) event.preventDefault();
+      });
+    }
+  }
+
+  function bindDatePickerEvents(elements) {
+    // app-lifetime
     elements.itemDateDisplay.addEventListener('click', () => {
       YW.forms.openDatePicker(elements.itemDateHidden.value);
     });
@@ -123,18 +149,17 @@
     elements.dateYearScroll.addEventListener('scroll', YW.forms.onColumnScroll, { passive: true });
     elements.dateMonthScroll.addEventListener('scroll', YW.forms.onColumnScroll, { passive: true });
     elements.dateDayScroll.addEventListener('scroll', YW.forms.onColumnScroll, { passive: true });
+  }
 
-    const lockNames = new Map([
-      [elements.groupForm, 'group'],
-      [elements.categoryForm, 'category'],
-      [elements.personForm, 'person'],
-      [elements.itemForm, 'item'],
-    ]);
-    [elements.groupForm, elements.categoryForm, elements.personForm, elements.itemForm].forEach((form) => {
-      form.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' && YW.forms.isFormLocked(lockNames.get(form))) event.preventDefault();
-      });
-    });
+  function bindEvents() {
+    const elements = YW.dom.elements;
+    bindNavigationEvents(elements);
+    bindGlobalModalEvents(elements);
+    bindFileInputEvents(elements);
+    bindSettingsEvents(elements);
+    bindFormOptionEvents(elements);
+    bindFormEvents(elements);
+    bindDatePickerEvents(elements);
   }
 
   async function handleDeleteCurrentPerson() {

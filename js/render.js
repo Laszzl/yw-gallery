@@ -4,8 +4,6 @@
   const elements = YW.dom.elements;
   const state = YW.state.state;
   const viewState = YW.state.viewState;
-  const { DEFAULT_ITEM_DATE } = YW.config;
-  const isMacDevice = YW.config.isMacDevice;
   const {
     findPersonById,
     findItemById,
@@ -13,8 +11,6 @@
     getCategoriesByGroupId,
     getItemsByPersonCategory,
     hasGroupContent,
-    getGroupOrderIdsForPerson,
-    getCategoryOrderIdsForPersonGroup,
     getOrderedGroupsForPerson,
     getOrderedCategoriesForPersonGroup,
     formatDate,
@@ -25,79 +21,6 @@
     compareItemsForDisplay,
     formatCategoryCounts,
   } = YW.data;
-  function scheduleSave() { return YW.storage.scheduleSave(); }
-
-  function reorderGroupsByDrag(personId, draggedGroupId, targetGroupId) {
-    const order = [...getGroupOrderIdsForPerson(personId)];
-    const draggedIndex = order.indexOf(draggedGroupId);
-    const targetIndex = order.indexOf(targetGroupId);
-    if (draggedIndex < 0 || targetIndex < 0 || draggedGroupId === targetGroupId) return;
-    const [moved] = order.splice(draggedIndex, 1);
-    order.splice(targetIndex, 0, moved);
-    state.groupOrderByPerson[personId] = order;
-    scheduleSave();
-    renderAll();
-  }
-
-  function reorderCategoriesByDrag(personId, groupId, draggedCategoryId, targetCategoryId) {
-    const order = [...getCategoryOrderIdsForPersonGroup(personId, groupId)];
-    const draggedIndex = order.indexOf(draggedCategoryId);
-    const targetIndex = order.indexOf(targetCategoryId);
-    if (draggedIndex < 0 || targetIndex < 0 || draggedCategoryId === targetCategoryId) return;
-    const [moved] = order.splice(draggedIndex, 1);
-    order.splice(targetIndex, 0, moved);
-    if (!state.categoryOrderByPerson[personId]) state.categoryOrderByPerson[personId] = {};
-    state.categoryOrderByPerson[personId][groupId] = order;
-    scheduleSave();
-    renderAll();
-  }
-
-  function reorderItemsByDrag(draggedItemId, targetItemId) {
-    const draggedItem = findItemById(draggedItemId);
-    const targetItem = findItemById(targetItemId);
-    if (!draggedItem || !targetItem) return;
-    if (draggedItem.personId !== targetItem.personId || draggedItem.categoryId !== targetItem.categoryId) return;
-    if (itemHasPhotos(draggedItem) !== itemHasPhotos(targetItem)) return;
-    if ((draggedItem.date || DEFAULT_ITEM_DATE) !== (targetItem.date || DEFAULT_ITEM_DATE)) return;
-
-    const sameTypeItems = getItemsByPersonCategory(draggedItem.personId, draggedItem.categoryId)
-      .filter(
-        (i) =>
-          itemHasPhotos(i) === itemHasPhotos(draggedItem) &&
-          (i.date || DEFAULT_ITEM_DATE) === (draggedItem.date || DEFAULT_ITEM_DATE)
-      )
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    const draggedIndex = sameTypeItems.findIndex((i) => i.id === draggedItemId);
-    const targetIndex = sameTypeItems.findIndex((i) => i.id === targetItemId);
-    if (draggedIndex < 0 || targetIndex < 0) return;
-
-    const [moved] = sameTypeItems.splice(draggedIndex, 1);
-    sameTypeItems.splice(targetIndex, 0, moved);
-    sameTypeItems.forEach((entry, index) => { entry.order = index; });
-
-    scheduleSave();
-    reorderRailCardsByItemList(sameTypeItems);
-  }
-
-  function reorderGalleryPhotosByDrag(personId, draggedIndexValue, targetIndexValue) {
-    const person = findPersonById(personId);
-    const draggedIndex = Number(draggedIndexValue);
-    const targetIndex = Number(targetIndexValue);
-    if (!person || !Array.isArray(person.galleryPhotos)) return;
-    if (!Number.isInteger(draggedIndex) || !Number.isInteger(targetIndex)) return;
-    if (draggedIndex === targetIndex) return;
-    if (draggedIndex < 0 || targetIndex < 0) return;
-    if (draggedIndex >= person.galleryPhotos.length || targetIndex >= person.galleryPhotos.length) return;
-
-    const nextPhotos = [...person.galleryPhotos];
-    const [moved] = nextPhotos.splice(draggedIndex, 1);
-    nextPhotos.splice(targetIndex, 0, moved);
-    person.galleryPhotos = nextPhotos;
-
-    scheduleSave();
-    renderGallery(person);
-    YW.railMask.setupRailMasks();
-  }
 
   function reorderRailCardsByItemList(itemsInOrder) {
     if (!itemsInOrder.length) return;
@@ -116,74 +39,40 @@
     }
   }
 
-  function createDragHandler({ dragOverClass, onDrop }) {
-    return function attachDrag(element, id) {
-      if (!isMacDevice) return;
-      // ── Mac 桌面端：HTML5 拖拽 ──
-      element.draggable = true;
-      element.addEventListener('dragstart', (event) => {
-        event.stopPropagation();
-        event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', id);
-        element.classList.add('dragging');
-      });
-      element.addEventListener('dragend', () => {
-        element.classList.remove('dragging');
-        document.querySelectorAll('.' + dragOverClass + '.drag-over').forEach((n) => n.classList.remove('drag-over'));
-      });
-      element.addEventListener('dragenter', (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        if (element.classList.contains('dragging')) return;
-        element.classList.add('drag-over');
-      });
-      element.addEventListener('dragover', (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        if (element.classList.contains('dragging')) return;
-        event.dataTransfer.dropEffect = 'move';
-        element.classList.add('drag-over');
-      });
-      element.addEventListener('dragleave', () => { element.classList.remove('drag-over'); });
-      element.addEventListener('drop', (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        element.classList.remove('drag-over');
-        const draggedId = event.dataTransfer.getData('text/plain');
-        if (!draggedId || draggedId === id) return;
-        onDrop(draggedId, id, element, event);
-      });
-    };
-  }
-
-  const attachItemDrag = createDragHandler({
+  const attachItemDrag = YW.drag.createDragHandler({
     dragOverClass: 'rail-card',
-    onDrop: (draggedId, targetId) => reorderItemsByDrag(draggedId, targetId),
-  });
-
-  const attachOverviewGroupDrag = createDragHandler({
-    dragOverClass: 'overview-group-card',
-    onDrop: (draggedId, targetId, targetEl) => {
-      const personId = targetEl.dataset.personId || viewState.overviewPersonId;
-      if (personId) reorderGroupsByDrag(personId, draggedId, targetId);
+    onDrop: (draggedId, targetId) => {
+      const itemsInOrder = YW.data.reorderItemsByDrag(draggedId, targetId);
+      if (itemsInOrder) reorderRailCardsByItemList(itemsInOrder);
     },
   });
 
-  const attachOverviewCategoryDrag = createDragHandler({
+  const attachOverviewGroupDrag = YW.drag.createDragHandler({
+    dragOverClass: 'overview-group-card',
+    onDrop: (draggedId, targetId, targetEl) => {
+      const personId = targetEl.dataset.personId || viewState.overviewPersonId;
+      if (personId && YW.data.reorderGroupsForPerson(personId, draggedId, targetId)) renderAll();
+    },
+  });
+
+  const attachOverviewCategoryDrag = YW.drag.createDragHandler({
     dragOverClass: 'overview-category-row',
     onDrop: (draggedId, targetId, targetEl) => {
       const personId = targetEl.dataset.personId || viewState.overviewPersonId;
       const groupId = targetEl.dataset.groupId;
-      if (personId && groupId) reorderCategoriesByDrag(personId, groupId, draggedId, targetId);
+      if (personId && groupId && YW.data.reorderCategoriesForPersonGroup(personId, groupId, draggedId, targetId)) renderAll();
     },
   });
 
-  const attachGalleryDrag = createDragHandler({
+  const attachGalleryDrag = YW.drag.createDragHandler({
     dragOverClass: 'gallery-card',
     onDrop: (draggedIndex, targetIndex, targetEl) => {
       const rail = targetEl.closest('.gallery-rail');
       const personId = rail ? rail.dataset.galleryPersonId : null;
-      if (personId) reorderGalleryPhotosByDrag(personId, Number(draggedIndex), Number(targetIndex));
+      const person = personId ? YW.data.reorderGalleryPhotos(personId, draggedIndex, targetIndex) : null;
+      if (!person) return;
+      renderGallery(person);
+      YW.railMask.setupRailMasks();
     },
   });
 
@@ -261,16 +150,10 @@
     select.replaceChildren();
     if (hasRecords) {
       for (const record of records) {
-        const option = document.createElement('option');
-        option.value = record.id;
-        option.textContent = record.name;
-        select.append(option);
+        select.append(YW.utils.createOption(record.id, record.name));
       }
     } else {
-      const option = document.createElement('option');
-      option.value = '';
-      option.textContent = emptyLabel;
-      select.append(option);
+      select.append(YW.utils.createOption('', emptyLabel));
     }
     select.disabled = !hasRecords;
     if (!hasRecords) return null;
@@ -314,8 +197,7 @@
     elements.gallerySettingsBlock.hidden = false;
 
     const enabled = person.galleryEnabled === true;
-    elements.galleryToggleBtn.classList.toggle('active', enabled);
-    elements.galleryToggleBtn.setAttribute('aria-checked', String(enabled));
+    YW.utils.setSwitchState(elements.galleryToggleBtn, enabled);
 
     const count = (person.galleryPhotos || []).length;
     elements.galleryPhotoCount.textContent = count > 0 ? `${count} 张图片` : '暂无图片';
@@ -418,14 +300,14 @@
       title.textContent = group.name;
       meta.textContent = categories.length ? `${categories.length} 个小品类` : '暂无小品类';
       if (isCollapsed) card.classList.add('collapsed');
-      groupToggle.setAttribute('aria-expanded', String(!isCollapsed));
+      YW.utils.setExpanded(groupToggle, !isCollapsed);
       attachOverviewGroupDrag(card, group.id);
 
       groupToggle.addEventListener('click', (event) => {
         event.stopPropagation();
         YW.data.toggleCollapsedState(group.id, state.collapsedSettingsGroups);
         card.classList.toggle('collapsed');
-        groupToggle.setAttribute('aria-expanded', String(!card.classList.contains('collapsed')));
+        YW.utils.setExpanded(groupToggle, !card.classList.contains('collapsed'));
       });
       remove.addEventListener('click', (event) => {
         event.stopPropagation();
@@ -455,24 +337,16 @@
     }
   }
 
-  async function confirmAndDelete(confirmMsg, deleteFn, successMsg) {
-    const confirmed = await YW.modals.showModal(confirmMsg, { showCancel: true });
-    if (!confirmed) return;
-    await deleteFn();
-    renderAll();
-    await YW.modals.showModal(successMsg);
-  }
-
   async function handleDeleteGroup(groupId) {
     const group = state.groups.find((g) => g.id === groupId);
     if (!group) return;
-    await confirmAndDelete(`确认删除大品类"${group.name}"及其所有小品类和 YW 吗？`, () => YW.data.deleteGroup(groupId), '大品类已删除');
+    await YW.modals.confirmAndDelete(`确认删除大品类"${group.name}"及其所有小品类和 YW 吗？`, () => YW.data.deleteGroup(groupId), '大品类已删除');
   }
 
   async function handleDeleteCategory(categoryId) {
     const category = findCategoryById(categoryId);
     if (!category) return;
-    await confirmAndDelete(`确认删除小品类"${category.name}"及其关联的所有 YW 吗？`, () => YW.data.deleteCategory(categoryId), '小品类已删除');
+    await YW.modals.confirmAndDelete(`确认删除小品类"${category.name}"及其关联的所有 YW 吗？`, () => YW.data.deleteCategory(categoryId), '小品类已删除');
   }
 
   function renderGroupSection(personId, group) {
@@ -501,13 +375,13 @@
       block.dataset.categoryId = category.id;
       const isCollapsed = Boolean(state.collapsedSubcategories[collapseKey]);
       if (isCollapsed) block.classList.add('collapsed');
-      toggle.setAttribute('aria-expanded', String(!isCollapsed));
+      YW.utils.setExpanded(toggle, !isCollapsed);
       titleNode.textContent = category.name;
       countsNode.textContent = formatCategoryCounts(categoryItems);
       toggle.addEventListener('click', () => {
         YW.data.toggleCollapsedState(collapseKey, state.collapsedSubcategories);
         block.classList.toggle('collapsed');
-        toggle.setAttribute('aria-expanded', String(!block.classList.contains('collapsed')));
+        YW.utils.setExpanded(toggle, !block.classList.contains('collapsed'));
       });
 
       const { imageItems, textItems } = splitItemsByPhotos(categoryItems);

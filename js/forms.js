@@ -1,13 +1,12 @@
 (function (YW) {
   YW.forms = YW.forms || {};
 
-  const SAVE_FAILURE_MESSAGE = '保存失败，数据未写入，请导出备份或稍后重试';
   const elements = YW.dom.elements;
   const state = YW.state.state;
   const viewState = YW.state.viewState;
-  const { DEFAULT_ITEM_DATE, DATE_MIN_YEAR } = YW.config;
+  const { DEFAULT_ITEM_DATE, DATE_MIN_YEAR, DATE_PICKER_SCROLL_DEBOUNCE_MS, SAVE_FAILURE_MESSAGE } = YW.config;
   const formLocks = { person: false, group: false, category: false, item: false };
-  const datePickerState = { year: 1998, month: 3, day: 25, scrollTimer: null };
+  const datePickerState = { ...YW.utils.parseDateParts(DEFAULT_ITEM_DATE), scrollTimer: null };
 
   async function withFormLock(form, lockName, fn) {
     if (formLocks[lockName]) return;
@@ -48,22 +47,6 @@
     elements.personDetailPhotoSummary.textContent = describeFiles(elements.personDetailPhotoInput.files, false);
   }
 
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const [y, m, d] = dateStr.split('-');
-    return `${String(y).slice(-2)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
-  }
-
-  function daysInMonth(year, month) {
-    return new Date(year, month, 0).getDate();
-  }
-
-  function toDateDisplay(dateStr) {
-    if (!dateStr) return '1998/3/25';
-    const [y, m, d] = dateStr.split('-');
-    return `${parseInt(y, 10)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
-  }
-
   // ═══════════════════════════════════════════════
   // Date picker
   // ═══════════════════════════════════════════════
@@ -72,13 +55,10 @@
     if (dateStr) {
       formatted = dateStr;
     } else {
-      const y = String(datePickerState.year);
-      const m = String(datePickerState.month).padStart(2, '0');
-      const d = String(datePickerState.day).padStart(2, '0');
-      formatted = y + '-' + m + '-' + d;
+      formatted = YW.utils.buildDateString(datePickerState.year, datePickerState.month, datePickerState.day);
     }
     elements.itemDateHidden.value = formatted;
-    elements.itemDateDisplay.querySelector('.date-display-text').textContent = toDateDisplay(formatted);
+    elements.itemDateDisplay.querySelector('.date-display-text').textContent = YW.utils.formatDateDisplay(formatted);
   }
 
   function renderColumnItems(scrollEl, items, selectedValue, colType) {
@@ -116,7 +96,7 @@
   }
 
   function renderDayColumn(scrollEl, selectedDay, year, month) {
-    const maxDay = daysInMonth(year, month);
+    const maxDay = YW.utils.daysInMonth(year, month);
     const items = [];
     for (let d = 1; d <= maxDay; d++) { items.push(d); }
     renderColumnItems(scrollEl, items, selectedDay, 'day');
@@ -153,7 +133,7 @@
       if (colType === 'year' || colType === 'month') {
         refreshDayColumn();
       }
-    }, 150);
+    }, DATE_PICKER_SCROLL_DEBOUNCE_MS);
   }
 
   function getClosestSnapItem(scrollEl) {
@@ -196,7 +176,7 @@
   }
 
   function refreshDayColumn() {
-    const maxDay = daysInMonth(datePickerState.year, datePickerState.month);
+    const maxDay = YW.utils.daysInMonth(datePickerState.year, datePickerState.month);
     if (datePickerState.day > maxDay) {
       datePickerState.day = maxDay;
     }
@@ -208,10 +188,7 @@
   }
 
   function openDatePicker(dateStr) {
-    const parts = dateStr.split('-');
-    datePickerState.year = parseInt(parts[0], 10) || 1998;
-    datePickerState.month = parseInt(parts[1], 10) || 3;
-    datePickerState.day = parseInt(parts[2], 10) || 25;
+    Object.assign(datePickerState, YW.utils.parseDateParts(dateStr));
 
     renderYearColumn(elements.dateYearScroll, datePickerState.year);
     renderMonthColumn(elements.dateMonthScroll, datePickerState.month);
@@ -227,18 +204,18 @@
     });
 
     elements.datePickerModal.hidden = false;
-    elements.itemDateDisplay.setAttribute('aria-expanded', 'true');
+    YW.utils.setExpanded(elements.itemDateDisplay, true);
   }
 
   function confirmDatePicker() {
     syncDateDisplay();
     elements.datePickerModal.hidden = true;
-    elements.itemDateDisplay.setAttribute('aria-expanded', 'false');
+    YW.utils.setExpanded(elements.itemDateDisplay, false);
   }
 
   function cancelDatePicker() {
     elements.datePickerModal.hidden = true;
-    elements.itemDateDisplay.setAttribute('aria-expanded', 'false');
+    YW.utils.setExpanded(elements.itemDateDisplay, false);
   }
 
   function bindSettingsPhotoInput(input, { field, aspectRatio, successMsg, errorMsg }) {

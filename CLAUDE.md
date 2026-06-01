@@ -36,7 +36,7 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 
 ## 设备检测
 
-`const isMacDevice = matchMedia('(hover: hover) and (pointer: fine)').matches;`（位于 app.js 顶部）
+`const isMacDevice = matchMedia('(hover: hover) and (pointer: fine)').matches;`（位于 js/config.js）
 
 单一布尔值控制所有 JS 端设备分支。CSS 侧通过媒体查询独立控制：
 `@media (hover: hover) and (pointer: fine)`（桌面 hover）、
@@ -105,25 +105,25 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 ### JavaScript
 
 **JS-1: No `var`.** 只用 `const` 和 `let`。`var` 的函数作用域提升是 bug 来源。
-> events.js 日期选择器(657-810行)和 rail-mask(2726-2797行)使用 `var`，待修复。
+> 已全部修复，无残留 `var`。
 
 **JS-2: Magic numbers must be named constants.** 除 0/1/-1 外的数字字面量定义为命名 `const`。跨作用域使用的放入 `config.js`。
-> events.js 中 `8`(滚动阈值), `32`(渐变宽度), `0.8`(裁剪比例), `20`(最小尺寸), `0.01`(宽高比容差) 均为硬编码。
+> 主要常量已迁移至 config.js；日期滚动防抖、裁剪尺寸、Rail Mask 等跨模块值已集中管理。
 
 **JS-3: Event listeners must be cleaned up.** 每个 `addEventListener` 必须有对应的移除路径（模态框关闭、元素销毁），或标注 `// app-lifetime` 注释说明故意保留。
-> 裁剪拖拽的 `mousemove`/`mouseup` 监听器注册在 `document` 上但从未移除。
+> 裁剪拖拽已通过 `unbindCropDocListeners`/`prepareCropModalClose` 清理。应用生命周期监听器使用 `// app-lifetime` 标注。
 
 **JS-4: async/await only.** 所有异步代码使用 `async/await`，不写 `.then()/.catch()` 链。混合风格容易隐藏错误传播路径。
-> `scheduleSave` 使用 `.then()/.catch()` 链，其余函数全部用 `await`。
+> 已全部统一为 async/await（仅顶层 `initApp().catch(...)` 为启动模式保留）。
 
 **JS-5: Functions max ~50 lines.** 超过 50 行的函数拆分为命名子函数。不是为了教条，而是长函数几乎总是做了多件事。
-> `openPhotoCollectionManager`(132行), `bindEvents`(150行), `validateImportedState`(81行)。
+> 已拆分 `openPhotoCollectionManager`、`bindEvents`、`validateImportedState`、`normalizeState`、`handleCornerDrag` 等长函数。
 
 **JS-6: DRY — Rule of Three.** 相同逻辑出现 3 次及以上才提取为共享函数。2 次重复可以容忍，过早抽象比重复更危险。
-> 模态框清理模式重复 5 次以上，应提取。
+> 日期格式、保存失败文案、切换状态、拖拽绑定、图片管理流程已抽取为共享工具或命名函数。
 
 **JS-7: Cached DOM access.** DOM 查询统一通过 `cacheElements()` 中的 `elements` 对象。动态创建的元素除外。
-> `closePhotoManageModal` 使用原始 `document.getElementById` 而非 `elements`。
+> 静态 DOM 查询统一在 `cacheElements()` 中维护；动态渲染区域允许局部查询。
 
 **JS-8: Save semantics.** 非关键保存用 `scheduleSave()`(去重+自含错误弹窗)，仅在调用方必须确认写入成功时才用 `await saveStateStrict()`。
 > 14 处 `saveStateStrict` vs 6 处 `scheduleSave`，无一致规则。
@@ -133,30 +133,30 @@ people → groups（大品类）→ categories（小品类）→ items（YW）
 ### CSS
 
 **CSS-1: No duplicate selectors.** 每个选择器块只定义一次，追加属性合并到已有块。
-> `.switcher-chip`(行205+310), `.manager-row`(行709+715) 重复定义。
+> 基础选择器重复已合并；媒体查询内的端侧覆盖允许保留。
 
 **CSS-2: No empty declaration blocks.** 删除无属性的空规则块。
-> `.selector-image-wrap, .yw-card-image-wrap {}`(行411) 为空。
+> 已清理空规则块。
 
 **CSS-3: CSS variables for repeated values.** 同一值出现 3 次以上提取为 `:root` 自定义属性。
-> `letter-spacing: 0` ~20次, font-weight 650/620/560, 日期选择器高度 220/200/190px。
+> 重复字重、日期选择器高度、`letter-spacing: 0` 等已使用 CSS 变量。
 
 **CSS-4: Max 2 descendant levels.** 选择器嵌套不超过 2 层。深层选择器依赖 DOM 结构，HTML 重构时容易断裂。
-> `.card-topline > div:first-child > .yw-date`(3层)。
+> 深层结构选择器已清理，新增样式避免依赖 2 层以上 DOM 嵌套。
 
 **CSS-5: No `!important`.** 靠特异性管理而非 `!important` 解决覆盖。仅 `.hidden` 等工具类除外。
-> 行1705(`margin`), 行2173(`font-size`) 使用 `!important`。
+> 仅保留 `[hidden]` 和 reduced-motion 这类工具/无障碍场景的 `!important`。
 
 ### HTML
 
 **HTML-1: Complete ARIA on every modal.** 每个模态框必须具备 `role="dialog"` + `aria-modal="true"` + `aria-labelledby`(或 `aria-label`)。
-> `#customModal` 缺少 `aria-labelledby`。
+> 当前模态框均具备 `role="dialog"` + `aria-modal="true"` + `aria-labelledby` 或 `aria-label`。
 
 **HTML-2: Popup triggers have semantics.** 打开弹窗的元素必须有 `aria-haspopup` 和 `aria-expanded`。
-> 日期选择器触发器无 `aria-haspopup`/`aria-expanded`。
+> 已全部修复。
 
 **HTML-3: No duplicate SVG icons.** 每个 SVG 图标只定义一次，用 `<template>` 或 JS 复用。
-> 三点菜单图标(行461+488)，删除图标(行503+521)。
+> 已全部改为 `<symbol>` + `<use>` 模式。
 
 ## 开发
 - 修改代码后刷新浏览器即可生效

@@ -1,8 +1,7 @@
 (function (YW) {
   YW.storage = YW.storage || {};
 
-  const SAVE_FAILURE_MESSAGE = '保存失败，数据未写入，请导出备份或稍后重试';
-  const { DB_NAME, DB_VERSION, DB_STORE, DB_KEY, STORAGE_KEY } = YW.config;
+  const { DB_NAME, DB_VERSION, DB_STORE, DB_KEY, STORAGE_KEY, SAVE_FAILURE_MESSAGE } = YW.config;
 
   function openDB() {
     return new Promise((resolve, reject) => {
@@ -105,7 +104,7 @@
   }
 
   function exportData() {
-    const data = serializeState();
+    const data = YW.state.serializeState();
     const dateStr = new Date().toISOString().slice(0, 10);
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);

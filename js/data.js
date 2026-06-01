@@ -11,21 +11,9 @@
     return String(value).trim().replace(/\s+/g, '').toLowerCase();
   }
 
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const [y, m, d] = dateStr.split('-');
-    return `${String(y).slice(-2)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
-  }
-
-  function daysInMonth(year, month) {
-    return new Date(year, month, 0).getDate();
-  }
-
-  function toDateDisplay(dateStr) {
-    if (!dateStr) return '1998/3/25';
-    const [y, m, d] = dateStr.split('-');
-    return `${parseInt(y, 10)}/${parseInt(m, 10)}/${parseInt(d, 10)}`;
-  }
+  const formatDate = YW.utils.formatDateShort;
+  const daysInMonth = YW.utils.daysInMonth;
+  const toDateDisplay = YW.utils.formatDateDisplay;
 
   function formatItemLabel(item) {
     let text = item.label;
@@ -120,6 +108,80 @@
       getCategoriesByGroupId(groupId).map((category) => [category.id, category])
     );
     return orderIds.map((id) => categoryMap.get(id)).filter(Boolean);
+  }
+
+  function reorderIdList(currentOrder, draggedId, targetId) {
+    const order = [...currentOrder];
+    const draggedIndex = order.indexOf(draggedId);
+    const targetIndex = order.indexOf(targetId);
+    if (draggedIndex < 0 || targetIndex < 0 || draggedId === targetId) return null;
+    const [moved] = order.splice(draggedIndex, 1);
+    order.splice(targetIndex, 0, moved);
+    return order;
+  }
+
+  function reorderGroupsForPerson(personId, draggedGroupId, targetGroupId) {
+    const order = reorderIdList(getGroupOrderIdsForPerson(personId), draggedGroupId, targetGroupId);
+    if (!order) return false;
+    state.groupOrderByPerson[personId] = order;
+    scheduleSave();
+    return true;
+  }
+
+  function reorderCategoriesForPersonGroup(personId, groupId, draggedCategoryId, targetCategoryId) {
+    const order = reorderIdList(getCategoryOrderIdsForPersonGroup(personId, groupId), draggedCategoryId, targetCategoryId);
+    if (!order) return false;
+    if (!state.categoryOrderByPerson[personId]) state.categoryOrderByPerson[personId] = {};
+    state.categoryOrderByPerson[personId][groupId] = order;
+    scheduleSave();
+    return true;
+  }
+
+  function getSameDragTypeItems(item) {
+    return getItemsByPersonCategory(item.personId, item.categoryId)
+      .filter(
+        (entry) =>
+          itemHasPhotos(entry) === itemHasPhotos(item) &&
+          (entry.date || DEFAULT_ITEM_DATE) === (item.date || DEFAULT_ITEM_DATE)
+      )
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }
+
+  function reorderItemsByDrag(draggedItemId, targetItemId) {
+    const draggedItem = findItemById(draggedItemId);
+    const targetItem = findItemById(targetItemId);
+    if (!draggedItem || !targetItem) return null;
+    if (draggedItem.personId !== targetItem.personId || draggedItem.categoryId !== targetItem.categoryId) return null;
+    if (itemHasPhotos(draggedItem) !== itemHasPhotos(targetItem)) return null;
+    if ((draggedItem.date || DEFAULT_ITEM_DATE) !== (targetItem.date || DEFAULT_ITEM_DATE)) return null;
+
+    const sameTypeItems = getSameDragTypeItems(draggedItem);
+    const draggedIndex = sameTypeItems.findIndex((item) => item.id === draggedItemId);
+    const targetIndex = sameTypeItems.findIndex((item) => item.id === targetItemId);
+    if (draggedIndex < 0 || targetIndex < 0) return null;
+
+    const [moved] = sameTypeItems.splice(draggedIndex, 1);
+    sameTypeItems.splice(targetIndex, 0, moved);
+    sameTypeItems.forEach((entry, index) => { entry.order = index; });
+    scheduleSave();
+    return sameTypeItems;
+  }
+
+  function reorderGalleryPhotos(personId, draggedIndexValue, targetIndexValue) {
+    const person = findPersonById(personId);
+    const draggedIndex = Number(draggedIndexValue);
+    const targetIndex = Number(targetIndexValue);
+    if (!person || !Array.isArray(person.galleryPhotos)) return null;
+    if (!Number.isInteger(draggedIndex) || !Number.isInteger(targetIndex)) return null;
+    if (draggedIndex === targetIndex || draggedIndex < 0 || targetIndex < 0) return null;
+    if (draggedIndex >= person.galleryPhotos.length || targetIndex >= person.galleryPhotos.length) return null;
+
+    const nextPhotos = [...person.galleryPhotos];
+    const [moved] = nextPhotos.splice(draggedIndex, 1);
+    nextPhotos.splice(targetIndex, 0, moved);
+    person.galleryPhotos = nextPhotos;
+    scheduleSave();
+    return person;
   }
 
   // ═══════════════════════════════════════════════
@@ -342,6 +404,10 @@
     getCategoryOrderIdsForPersonGroup,
     getOrderedGroupsForPerson,
     getOrderedCategoriesForPersonGroup,
+    reorderGroupsForPerson,
+    reorderCategoriesForPersonGroup,
+    reorderItemsByDrag,
+    reorderGalleryPhotos,
     readFileAsDataURL,
     readFilesAsDataURLs,
     createPerson,

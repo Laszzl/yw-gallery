@@ -2,11 +2,13 @@
   YW.config = {
     DEFAULT_ITEM_DATE: '1998-03-25',
     DATE_MIN_YEAR: 1950,
+    DATE_PICKER_SCROLL_DEBOUNCE_MS: 150,
     DB_NAME: 'yw_gallery_v1',
     DB_VERSION: 1,
     DB_STORE: 'app_data',
     DB_KEY: 'state',
     STORAGE_KEY: 'yw_data',
+    SAVE_FAILURE_MESSAGE: '保存失败，数据未写入，请导出备份或稍后重试',
     CROP_JPEG_QUALITY: 0.92,
     CROP_OUTPUT_BASE: 1200,
     CROP_INITIAL_RECT_RATIO: 0.8,
