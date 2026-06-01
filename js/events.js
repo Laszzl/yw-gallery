@@ -204,6 +204,7 @@
     bindEvents();
     YW.crop.bindCropModalEvents();
     YW.datePicker.syncDateDisplay(YW.config.DEFAULT_ITEM_DATE);
+    YW.render.observeNavMetrics();
     YW.render.renderAll();
     YW.forms.syncFileSummaries();
   }

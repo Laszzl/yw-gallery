@@ -131,7 +131,7 @@
                 <div class="inline-actions">
                   <label class="file-picker primary-button">
                     选择图片
-                    <input name="photos" id="itemPhotosInput" type="file" accept="image/*" multiple />
+                    <input name="photos" id="itemPhotosInput" class="visually-hidden-input" type="file" accept="image/*" multiple />
                   </label>
                   <button id="clearItemFilesButton" class="mini-button" type="button">
                     清空已选
@@ -157,11 +157,11 @@
                   <div class="person-photo-actions person-create-actions">
                     <label class="file-picker mini-file-button action-button-wide">
                       更换主页图片
-                      <input id="settingsPersonHomePhotoInput" type="file" accept="image/*" />
+                      <input id="settingsPersonHomePhotoInput" class="visually-hidden-input" type="file" accept="image/*" />
                     </label>
                     <label class="file-picker mini-file-button action-button-wide">
                       更换个人页图片
-                      <input id="settingsPersonDetailPhotoInput" type="file" accept="image/*" />
+                      <input id="settingsPersonDetailPhotoInput" class="visually-hidden-input" type="file" accept="image/*" />
                     </label>
                     <button id="settingsDeletePersonBtn" class="danger-button action-button-wide" type="button">删除体育生</button>
                   </div>
@@ -174,11 +174,11 @@
                     <div class="person-create-actions">
                       <label class="file-picker mini-file-button action-button-wide">
                         选择主页图
-                        <input name="homePhoto" id="personHomePhotoInput" type="file" accept="image/*" />
+                        <input name="homePhoto" id="personHomePhotoInput" class="visually-hidden-input" type="file" accept="image/*" />
                       </label>
                       <label class="file-picker mini-file-button action-button-wide">
                         选择个人页图
-                        <input name="detailPhoto" id="personDetailPhotoInput" type="file" accept="image/*" />
+                        <input name="detailPhoto" id="personDetailPhotoInput" class="visually-hidden-input" type="file" accept="image/*" />
                       </label>
                       <button type="submit" class="primary-button action-button-wide">保存新体育生</button>
                     </div>
@@ -207,7 +207,7 @@
               <div class="gallery-settings-row">
                 <div class="toggle-row">
                   <span class="toggle-label">启用画廊</span>
-                  <button id="galleryToggleBtn" class="toggle-switch" type="button" role="switch" aria-checked="false">
+                  <button id="galleryToggleBtn" class="toggle-switch" type="button" role="switch" aria-label="启用画廊" aria-checked="false">
                     <span class="toggle-knob"></span>
                   </button>
                 </div>
@@ -264,7 +264,7 @@
                 <button id="exportDataBtn" class="primary-button" type="button">导出备份</button>
                 <label class="file-picker primary-button">
                   导入备份
-                  <input id="importDataInput" type="file" accept=".json,application/json" />
+                  <input id="importDataInput" class="visually-hidden-input" type="file" accept=".json,application/json" />
                 </label>
               </div>
             </section>
@@ -325,13 +325,13 @@
         <div class="item-status-toggles">
           <div class="status-toggle-row">
             <span class="status-toggle-label">赠送</span>
-            <button class="toggle-switch" data-status-toggle="isGift" type="button" role="switch">
+            <button class="toggle-switch" data-status-toggle="isGift" type="button" role="switch" aria-label="赠送">
               <span class="toggle-knob"></span>
             </button>
           </div>
           <div class="status-toggle-row">
             <span class="status-toggle-label">现存</span>
-            <button class="toggle-switch" data-status-toggle="isOwnedNow" type="button" role="switch">
+            <button class="toggle-switch" data-status-toggle="isOwnedNow" type="button" role="switch" aria-label="现存">
               <span class="toggle-knob"></span>
             </button>
           </div>

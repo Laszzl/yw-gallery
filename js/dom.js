@@ -9,6 +9,7 @@
       addButton: document.querySelector('#addButton'),
       settingsButton: document.querySelector('#settingsButton'),
       emptySettingsButton: document.querySelector('#emptySettingsButton'),
+      topbar: document.querySelector('.topbar'),
 
       homeView: document.querySelector('#homeView'),
       athleteView: document.querySelector('#athleteView'),

@@ -35,6 +35,10 @@
       reader.readAsDataURL(file);
       bindCropDocListeners();
       elements.cropModal.hidden = false;
+      YW.modals.activateModalFocus(elements.cropModal, {
+        initialFocus: elements.cropConfirmBtn,
+        onEscape: () => closeCropModal(createCropResult('cancel')),
+      });
     });
   }
 
@@ -149,6 +153,7 @@
   }
 
   function prepareCropModalClose() {
+    YW.modals.deactivateModalFocus(elements.cropModal);
     elements.cropModal.hidden = true;
     endCropDrag();
     unbindCropDocListeners();

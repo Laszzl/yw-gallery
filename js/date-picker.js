@@ -135,6 +135,20 @@
     });
   }
 
+  function syncPickerStateFromScrolls() {
+    const columns = [
+      ['year', elements.dateYearScroll],
+      ['month', elements.dateMonthScroll],
+      ['day', elements.dateDayScroll],
+    ];
+    for (const [colType, scrollEl] of columns) {
+      const selectedValue = getClosestSnapItem(scrollEl);
+      if (selectedValue !== null) pickerState[colType] = selectedValue;
+    }
+    const maxDay = YW.utils.daysInMonth(pickerState.year, pickerState.month);
+    if (pickerState.day > maxDay) pickerState.day = maxDay;
+  }
+
   function openDatePicker(dateStr) {
     Object.assign(pickerState, YW.utils.parseDateParts(dateStr));
 
@@ -153,15 +167,23 @@
 
     elements.datePickerModal.hidden = false;
     YW.utils.setExpanded(elements.itemDateDisplay, true);
+    YW.modals.activateModalFocus(elements.datePickerModal, {
+      initialFocus: elements.datePickerConfirmBtn,
+      onEscape: cancelDatePicker,
+    });
   }
 
   function confirmDatePicker() {
+    clearTimeout(pickerState.scrollTimer);
+    syncPickerStateFromScrolls();
     syncDateDisplay();
+    YW.modals.deactivateModalFocus(elements.datePickerModal);
     elements.datePickerModal.hidden = true;
     YW.utils.setExpanded(elements.itemDateDisplay, false);
   }
 
   function cancelDatePicker() {
+    YW.modals.deactivateModalFocus(elements.datePickerModal);
     elements.datePickerModal.hidden = true;
     YW.utils.setExpanded(elements.itemDateDisplay, false);
   }

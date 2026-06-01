@@ -332,6 +332,34 @@
     return changed;
   }
 
+  function normalizeReferences(peopleIdSet, groupIdSet) {
+    let changed = false;
+    const originalCategoryLength = state.categories.length;
+    state.categories = state.categories.filter((category) => groupIdSet.has(category.groupId));
+    if (state.categories.length !== originalCategoryLength) changed = true;
+
+    const categoryIdSet = new Set(state.categories.map((category) => category.id));
+    const originalItemLength = state.items.length;
+    state.items = state.items.filter((item) => peopleIdSet.has(item.personId) && categoryIdSet.has(item.categoryId));
+    if (state.items.length !== originalItemLength) changed = true;
+
+    for (const groupId of Object.keys(state.collapsedSettingsGroups)) {
+      if (!groupIdSet.has(groupId)) {
+        delete state.collapsedSettingsGroups[groupId];
+        changed = true;
+      }
+    }
+
+    for (const key of Object.keys(state.collapsedSubcategories)) {
+      const [personId, categoryId] = key.split(':');
+      if (!peopleIdSet.has(personId) || !categoryIdSet.has(categoryId)) {
+        delete state.collapsedSubcategories[key];
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
   function normalizePersonGallery(person) {
     let changed = false;
     if (person.galleryEnabled === undefined) { person.galleryEnabled = false; changed = true; }
@@ -390,6 +418,7 @@
     const groupIdSet = new Set(groupIds);
 
     changed = ensureOrderMaps() || changed;
+    changed = normalizeReferences(peopleIdSet, groupIdSet) || changed;
     changed = normalizeItems() || changed;
     changed = pruneMissingPeopleOrders(peopleIdSet) || changed;
 

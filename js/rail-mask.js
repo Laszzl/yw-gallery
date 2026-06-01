@@ -39,6 +39,7 @@
 
   let _railMaskResizeObserver = null;
   const _railMaskPending = new WeakMap();
+  const _railMaskObserved = new Set();
 
   function scheduleRailMask(rail) {
     if (_railMaskPending.get(rail)) return;
@@ -59,6 +60,13 @@
     }
 
     const rails = document.querySelectorAll('.rail-list');
+    const currentRails = new Set(rails);
+    for (const rail of Array.from(_railMaskObserved)) {
+      if (!currentRails.has(rail) || !document.contains(rail)) {
+        _railMaskResizeObserver.unobserve(rail);
+        _railMaskObserved.delete(rail);
+      }
+    }
     for (let i = 0; i < rails.length; i++) {
       const rail = rails[i];
       if (rail.dataset.railMaskSetup) {
@@ -70,6 +78,7 @@
         scheduleRailMask(this);
       }, { passive: true });
       _railMaskResizeObserver.observe(rail);
+      _railMaskObserved.add(rail);
       updateRailMask(rail);
     }
   }

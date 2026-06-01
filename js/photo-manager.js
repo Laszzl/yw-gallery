@@ -63,6 +63,7 @@
 
   function resetPhotoManagerDom() {
     const { photoManageModal, photoThumbGrid, modalPhotoInput, modalPhotoAddBtn, modalPhotoDeleteBtn } = elements;
+    if (!photoManageModal.hidden) YW.modals.deactivateModalFocus(photoManageModal);
     photoManageModal.hidden = true;
     photoManageModal.onclick = null;
     photoThumbGrid.classList.remove('gallery-thumb-grid');
@@ -153,6 +154,10 @@
     const ctx = createPhotoManagerContext(config);
     bindPhotoManagerEvents(ctx);
     renderPhotoThumbGrid(ctx);
+    YW.modals.activateModalFocus(ctx.modal, {
+      initialFocus: ctx.addBtn,
+      onEscape: () => closePhotoManagerContext(ctx),
+    });
   }
 
   function openPhotoManageModal(itemId) {

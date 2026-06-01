@@ -8,11 +8,10 @@
     findPersonById,
     findItemById,
     getItemsByPersonCategory,
-    hasGroupContent,
     getOrderedGroupsForPerson,
     getOrderedCategoriesForPersonGroup,
+    getPersonDetailViewModel,
     itemHasPhotos,
-    splitItemsByPhotos,
     compareItemsForDisplay,
   } = YW.data;
   const {
@@ -25,18 +24,37 @@
   // ═══════════════════════════════════════════════
   // Render
   // ═══════════════════════════════════════════════
-  function updateNavHeight() {
-    const hasAthletes = state.people.length > 0;
-    document.body.style.setProperty('--ios-nav-height', hasAthletes
+  let navMetricsObserver = null;
+
+  function syncNavMetrics() {
+    const fallback = state.people.length > 0
       ? YW.config.NAV_HEIGHT_WITH_ATHLETES
-      : YW.config.NAV_HEIGHT_NO_ATHLETES);
+      : YW.config.NAV_HEIGHT_NO_ATHLETES;
+    const topbarHeight = elements.topbar?.getBoundingClientRect().height || 0;
+    document.body.style.setProperty('--ios-nav-height', topbarHeight > 0 ? `${Math.ceil(topbarHeight)}px` : fallback);
+  }
+
+  function observeNavMetrics() {
+    if (navMetricsObserver || !elements.topbar || typeof ResizeObserver === 'undefined') {
+      syncNavMetrics();
+      return;
+    }
+    navMetricsObserver = new ResizeObserver(() => syncNavMetrics());
+    navMetricsObserver.observe(elements.topbar);
+    syncNavMetrics();
+    requestAnimationFrame(syncNavMetrics);
+  }
+
+  function updateNavHeight() {
+    syncNavMetrics();
   }
 
   function renderShell() {
     YW.state.ensureValidViewState();
     syncFormOptions();
     renderSwitcher();
-    updateNavHeight();
+    syncNavMetrics();
+    requestAnimationFrame(syncNavMetrics);
   }
 
   function renderAll({ closeModals = true } = {}) {
@@ -223,9 +241,9 @@
 
     renderGallery(person);
 
-    const groupsWithContent = getOrderedGroupsForPerson(person.id).filter((g) => hasGroupContent(person.id, g.id));
-    for (const group of groupsWithContent) {
-      elements.athleteGroupedContent.append(renderGroupSection(person.id, group));
+    const detailViewModel = getPersonDetailViewModel(person.id);
+    for (const groupEntry of detailViewModel.groups) {
+      elements.athleteGroupedContent.append(renderGroupSection(groupEntry));
     }
     YW.railMask.setupRailMasks();
   }
@@ -283,19 +301,15 @@
     }
   }
 
-  function renderGroupSection(personId, group) {
-    const categoriesInGroup = getOrderedCategoriesForPersonGroup(personId, group.id).filter((c) =>
-      getItemsByPersonCategory(personId, c.id).length > 0
-    );
+  function renderGroupSection(groupEntry) {
+    const { group, categories } = groupEntry;
     const fragment = elements.templates.categorySection.content.cloneNode(true);
     const title = fragment.querySelector('.category-section-title');
     const subSections = fragment.querySelector('.subcategory-sections');
     title.textContent = group.name;
 
-    for (const category of categoriesInGroup) {
-      const categoryItems = getItemsByPersonCategory(personId, category.id)
-        .sort(compareItemsForDisplay);
-
+    for (const categoryEntry of categories) {
+      const { category, items: categoryItems, imageItems, textItems } = categoryEntry;
       const subFragment = elements.templates.subcategory.content.cloneNode(true);
       const block = subFragment.querySelector('.subcategory-block');
       const titleNode = subFragment.querySelector('.subcategory-title');
@@ -304,6 +318,7 @@
       const textRail = subFragment.querySelector('.text-items-rail');
       const toggle = subFragment.querySelector('[data-subcategory-toggle]');
 
+      const personId = categoryItems[0]?.personId || '';
       const collapseKey = `${personId}:${category.id}`;
       block.dataset.personId = personId;
       block.dataset.categoryId = category.id;
@@ -313,8 +328,6 @@
       titleNode.textContent = category.name;
       countsNode.textContent = categoryCounts(categoryItems);
       YW.utils.bindCollapseToggle(toggle, state.collapsedSubcategories, collapseKey, block);
-
-      const { imageItems, textItems } = splitItemsByPhotos(categoryItems);
 
       for (const item of imageItems) appendImageItemCard(imageRail, item);
       for (const item of textItems) appendTextItemCard(textRail, item);
@@ -534,6 +547,8 @@
 
   Object.assign(YW.render, {
     updateNavHeight,
+    syncNavMetrics,
+    observeNavMetrics,
     renderShell,
     renderAll,
     renderCurrentView,

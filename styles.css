@@ -45,7 +45,7 @@
   --fw-medium: 560;
   --letter-flat: 0;
   --datepicker-height: 220px;
-  --text-hero: clamp(3rem, 6vw, 4.8rem);
+  --text-hero: 4.4rem;
   --text-xxl: 1.75rem;
   --text-xl: 1.25rem;
   --text-lg: 1.15rem;
@@ -76,7 +76,15 @@ body {
 }
 
 .visually-hidden-input {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 img {
@@ -699,6 +707,20 @@ button,
 .category-section {
   padding: 28px;
   background: rgba(255, 255, 255, 0.72);
+}
+
+@media (min-width: 769px) {
+  .category-section {
+    padding: 24px 0;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .settings-block,
+  .glass-form {
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
 }
 
 .category-section-header,
@@ -1344,9 +1366,7 @@ select:focus {
   user-select: none;
 }
 
-.checkbox-label input,
-.file-picker input,
-.mini-file-button input {
+.checkbox-label input {
   display: none;
 }
 
@@ -1542,6 +1562,11 @@ select:focus {
   box-shadow: none;
 }
 
+.photo-thumb-replace:focus-visible,
+.photo-thumb-item:focus-within .photo-thumb-replace {
+  opacity: 1;
+}
+
 @media (hover: none), (max-width: 768px) {
   .photo-thumb-replace {
     inset: auto 8px 8px auto;
@@ -1629,7 +1654,7 @@ select:focus {
    ═══════════════════════════════════════════════ */
 
 /* ── iPad 横版（仅触控微调，布局保持 Mac 原样）── */
-@media (max-width: 1366px) {
+@media (hover: none) and (pointer: coarse) and (max-width: 1366px) {
   /* 按钮间距适配触控 */
   .topbar-actions,
   .person-photo-actions,
@@ -2199,7 +2224,7 @@ select:focus {
   }
 
   .detail-hero-name {
-    font-size: clamp(2.6rem, 15vw, 4.4rem);
+    font-size: 3.4rem;
     letter-spacing: var(--letter-flat);
   }
 
