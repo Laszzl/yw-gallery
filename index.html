@@ -265,9 +265,9 @@
       </main>
     </div>
 
-    <div id="cropModal" class="modal-overlay" hidden>
+    <div id="cropModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cropModalTitle" hidden>
       <div class="modal-content crop-modal-content">
-        <h3>裁剪图片</h3>
+        <h3 id="cropModalTitle">裁剪图片</h3>
         <div id="cropPreviewContainer" class="crop-preview-container">
           <img id="cropImage" alt="裁剪预览" />
           <div id="cropOverlay" class="crop-overlay">
@@ -280,30 +280,30 @@
           </div>
         </div>
         <div class="crop-modal-actions">
-          <button id="cropConfirmBtn" class="primary-button">确认裁剪</button>
-          <button id="cropSkipBtn" class="mini-button">原图保存</button>
+          <button id="cropConfirmBtn" class="primary-button" type="button">确认裁剪</button>
+          <button id="cropSkipBtn" class="mini-button" type="button">原图保存</button>
         </div>
       </div>
     </div>
 
-    <div id="customModal" class="modal-overlay" hidden>
+    <div id="customModal" class="modal-overlay" role="dialog" aria-modal="true" aria-describedby="modalMessage" hidden>
       <div class="modal-content dialog-modal-content">
         <p id="modalMessage" class="modal-msg"></p>
         <div class="modal-actions">
-          <button id="modalConfirmBtn" class="primary-button">确定</button>
+          <button id="modalConfirmBtn" class="primary-button" type="button">确定</button>
         </div>
       </div>
     </div>
 
-    <div id="photoManageModal" class="modal-overlay" hidden>
+    <div id="photoManageModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="photoManageTitle" hidden>
       <div class="modal-content photo-manage-content">
-        <h3 class="modal-title">图片管理</h3>
+        <h3 id="photoManageTitle" class="modal-title">图片管理</h3>
         <div id="photoThumbGrid" class="photo-thumb-grid"></div>
         <div class="modal-actions-col">
-          <button id="modalPhotoAddBtn" class="primary-button center-btn">
+          <button id="modalPhotoAddBtn" class="primary-button center-btn" type="button">
             添加图片
           </button>
-          <button id="modalPhotoDeleteBtn" class="danger-button center-btn">
+          <button id="modalPhotoDeleteBtn" class="danger-button center-btn" type="button">
             删除所有图片
           </button>
         </div>
@@ -311,9 +311,9 @@
       </div>
     </div>
 
-    <div id="itemActionsModal" class="modal-overlay" hidden>
+    <div id="itemActionsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="itemActionsTitle" hidden>
       <div class="modal-content item-actions-content">
-        <h3 class="modal-title">更多操作</h3>
+        <h3 id="itemActionsTitle" class="modal-title">更多操作</h3>
         <div class="item-status-toggles">
           <div class="status-toggle-row">
             <span class="status-toggle-label">赠送</span>
@@ -339,9 +339,9 @@
       </div>
     </div>
 
-    <div id="datePickerModal" class="modal-overlay" hidden>
+    <div id="datePickerModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="datePickerTitle" hidden>
       <div class="modal-content date-picker-modal-content">
-        <h3 class="modal-title">选择日期</h3>
+        <h3 id="datePickerTitle" class="modal-title">选择日期</h3>
         <div class="date-picker-labels">
           <span class="date-col-label">年</span>
           <span class="date-col-label">月</span>
@@ -525,6 +525,16 @@
       </div>
     </template>
 
-    <script src="./app.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/state.js"></script>
+    <script src="./js/storage.js"></script>
+    <script src="./js/data.js"></script>
+    <script src="./js/dom.js"></script>
+    <script src="./js/modals.js"></script>
+    <script src="./js/crop.js"></script>
+    <script src="./js/render.js"></script>
+    <script src="./js/forms.js"></script>
+    <script src="./js/rail-mask.js"></script>
+    <script src="./js/events.js"></script>
   </body>
 </html>

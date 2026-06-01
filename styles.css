@@ -86,6 +86,15 @@ select {
   outline: none;
 }
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.date-display-button:focus-visible,
+.file-picker:focus-within {
+  outline: 3px solid rgba(0, 122, 255, 0.36);
+  outline-offset: 3px;
+}
+
 button,
 input,
 select,
@@ -353,7 +362,7 @@ button,
 .subcategory-title,
 .overview-group-title {
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .form-heading {
@@ -453,7 +462,7 @@ button,
   color: #ffffff;
   font-size: 1.45rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   text-shadow: 0 4px 14px rgba(0, 0, 0, 0.32);
 }
 
@@ -593,7 +602,7 @@ button,
 .detail-hero-name {
   font-size: var(--text-hero);
   line-height: 0.95;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
   color: var(--text);
   margin: 0;
   text-align: center;
@@ -620,7 +629,7 @@ button,
 
 .gallery-title {
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: var(--text);
 }
 
@@ -721,7 +730,7 @@ button,
 .overview-group-title,
 .yw-title,
 .text-item-title {
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .manager-row-subtitle {
@@ -955,7 +964,7 @@ button,
   font-size: 0.88rem;
   font-weight: 500;
   white-space: nowrap;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .person-manager-layout .person-photo-actions {
@@ -998,7 +1007,7 @@ button,
   padding: 0 20px;
   font-size: 0.88rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .action-button-wide {
@@ -1431,7 +1440,7 @@ select:focus {
 .modal-title {
   margin: 0;
   font-size: var(--text-xl);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .modal-subtitle,
@@ -2102,7 +2111,7 @@ select:focus {
     font-size: 1.5rem;
     line-height: 1.08;
     font-weight: 680;
-    letter-spacing: -0.04em;
+    letter-spacing: 0;
     color: var(--ios-label);
     margin: 0;
     padding: 0;
@@ -2112,7 +2121,7 @@ select:focus {
     color: var(--ios-label);
     font-size: 1.2rem;
     font-weight: 650;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
     margin: 0;
   }
 
@@ -2164,7 +2173,7 @@ select:focus {
     font-size: 1.35rem !important;
     font-weight: 650;
     line-height: 1.15;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
   }
 
   /* ═══════════════════════════════════════════════
@@ -2183,7 +2192,7 @@ select:focus {
 
   .detail-hero-name {
     font-size: clamp(2.6rem, 15vw, 4.4rem);
-    letter-spacing: -0.065em;
+    letter-spacing: 0;
   }
 
   .grouped-content {
@@ -2221,7 +2230,7 @@ select:focus {
     color: var(--ios-label);
     font-size: 1.2rem;
     font-weight: 650;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
   }
 
   .form-heading {
@@ -2297,7 +2306,7 @@ select:focus {
   .gallery-title {
     font-size: 1.2rem;
     font-weight: 650;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
     color: var(--ios-label);
   }
 
