@@ -25,7 +25,7 @@
   --hover-field-border: rgba(17, 17, 17, 0.15);
   --hover-panel-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
   --hover-date-item-bg: rgba(17, 17, 17, 0.04);
-  --hover-brand-brightness: 1.35;
+  --hover-brand-brightness: 1.5;
   --hover-danger-bg: rgba(192, 54, 44, 0.18);
   --hover-danger-border: rgba(192, 54, 44, 0.18);
   --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -2951,7 +2951,7 @@ select:focus {
   .file-picker.primary-button:hover,
   .switcher-chip.active:hover {
     filter: brightness(var(--hover-brand-brightness));
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   .brand-button:active,
@@ -2969,8 +2969,8 @@ select:focus {
   .subtle-icon-btn:hover,
   .file-picker:not(.primary-button):hover,
   .switcher-chip:not(.active):hover {
-    background: var(--hover-control-bg);
-    border-color: var(--hover-control-border);
+    background: rgba(17, 17, 17, 0.05);
+    border-color: rgba(15, 23, 42, 0.14);
     box-shadow: var(--hover-control-shadow);
   }
 
