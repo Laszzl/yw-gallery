@@ -214,7 +214,7 @@
     const itemData = getItemFormData();
     if (!(await validateItemFormData(itemData))) return;
 
-    const photoUrls = await YW.data.readFilesAsDataURLs(itemData.rawFiles);
+    const photoUrls = await YW.media.readFilesAsDataURLs(itemData.rawFiles);
     const { rawFiles, quantityRaw, ...payload } = itemData;
     await YW.data.createItem({ ...payload, photoUrls });
 

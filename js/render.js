@@ -10,7 +10,6 @@
     getItemsByPersonCategory,
     getOrderedGroupsForPerson,
     getOrderedCategoriesForPersonGroup,
-    getPersonDetailViewModel,
     itemHasPhotos,
     compareItemsForDisplay,
   } = YW.data;
@@ -241,7 +240,7 @@
 
     renderGallery(person);
 
-    const detailViewModel = getPersonDetailViewModel(person.id);
+    const detailViewModel = YW.viewModels.getPersonDetailViewModel(person.id);
     for (const groupEntry of detailViewModel.groups) {
       elements.athleteGroupedContent.append(renderGroupSection(groupEntry));
     }

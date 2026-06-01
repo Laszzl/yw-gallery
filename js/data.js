@@ -85,27 +85,6 @@
     return orderIds.map((id) => categoryMap.get(id)).filter(Boolean);
   }
 
-  function getPersonDetailViewModel(personId) {
-    const itemsByCategory = new Map();
-    for (const item of state.items) {
-      if (item.personId !== personId) continue;
-      if (!itemsByCategory.has(item.categoryId)) itemsByCategory.set(item.categoryId, []);
-      itemsByCategory.get(item.categoryId).push(item);
-    }
-
-    const groups = [];
-    for (const group of getOrderedGroupsForPerson(personId)) {
-      const categories = [];
-      for (const category of getOrderedCategoriesForPersonGroup(personId, group.id)) {
-        const items = (itemsByCategory.get(category.id) || []).slice().sort(compareItemsForDisplay);
-        if (!items.length) continue;
-        categories.push({ category, items, ...splitItemsByPhotos(items) });
-      }
-      if (categories.length) groups.push({ group, categories });
-    }
-    return { groups };
-  }
-
   function reorderIdList(currentOrder, draggedId, targetId) {
     const order = [...currentOrder];
     const draggedIndex = order.indexOf(draggedId);
@@ -180,35 +159,15 @@
     return person;
   }
 
-  // ═══════════════════════════════════════════════
-  // Photo helpers (local, base64 data URLs)
-  // ═══════════════════════════════════════════════
-  function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function readFilesAsDataURLs(files) {
-    const photoUrls = [];
-    for (const file of files) {
-      photoUrls.push(await readFileAsDataURL(file));
-    }
-    return photoUrls;
-  }
-
   async function createPerson(name, homePhotoFile, detailPhotoFile) {
     let homePhotoUrl = null;
     let detailPhotoUrl = null;
 
     if (homePhotoFile instanceof File && homePhotoFile.size > 0) {
-      homePhotoUrl = await readFileAsDataURL(homePhotoFile);
+      homePhotoUrl = await YW.media.readFileAsDataURL(homePhotoFile);
     }
     if (detailPhotoFile instanceof File && detailPhotoFile.size > 0) {
-      detailPhotoUrl = await readFileAsDataURL(detailPhotoFile);
+      detailPhotoUrl = await YW.media.readFileAsDataURL(detailPhotoFile);
     }
 
     const person = { id: crypto.randomUUID(), name, homePhotoUrl, detailPhotoUrl, galleryEnabled: false, galleryPhotos: [] };
@@ -222,7 +181,7 @@
     if (field !== 'homePhotoUrl' && field !== 'detailPhotoUrl') {
       throw new Error('Invalid person photo field');
     }
-    const photoUrlValue = await readFileAsDataURL(file);
+    const photoUrlValue = await YW.media.readFileAsDataURL(file);
     const person = findPersonById(personId);
     if (person) person[field] = photoUrlValue;
     await saveStateStrict();
@@ -424,13 +383,12 @@
     getCategoryOrderIdsForPersonGroup,
     getOrderedGroupsForPerson,
     getOrderedCategoriesForPersonGroup,
-    getPersonDetailViewModel,
     reorderGroupsForPerson,
     reorderCategoriesForPersonGroup,
     reorderItemsByDrag,
     reorderGalleryPhotos,
-    readFileAsDataURL,
-    readFilesAsDataURLs,
+    readFileAsDataURL: YW.media.readFileAsDataURL,
+    readFilesAsDataURLs: YW.media.readFilesAsDataURLs,
     createPerson,
     updatePersonPhoto,
     setGalleryEnabled,

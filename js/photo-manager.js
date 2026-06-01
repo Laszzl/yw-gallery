@@ -109,7 +109,7 @@
         await handlePartialPhotoUpdate(ctx, photoUrls, cropResult);
         return;
       }
-      photoUrls.push(await YW.data.readFileAsDataURL(finalFile));
+      photoUrls.push(await YW.media.readFileAsDataURL(finalFile));
     }
 
     await applyManagedPhotos(ctx, photoUrls);

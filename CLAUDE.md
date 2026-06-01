@@ -24,10 +24,13 @@
 ### js 模块
 - `js/config.js`：集中维护常量、存储 key、裁剪参数、断点相关值和 `isMacDevice`。
 - `js/utils.js`：通用纯函数与轻量 DOM helper；避免放入具体业务流程。
-- `js/state.js`：state/viewState、序列化、导入校验、数据归一化和视图状态兜底。
+- `js/state.js`：state/viewState、序列化、数据归一化、导入数据清洗和视图状态兜底。
+- `js/validators.js`：导入数据校验，包括根结构、重复 ID、引用关系、数量、日期、布尔值和图片数组类型。
 - `js/storage.js`：IndexedDB/localStorage 读写、迁移、导入导出、保存队列。
 - `js/formatters.js`：集中维护面向 UI 的展示文案与日期/数量状态格式化。
-- `js/data.js`：业务数据查询、创建、删除、排序、图片 Data URL 读取等数据层操作。
+- `js/data.js`：业务数据查询、创建、删除、排序、状态切换和图片集合写入等数据层操作。
+- `js/media.js`：FileReader、图片 Data URL 读取和后续图片处理能力。
+- `js/view-models.js`：页面展示所需的派生数据结构；不直接写入持久化 state。
 - `js/dom.js`：集中缓存稳定 DOM 节点和模板引用；新增稳定 DOM 查询优先放这里。
 - `js/render.js`：所有视图渲染、列表生成、视图切换和 UI 同步。
 - `js/forms.js`：表单提交、表单锁、文件摘要、设置页图片输入处理。
@@ -165,7 +168,7 @@
 
 ### 图片处理
 - 所有 Person、Item、Gallery 图片都存储为 base64 Data URL。
-- Data URL 读取统一通过 `readFileAsDataURL` / `readFilesAsDataURLs` 和 FileReader 完成。
+- Data URL 读取统一通过 `YW.media.readFileAsDataURL` / `YW.media.readFilesAsDataURLs` 和 FileReader 完成。
 - YW 图片和个人页图片使用 `1:1`。
 - 主页图片和画廊图片使用 `4:5`。
 - 裁剪组件可保留 `3:4` 样式能力，但当前业务默认不主动使用。
@@ -190,7 +193,7 @@
 
 ### 状态与数据
 - 不随意改变持久化 state key、数据结构、IndexedDB 名称、store、key 或 localStorage key。
-- 修改数据模型时必须同步更新 `serializeState()`、`normalizeState()`、`validateImportedState()`、导入导出兼容逻辑和规范文档。
+- 修改数据模型时必须同步更新 `serializeState()`、`normalizeState()`、`YW.validators.validateImportedState()`、导入导出兼容逻辑和规范文档。
 - 状态变更优先通过 `js/data.js` 中的业务函数完成；通用 state 修复放在 `js/state.js`。
 - UI 模块不得直接写持久化 state；item/person/gallery 的状态切换与图片集合更新必须通过 `js/data.js` API 完成。
 - 数据写入必须使用 `saveStateStrict()` 或 `scheduleSave()`；不要绕过 `js/storage.js` 直接写 IndexedDB/localStorage。
