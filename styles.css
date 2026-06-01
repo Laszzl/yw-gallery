@@ -176,7 +176,8 @@ button,
 }
 
 .primary-button,
-.secondary-button {
+.secondary-button,
+.switcher-chip.active {
   background: var(--dark-button-bg);
   color: var(--primary-fg);
   box-shadow: var(--dark-button-shadow);
@@ -309,11 +310,6 @@ button,
   line-height: 1;
   border-width: 1px;
   flex-shrink: 0;
-}
-
-.switcher-chip.active {
-  background: var(--dark-button-bg);
-  color: #ffffff;
 }
 
 .app-main {
@@ -2951,7 +2947,8 @@ select:focus {
   .brand-button:hover,
   .primary-button:hover,
   .secondary-button:hover,
-  .file-picker.primary-button:hover {
+  .file-picker.primary-button:hover,
+  .switcher-chip.active:hover {
     filter: brightness(var(--hover-brand-brightness));
     box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
@@ -2959,15 +2956,10 @@ select:focus {
   .brand-button:active,
   .primary-button:active,
   .secondary-button:active,
-  .file-picker.primary-button:active {
+  .file-picker.primary-button:active,
+  .switcher-chip.active:active {
     filter: brightness(0.94);
     transition: filter 0.08s var(--ease-apple);
-  }
-
-  .switcher-chip.active:hover {
-    background: var(--dark-button-hover-bg);
-    filter: brightness(var(--hover-brand-brightness));
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   /* ── Ghost Buttons: surface brightens, border surfaces ── */
@@ -2990,7 +2982,7 @@ select:focus {
   .mini-file-button:active,
   .subtle-icon-btn:active,
   .file-picker:not(.primary-button):active,
-  .switcher-chip:active {
+  .switcher-chip:not(.active):active {
     background: rgba(17, 17, 17, 0.06);
     transition: background 0.08s var(--ease-apple);
   }
@@ -3158,7 +3150,8 @@ select:focus {
   .brand-button,
   .primary-button,
   .secondary-button,
-  .file-picker.primary-button {
+  .file-picker.primary-button,
+  .switcher-chip.active {
     color: #ffffff;
     box-shadow: var(--dark-button-shadow);
   }
