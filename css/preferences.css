@@ -120,12 +120,6 @@
     filter: brightness(1.03);
   }
 
-  /* ── Date Picker Items ── */
-  .date-col-item:hover {
-    color: var(--text);
-    background: var(--hover-date-item-bg);
-    font-weight: 500;
-  }
 
   /* ── Cards: subtle scale lift ── */
   .selector-card:hover {

@@ -29,10 +29,6 @@
       itemEl.textContent = String(items[j]);
       itemEl.dataset.value = String(items[j]);
       itemEl.dataset.col = colType;
-      itemEl.addEventListener('click', function(e) {
-        const val = parseInt(e.currentTarget.dataset.value, 10);
-        handleDateItemClick(colType, val, scrollEl);
-      });
       fragment.appendChild(itemEl);
     }
     scrollEl.insertBefore(fragment, spacerBottom);
@@ -56,16 +52,6 @@
     const items = [];
     for (let d = 1; d <= maxDay; d++) { items.push(d); }
     renderColumnItems(scrollEl, items, selectedDay, 'day');
-  }
-
-  function handleDateItemClick(colType, value, scrollEl) {
-    pickerState[colType] = value;
-
-    if (colType === 'year' || colType === 'month') {
-      refreshDayColumn();
-    }
-    scrollToSelectedItem(scrollEl, value);
-    updateColumnSelection(scrollEl, value);
   }
 
   function onColumnScroll(e) {
