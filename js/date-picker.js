@@ -68,7 +68,7 @@
 
       updateColumnSelection(scrollEl, selectedValue);
 
-      if (colType === 'year' || colType === 'month') {
+      if (colType === 'month' || (colType === 'year' && pickerState.month === 2)) {
         refreshDayColumn();
       }
     }, DATE_PICKER_SCROLL_DEBOUNCE_MS);
