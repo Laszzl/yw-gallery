@@ -97,6 +97,41 @@
     ];
     assert('serializeState 只输出持久化字段', serializedKeys.join(',') === expectedKeys.join(','));
 
+    const emptyState = {
+      people: [],
+      groups: [],
+      categories: [],
+      items: [],
+    };
+    const sampleSnapshot = YW.storage.createStoredStateSnapshot('indexedDB', sample);
+    const localSampleSnapshot = YW.storage.createStoredStateSnapshot('localStorage', sample);
+    const emptyLocalSnapshot = YW.storage.createStoredStateSnapshot('localStorage', emptyState);
+    const emptyIndexedSnapshot = YW.storage.createStoredStateSnapshot('indexedDB', emptyState);
+    const otherSample = clone(sample);
+    otherSample.people[0].id = 'p2';
+    otherSample.people[0].name = '另一位体育生';
+    otherSample.items[0].personId = 'p2';
+    otherSample.items[1].personId = 'p2';
+    const otherLocalSnapshot = YW.storage.createStoredStateSnapshot('localStorage', otherSample);
+
+    let loadDecision = YW.storage.chooseLoadSource(sampleSnapshot, null);
+    assert('存储加载：只有 IndexedDB 时读取 IndexedDB', loadDecision.snapshot.source === 'indexedDB' && !loadDecision.shouldMigrateLocal);
+
+    loadDecision = YW.storage.chooseLoadSource(null, localSampleSnapshot);
+    assert('存储加载：只有 localStorage 时读取并迁移', loadDecision.snapshot.source === 'localStorage' && loadDecision.shouldMigrateLocal);
+
+    loadDecision = YW.storage.chooseLoadSource(sampleSnapshot, emptyLocalSnapshot);
+    assert('存储加载：IndexedDB 非空时忽略空 localStorage', loadDecision.snapshot.source === 'indexedDB' && loadDecision.conflict === 'emptyLocalStorage');
+
+    loadDecision = YW.storage.chooseLoadSource(sampleSnapshot, otherLocalSnapshot);
+    assert('存储加载：两边不同非空数据时优先 IndexedDB', loadDecision.snapshot.source === 'indexedDB' && loadDecision.conflict === 'nonEmptyLocalStorage');
+
+    loadDecision = YW.storage.chooseLoadSource(emptyIndexedSnapshot, localSampleSnapshot);
+    assert('存储加载：IndexedDB 为空时迁移非空 localStorage', loadDecision.snapshot.source === 'localStorage' && loadDecision.shouldMigrateLocal);
+
+    loadDecision = YW.storage.chooseLoadSource(null, emptyLocalSnapshot);
+    assert('存储加载：只有空 localStorage 时保持空状态', loadDecision.snapshot === null && !loadDecision.shouldMigrateLocal);
+
     writeResult(lines.join('\n') + '\n\n全部 smoke test 通过。');
   } catch (err) {
     writeResult(lines.join('\n') + '\n\nFAIL ' + err.message);

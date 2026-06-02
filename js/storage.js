@@ -69,29 +69,48 @@
     return scheduledSave;
   }
 
-  async function loadState() {
-    // localStorage 通常是 IndexedDB 失败后的最新回退数据，启动时优先迁移。
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const validation = YW.state.validateImportedState(parsed);
-        if (!validation.ok) {
-          console.error('localStorage 数据格式错误，跳过迁移:', validation.message);
-        } else {
-          YW.state.restoreStateFromData(validation.data);
-          const result = await saveState();
-          if (result && result.storage === 'indexedDB') {
-            localStorage.removeItem(STORAGE_KEY);
-          }
-          return true;
-        }
-      }
-    } catch (e) {
-      console.error('localStorage 迁移失败，保留原数据:', e);
-    }
+  function getStoredStateWeight(data) {
+    return ['people', 'groups', 'categories', 'items'].reduce((total, key) => {
+      return total + (Array.isArray(data?.[key]) ? data[key].length : 0);
+    }, 0);
+  }
 
-    // localStorage 不可用或无有效数据时，从 IndexedDB 加载。
+  function createStoredStateSnapshot(source, data) {
+    const validation = YW.state.validateImportedState(data);
+    if (!validation.ok) return { source, ok: false, message: validation.message };
+    return {
+      source,
+      ok: true,
+      data: validation.data,
+      weight: getStoredStateWeight(validation.data),
+      fingerprint: JSON.stringify(validation.data),
+    };
+  }
+
+  function chooseLoadSource(indexedDBSnapshot, localStorageSnapshot) {
+    const indexed = indexedDBSnapshot?.ok ? indexedDBSnapshot : null;
+    const local = localStorageSnapshot?.ok ? localStorageSnapshot : null;
+    if (indexed && indexed.weight > 0) {
+      if (local && local.fingerprint !== indexed.fingerprint) {
+        return {
+          snapshot: indexed,
+          shouldMigrateLocal: false,
+          shouldRemoveLocal: false,
+          conflict: local.weight > 0 ? 'nonEmptyLocalStorage' : 'emptyLocalStorage',
+        };
+      }
+      return { snapshot: indexed, shouldMigrateLocal: false, shouldRemoveLocal: false, conflict: null };
+    }
+    if (local && local.weight > 0) {
+      return { snapshot: local, shouldMigrateLocal: true, shouldRemoveLocal: true, conflict: null };
+    }
+    if (indexed) {
+      return { snapshot: indexed, shouldMigrateLocal: false, shouldRemoveLocal: false, conflict: null };
+    }
+    return { snapshot: null, shouldMigrateLocal: false, shouldRemoveLocal: false, conflict: null };
+  }
+
+  async function readIndexedDBSnapshot() {
     try {
       const db = await openDB();
       const tx = db.transaction(DB_STORE, 'readonly');
@@ -100,15 +119,57 @@
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
       });
-      if (data) {
-        const changed = YW.state.restoreStateFromData(data);
-        if (changed) await saveStateStrict();
-        return true;
+      if (!data) return null;
+      const snapshot = createStoredStateSnapshot('indexedDB', data);
+      if (!snapshot.ok) {
+        console.error('IndexedDB 数据格式错误，跳过加载:', snapshot.message);
+        return null;
       }
+      return snapshot;
     } catch (e) {
       console.error('IndexedDB 加载失败:', e);
+      return null;
     }
-    return false;
+  }
+
+  function readLocalStorageSnapshot() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const snapshot = createStoredStateSnapshot('localStorage', JSON.parse(raw));
+      if (!snapshot.ok) {
+        console.error('localStorage 数据格式错误，跳过迁移:', snapshot.message);
+        return null;
+      }
+      return snapshot;
+    } catch (e) {
+      console.error('localStorage 迁移失败，保留原数据:', e);
+      return null;
+    }
+  }
+
+  async function loadState() {
+    const indexedDBSnapshot = await readIndexedDBSnapshot();
+    const localStorageSnapshot = readLocalStorageSnapshot();
+    const decision = chooseLoadSource(indexedDBSnapshot, localStorageSnapshot);
+    if (!decision.snapshot) return false;
+
+    if (decision.conflict === 'nonEmptyLocalStorage') {
+      console.warn('IndexedDB 与 localStorage 都存在不同数据，已优先加载 IndexedDB，并保留 localStorage 以便手动恢复。');
+    } else if (decision.conflict === 'emptyLocalStorage') {
+      console.warn('localStorage 存在空数据，已忽略并优先加载 IndexedDB。');
+    }
+
+    const changed = YW.state.restoreStateFromData(decision.snapshot.data);
+    if (decision.shouldMigrateLocal) {
+      const result = await saveState();
+      if (decision.shouldRemoveLocal && result && result.storage === 'indexedDB') {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    } else if (changed) {
+      await saveStateStrict();
+    }
+    return true;
   }
 
   function exportData() {
@@ -160,5 +221,16 @@
     await YW.modals.showModal(`数据导入成功！已恢复 ${YW.state.state.people.length} 位体育生、${YW.state.state.items.length} 条 YW`);
   }
 
-  Object.assign(YW.storage, { openDB, saveState, saveStateStrict, scheduleSave, loadState, exportData, importData });
+  Object.assign(YW.storage, {
+    openDB,
+    saveState,
+    saveStateStrict,
+    scheduleSave,
+    getStoredStateWeight,
+    createStoredStateSnapshot,
+    chooseLoadSource,
+    loadState,
+    exportData,
+    importData,
+  });
 })(window.YW);

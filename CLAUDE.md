@@ -167,7 +167,7 @@
 ### 存储
 - IndexedDB: 数据库 `yw_gallery_v1`，store `app_data`，key `state`。
 - localStorage 回退: key `yw_data`，IndexedDB 失败时自动回退写入。
-- 自动迁移: 检测到 localStorage 有有效数据时优先迁移到 IndexedDB。
+- 自动迁移: 启动时优先加载有效 IndexedDB 数据；仅当 IndexedDB 无有效数据且 localStorage 有有效数据时迁移到 IndexedDB。两边都有不同的非空数据时优先保留 IndexedDB，并保留 localStorage 以便手动恢复。
 - 导出/导入: JSON 文件下载 + 上传验证。
 
 ### 导入导出兼容
