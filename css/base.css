@@ -1,0 +1,80 @@
+* {
+  box-sizing: border-box;
+}
+
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif;
+  background: var(--bg-accent);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.visually-hidden-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  outline: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.date-display-button:focus-visible,
+.file-picker:focus-within {
+  outline: 3px solid rgba(0, 122, 255, 0.36);
+  outline-offset: 3px;
+}
+
+button,
+input,
+select,
+label,
+.date-display-button,
+.mini-file-button,
+.file-picker,
+.checkbox-panel,
+.checkbox-label,
+.checkbox-ui {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+.mini-file-button,
+.file-picker {
+  -webkit-appearance: none;
+  appearance: none;
+  background-clip: padding-box;
+  border: 0;
+  border-radius: 999px;
+  transition: transform 0.22s var(--ease-apple), box-shadow 0.22s var(--ease-apple), opacity 0.22s var(--ease-apple), background-color 0.22s var(--ease-apple), border-color 0.22s var(--ease-apple), filter 0.22s var(--ease-apple);
+  font-weight: 500;
+}
+

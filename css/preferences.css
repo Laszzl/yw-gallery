@@ -1,0 +1,697 @@
+/* ═══════════════════════════════════════════════
+   Mac Desktop Only — hover (触摸设备不生效)
+   Apple-inspired: luminance/scale, no translateY lift
+   ═══════════════════════════════════════════════ */
+@media (hover: hover) and (pointer: fine) {
+  .rail-card[draggable="true"],
+  .overview-group-card[draggable="true"],
+  .overview-category-row[draggable="true"] {
+    cursor: grab;
+  }
+
+  .rail-card[draggable="true"].dragging,
+  .overview-group-card[draggable="true"].dragging,
+  .overview-category-row[draggable="true"].dragging {
+    cursor: grabbing;
+  }
+
+  .brand-button,
+  .primary-button,
+  .secondary-button,
+  .file-picker.primary-button,
+  .switcher-chip.active {
+    border: 0;
+  }
+
+  .danger-button,
+  .danger-lite-button {
+    border: 1px solid transparent;
+  }
+
+  /* ── Filled Buttons: illuminate via brightness ── */
+  .brand-button:hover,
+  .primary-button:hover,
+  .secondary-button:hover,
+  .file-picker.primary-button:hover,
+  .switcher-chip.active:hover {
+    filter: brightness(var(--hover-brand-brightness));
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .brand-button:active,
+  .primary-button:active,
+  .secondary-button:active,
+  .file-picker.primary-button:active,
+  .switcher-chip.active:active {
+    filter: brightness(0.94);
+    transition: filter 0.08s var(--ease-apple);
+  }
+
+  /* ── Ghost Buttons: surface brightens, border surfaces ── */
+  .mini-button:hover,
+  .mini-file-button:hover,
+  .subtle-icon-btn:hover,
+  .file-picker:not(.primary-button):hover,
+  .switcher-chip:not(.active):hover {
+    background: rgba(17, 17, 17, 0.05);
+    border-color: rgba(15, 23, 42, 0.14);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  /* Override: remove shadow from switcher-chip hover only */
+  .switcher-chip:not(.active):hover {
+    box-shadow: none;
+  }
+
+  .mini-button:active,
+  .mini-file-button:active,
+  .subtle-icon-btn:active,
+  .file-picker:not(.primary-button):active,
+  .switcher-chip:not(.active):active {
+    background: rgba(17, 17, 17, 0.06);
+    transition: background 0.08s var(--ease-apple);
+  }
+
+  /* ── Danger Buttons ── */
+  .danger-button:hover,
+  .danger-lite-button:hover {
+    background: var(--hover-danger-bg);
+    border-color: var(--hover-danger-border);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  .danger-button:active,
+  .danger-lite-button:active {
+    filter: brightness(0.94);
+    transition: filter 0.08s var(--ease-apple);
+  }
+
+  /* ── Form Fields ── */
+  input[type="text"]:hover,
+  input[type="number"]:hover,
+  input[type="date"]:hover,
+  select:hover,
+  .date-display-button:hover {
+    background-color: var(--hover-field-bg);
+    border-color: var(--hover-field-border);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  .date-display-button:hover .date-chevron {
+    opacity: 0.6;
+  }
+
+  /* ── Checkbox / Toggle ── */
+  .checkbox-panel:hover {
+    border-color: var(--hover-field-border);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  .checkbox-label:hover .checkbox-ui {
+    border-color: var(--hover-field-border);
+    box-shadow: 0 0 0 4px var(--hover-date-item-bg);
+  }
+
+  .toggle-switch:hover {
+    box-shadow: 0 0 0 4px var(--hover-date-item-bg);
+  }
+
+  .toggle-switch.active:hover {
+    filter: brightness(1.03);
+  }
+
+  /* ── Date Picker Items ── */
+  .date-col-item:hover {
+    color: var(--text);
+    background: var(--hover-date-item-bg);
+    font-weight: 500;
+  }
+
+  /* ── Cards: subtle scale lift ── */
+  .selector-card:hover {
+    transform: scale(1.006);
+    border-color: var(--hover-control-border);
+    box-shadow: var(--hover-panel-shadow);
+  }
+
+  .selector-card:hover .selector-image {
+    transform: scale(1.018);
+  }
+
+  .gallery-card:hover {
+    transform: scale(1.008);
+    box-shadow: var(--hover-panel-shadow);
+  }
+
+  /* ── Photo Thumbnails ── */
+  .photo-thumb-item:hover .photo-thumb-replace {
+    opacity: 1;
+  }
+
+  .photo-thumb-item:hover {
+    transform: scale(1.015);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  .photo-thumb-replace:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  /* ── Crop ── */
+  .crop-rect:hover {
+    border-color: #9ed0f5;
+    box-shadow: 0 0 0 3px rgba(124, 184, 228, 0.14);
+  }
+
+  .crop-handle:hover {
+    transform: scale(1.04);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.32);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════
+   Reduced Motion — respect OS preference
+   ═══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════
+   Dark Mode
+   ═══════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e;
+    --bg-accent: radial-gradient(circle at top, rgba(44, 44, 46, 0.95), rgba(28, 28, 30, 0.78) 38%, rgba(20, 20, 22, 0.92) 100%);
+    --panel: rgba(44, 44, 46, 0.82);
+    --panel-strong: rgba(44, 44, 46, 0.94);
+    --panel-soft: rgba(44, 44, 46, 0.72);
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.12);
+    --text: #f5f5f7;
+    --muted: #98989d;
+    --primary: #f5f5f7;
+    --primary-fg: #1c1c1e;
+    --danger: #ff6961;
+    --danger-bg: rgba(255, 105, 97, 0.12);
+    --accent-soft: rgba(255, 255, 255, 0.06);
+    --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
+    --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
+    --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
+    --hover-control-bg: rgba(255, 255, 255, 0.08);
+    --hover-control-border: rgba(255, 255, 255, 0.12);
+    --hover-control-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    --hover-primary-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+    --hover-field-bg: rgba(255, 255, 255, 0.08);
+    --hover-field-border: rgba(255, 255, 255, 0.15);
+    --hover-panel-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
+    --hover-date-item-bg: rgba(255, 255, 255, 0.05);
+    --hover-brand-brightness: 1.22;
+    --hover-danger-bg: rgba(255, 105, 97, 0.18);
+    --hover-danger-border: rgba(255, 105, 97, 0.24);
+    --active-inset-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  html {
+    background: #1c1c1e;
+  }
+
+  /* Topbar */
+  .topbar {
+    background: rgba(44, 44, 46, 0.96);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  /* Brand / primary / secondary — have dark gradient bg, text must stay white */
+  .brand-button,
+  .primary-button,
+  .secondary-button,
+  .file-picker.primary-button,
+  .switcher-chip.active {
+    color: #ffffff;
+    box-shadow: var(--dark-button-shadow);
+  }
+
+  .danger-button,
+  .danger-lite-button {
+    box-shadow: var(--shadow-control);
+  }
+
+  /* Mini / subtle buttons */
+  .mini-button,
+  .mini-file-button,
+  .subtle-icon-btn,
+  .file-picker:not(.primary-button) {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-control);
+  }
+
+  .switcher-chip {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Status toggle — inactive track more visible on dark bg */
+  .toggle-switch:not(.active) {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Panels */
+  .view-panel,
+  .selector-card,
+  .category-section,
+  .glass-form,
+  .yw-card,
+  .text-item-row,
+  .empty-state-panel,
+  .settings-block,
+  .manager-row,
+  .overview-group-card,
+  .upload-card {
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .empty-state-panel {
+    background: linear-gradient(180deg, rgba(44, 44, 46, 0.9), rgba(28, 28, 30, 0.95));
+  }
+
+  .empty-state-icon {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .gallery-card {
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .selector-card {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .selector-image-placeholder {
+    background: linear-gradient(135deg, #555, #333);
+    color: #ffffff;
+  }
+
+  .category-section {
+    background: rgba(44, 44, 46, 0.72);
+  }
+
+  .subcategory-block {
+    background: linear-gradient(180deg, rgba(44, 44, 46, 0.92), rgba(28, 28, 30, 0.98));
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .yw-card {
+    background: rgba(44, 44, 46, 0.96);
+  }
+
+  .yw-card,
+  .text-item-row {
+    border-color: rgba(255, 255, 255, 0.04);
+  }
+
+  .text-item-row {
+    background: rgba(44, 44, 46, 0.94);
+  }
+
+  .manager-row {
+    background: rgba(44, 44, 46, 0.84);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .overview-category-row {
+    background: rgba(44, 44, 46, 0.92);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .overview-group-card {
+    background: linear-gradient(180deg, rgba(44, 44, 46, 0.92), rgba(28, 28, 30, 0.98));
+  }
+
+  .overview-group-header {
+    background: transparent;
+  }
+
+  .upload-card,
+  .small-upload {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Checkbox panel — same shadow as buttons/inputs */
+  .checkbox-panel {
+    background: #2c2c2e;
+    border-color: var(--line);
+    box-shadow: var(--shadow-control);
+  }
+
+  .checkbox-ui {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Inputs & selects */
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  .date-display-button {
+    background-color: #2c2c2e;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    box-shadow: var(--shadow-control);
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  select:focus {
+    border-color: rgba(255, 255, 255, 0.32);
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-control), 0 0 0 4px rgba(255, 255, 255, 0.06);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2398989d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 14px;
+  }
+
+  /* Hero image */
+  .detail-hero-image-wrap {
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5);
+  }
+
+  .detail-hero-placeholder {
+    background: linear-gradient(135deg, #555, #333);
+    color: #ffffff;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    background: rgba(0, 0, 0, 0.48);
+  }
+
+  .modal-content {
+    background: rgba(44, 44, 46, 0.96);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  }
+
+  .crop-modal-content {
+    background: #2c2c2e;
+  }
+
+  .crop-preview-container {
+    background: #2c2c2e;
+  }
+
+  .crop-handle {
+    background: #f5f5f7;
+  }
+
+  /* Photo thumb */
+  .photo-thumb-item {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  /* Scrollbar */
+  .rail-list {
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+
+  .rail-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Drag outlines */
+  .rail-card.drag-over {
+    outline-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .overview-group-card.drag-over,
+  .overview-category-row.drag-over {
+    outline-color: rgba(255, 255, 255, 0.25);
+  }
+
+  /* Date picker */
+  .date-display-button:focus-visible {
+    border-color: rgba(255, 255, 255, 0.32);
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-control), 0 0 0 4px rgba(255, 255, 255, 0.06);
+  }
+
+  .date-picker-columns {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .date-picker-selection-bar {
+    border-top-color: rgba(255, 255, 255, 0.08);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .date-col-item {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .date-col-item.selected {
+    color: var(--text);
+  }
+
+  /* Glass form */
+  .glass-form {
+    background: rgba(44, 44, 46, 0.66);
+  }
+
+  /* iPhone 暗色模式 */
+  @media (max-width: 768px) {
+    body {
+      --ios-bg: #000000;
+      --ios-label: rgba(255, 255, 255, 0.96);
+      --ios-secondary-label: rgba(235, 235, 245, 0.62);
+      --ios-separator: rgba(235, 235, 245, 0.14);
+
+      --ios-glass-bg: rgba(35, 35, 38, 0.24);
+      --ios-glass-bg-strong: rgba(48, 48, 52, 0.36);
+      --ios-glass-border: rgba(255, 255, 255, 0.08);
+      --ios-glass-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.38),
+        0 1px 3px rgba(0, 0, 0, 0.22);
+
+      --ios-card-bg: rgba(28, 28, 30, 0.40);
+      --ios-card-border: rgba(235, 235, 245, 0.05);
+      --ios-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+
+      --ios-fill: rgba(120, 120, 128, 0.18);
+      --ios-fill-strong: rgba(120, 120, 128, 0.24);
+
+      --ios-primary-bg: #f5f5f7;
+      --ios-primary-fg: #111111;
+      --ios-danger-bg: rgba(255, 69, 58, 0.14);
+      --ios-danger: #ff6961;
+
+      --ios-nav-height: 56px;
+
+      background: var(--ios-bg);
+      color: var(--ios-label);
+    }
+
+    html,
+    body,
+    .page-shell {
+      background: #000000;
+    }
+
+    .topbar {
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .brand-button,
+    #addButton,
+    #settingsButton {
+      border-color: rgba(255, 255, 255, 0.10);
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.07) 55%,
+          rgba(255, 255, 255, 0.03) 100%
+        );
+      color: rgba(255, 255, 255, 0.93);
+      box-shadow: none;
+    }
+
+
+    .primary-button,
+    .secondary-button,
+    .file-picker.primary-button,
+    .form-footer-actions .primary-button {
+      background: var(--ios-primary-bg);
+      background-image: none;
+      color: var(--ios-primary-fg);
+      box-shadow: none;
+    }
+
+    .secondary-button {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: var(--ios-label);
+    }
+
+    .mini-button,
+    .mini-file-button,
+    .subtle-icon-btn,
+    .file-picker:not(.primary-button) {
+      background: var(--ios-fill);
+      background-image: none;
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--ios-label);
+    }
+
+    .danger-button,
+    .danger-lite-button {
+      background: var(--ios-danger-bg);
+      background-image: none;
+      color: var(--ios-danger);
+      box-shadow: none;
+    }
+
+    .switcher-chip,
+    .athlete-switcher.scrollable .switcher-chip {
+      border-color: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .switcher-chip.active {
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.07) 55%,
+          rgba(255, 255, 255, 0.03) 100%
+        );
+      color: rgba(255, 255, 255, 0.93);
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    .date-display-button {
+      background: rgba(44, 44, 46, 0.72);
+      color: var(--ios-label);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    .date-display-button:focus-visible {
+      background: rgba(44, 44, 46, 0.72);
+      border-color: var(--ios-separator);
+      box-shadow: none;
+    }
+
+    .modal-content {
+      background: rgba(28, 28, 30, 0.82);
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .date-picker-selection-bar {
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+}
+
+@media (max-width: 768px) and (prefers-reduced-transparency: reduce) {
+  .topbar,
+  #addButton,
+  #settingsButton,
+  #homeButton,
+  .switcher-chip,
+  .modal-overlay,
+  .modal-content {
+    background-image: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .topbar {
+    background: var(--ios-bg);
+    box-shadow: 0 0.5px 0 0 var(--ios-separator);
+  }
+
+  .image-items-rail .rail-card {
+    background: var(--ios-card-bg);
+  }
+
+  .category-section,
+  .settings-block,
+  .empty-state-panel,
+  .overview-group-card,
+  .glass-form,
+  .selector-card,
+  .upload-card,
+  .small-upload,
+  .checkbox-panel,
+  .manager-row,
+  .overview-category-row,
+  .modal-content {
+    background: var(--ios-bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .modal-overlay {
+    background: rgba(0, 0, 0, 0.52);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  #addButton,
+  #settingsButton,
+  #homeButton,
+  .switcher-chip {
+    background: var(--ios-fill);
+    border-color: var(--ios-separator);
+  }
+
+  .switcher-chip.active {
+    background: var(--ios-fill-strong);
+    border-color: var(--ios-separator);
+  }
+}

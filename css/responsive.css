@@ -1,0 +1,1302 @@
+/* ═══════════════════════════════════════════════
+   通用移动端适配：iPad 横版 (≤1366px) · iPad 竖版 (≤1024px)
+   Mac 端（>1366px）使用上方默认样式，不做修改
+   ═══════════════════════════════════════════════ */
+
+/* ── iPad 横版（仅触控微调，布局保持 Mac 原样）── */
+@media (hover: none) and (pointer: coarse) and (max-width: 1366px) {
+  /* 按钮间距适配触控 */
+  .topbar-actions,
+  .person-photo-actions,
+  .person-create-actions,
+  .inline-actions,
+  .overview-group-actions,
+  .subcategory-actions,
+  .form-footer-actions {
+    gap: 16px;
+  }
+
+  /* 弹窗加宽，触摸更友好 */
+  .modal-content {
+    width: min(480px, 94vw);
+  }
+
+  /* 详情页头像略缩小，给触控滚动留空间 */
+  .detail-hero-image-wrap {
+    width: min(300px, 65vw);
+  }
+
+  /* 横向卡片：触控滚动空间 */
+  .rail-card {
+    flex-basis: 280px;
+  }
+
+  .athlete-gallery {
+    margin-top: 32px;
+  }
+
+  .gallery-card {
+    flex-basis: 240px;
+  }
+}
+
+/* ── iPad 竖版 ── */
+@media (max-width: 1024px) {
+  /* 表单：3/4 列 → 2 列 */
+  .form-grid.three-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .add-row-grid-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .person-form-layout,
+  .person-manager-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* 2 列 → 1 列 */
+  .dual-upload-grid,
+  .form-grid.two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  /* 设置页：双列 → 单列 */
+  .settings-stack-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .category-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* 防止横向溢出 */
+  .view-panel,
+  .category-section,
+  .settings-block,
+  .glass-form {
+    overflow-x: hidden;
+  }
+
+  .person-create-actions,
+  .person-photo-actions {
+    width: 100%;
+  }
+
+  .manager-row .order-actions {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+
+  /* 页面宽度 */
+  .page-shell {
+    width: min(100% - 32px, 1024px);
+  }
+
+  /* 卡片 */
+  .rail-card {
+    flex-basis: 220px;
+  }
+
+  .athlete-gallery {
+    margin-top: 28px;
+  }
+
+  .gallery-card {
+    flex-basis: 200px;
+  }
+
+  .athlete-selector-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .detail-hero-image-wrap {
+    width: min(280px, 60vw);
+  }
+
+  /* 图片缩略图 3 → 2 列 */
+  .photo-thumb-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* 日期选择器 */
+  .date-picker-modal-content {
+    width: min(380px, 94vw);
+    padding: 24px 20px;
+  }
+
+  .date-picker-columns {
+    --datepicker-height: 200px;
+  }
+}
+
+/* ── iPad 竖版设置页细化 ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .person-manager-layout .person-photo-actions,
+  .person-card-form .person-create-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .person-manager-layout .person-photo-actions .danger-button,
+  .person-card-form .person-create-actions .primary-button {
+    grid-column: 1 / -1;
+  }
+
+  .person-upload-summary-grid,
+  .category-form-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── iPhone：iOS 26 Liquid Glass ── */
+@media (max-width: 768px) {
+  /* ═══════════════════════════════════════════════
+     iOS 26 Design Tokens
+     ═══════════════════════════════════════════════ */
+  body {
+    --ios-bg: #f5f5fa;
+    --ios-label: #111111;
+    --ios-secondary-label: rgba(60, 60, 67, 0.62);
+    --ios-separator: rgba(60, 60, 67, 0.12);
+
+    --ios-glass-bg: rgba(255, 255, 255, 0.24);
+    --ios-glass-bg-strong: rgba(255, 255, 255, 0.38);
+    --ios-glass-border: rgba(255, 255, 255, 0.38);
+    --ios-glass-shadow:
+      0 8px 24px rgba(15, 23, 42, 0.10),
+      0 1px 3px rgba(15, 23, 42, 0.06);
+
+    --ios-card-bg: rgba(255, 255, 255, 0.30);
+    --ios-card-border: rgba(60, 60, 67, 0.04);
+    --ios-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+
+    --ios-fill: rgba(120, 120, 128, 0.10);
+    --ios-fill-strong: rgba(120, 120, 128, 0.16);
+
+    --ios-primary-bg: #111111;
+    --ios-primary-fg: #ffffff;
+    --ios-danger-bg: rgba(255, 59, 48, 0.10);
+    --ios-danger: #c7352d;
+
+    --ios-nav-height: 56px;
+
+    min-width: 0;
+    color: var(--ios-label);
+    background: var(--ios-bg);
+  }
+
+  html,
+  body {
+    width: 100%;
+    min-width: 0;
+    min-height: 100%;
+    overflow-x: hidden;
+    background: var(--ios-bg);
+  }
+
+  body {
+    min-height: 100vh;
+    color: var(--ios-label);
+  }
+
+  @supports (min-height: 100dvh) {
+    body {
+      min-height: 100dvh;
+    }
+  }
+
+  button,
+  input,
+  select,
+  .date-display-button {
+    font-size: 16px;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Page Shell — edge-to-edge
+     ═══════════════════════════════════════════════ */
+  .page-shell {
+    --ios-topbar-space: calc(var(--ios-nav-height) + 8px);
+
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: env(safe-area-inset-top, 0px) 14px 36px;
+    background: var(--ios-bg);
+    overflow: visible;
+  }
+
+  @supports (min-height: 100dvh) {
+    .page-shell {
+      min-height: 100dvh;
+    }
+  }
+
+  .app-main {
+    display: block;
+    min-height: 100vh;
+    padding-top: var(--ios-topbar-space);
+    background: transparent;
+
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgba(0, 0, 0, 0.08) 18px,
+      rgba(0, 0, 0, 0.35) 58px,
+      rgba(0, 0, 0, 0.78) 104px,
+      #000 138px
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgba(0, 0, 0, 0.08) 18px,
+      rgba(0, 0, 0, 0.35) 58px,
+      rgba(0, 0, 0, 0.78) 104px,
+      #000 138px
+    );
+  }
+
+  @supports (min-height: 100dvh) {
+    .app-main {
+      min-height: 100dvh;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     Topbar — Fixed + Liquid Glass + scroll-edge fade
+     ═══════════════════════════════════════════════ */
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas:
+      "add brand settings"
+      "switcher switcher switcher";
+
+    gap: 10px;
+    align-items: center;
+    padding:
+      8px
+      14px
+      8px
+      14px;
+
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    pointer-events: none;
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .topbar-branding {
+    grid-area: brand;
+    justify-content: center;
+    min-width: 0;
+    pointer-events: auto;
+  }
+
+  .topbar-actions {
+    display: contents;
+  }
+
+  #addButton {
+    grid-area: add;
+    justify-self: start;
+  }
+
+  #settingsButton {
+    grid-area: settings;
+    justify-self: end;
+  }
+
+  /* ── Liquid Glass navigation buttons ── */
+  .brand-button,
+  #addButton,
+  #settingsButton {
+    pointer-events: auto;
+    height: 50px;
+    min-height: 50px;
+    border-radius: 999px;
+    border: 0.5px solid rgba(0, 0, 0, 0.10);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.40) 0%,
+        rgba(255, 255, 255, 0.24) 55%,
+        rgba(255, 255, 255, 0.10) 100%
+      );
+    color: rgba(17, 17, 17, 0.88);
+    box-shadow: none;
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    transform: translateZ(0);
+  }
+
+  .brand-button {
+    min-width: 130px;
+    padding: 0 28px;
+    font-size: 1.05rem;
+    font-weight: var(--fw-heavy);
+    letter-spacing: 0.01em;
+  }
+
+  #addButton,
+  #settingsButton {
+    min-width: 50px;
+    width: 50px;
+    padding: 0;
+  }
+
+  #addButton .button-label,
+  #settingsButton .button-label {
+    display: none;
+  }
+
+  #addButton .button-icon,
+  #settingsButton .button-icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav-icon-button {
+    gap: 0;
+  }
+
+
+  /* ═══════════════════════════════════════════════
+     Athlete Switcher — row 2 chips
+     ═══════════════════════════════════════════════ */
+  .athlete-switcher {
+    grid-area: switcher;
+    pointer-events: auto;
+    justify-self: center;
+    width: min(100%, 330px);
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .athlete-switcher.scrollable {
+    flex-wrap: nowrap;
+    justify-content: center;
+    overflow: hidden;
+    width: min(100%, 330px);
+    max-width: 330px;
+    padding: 0;
+    margin: 0 auto;
+  }
+
+  .switcher-scroll-area {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding: 2px 2px 4px;
+  }
+
+  .athlete-switcher.scrollable .switcher-scroll-area {
+    justify-content: flex-start;
+    padding: 2px 2px 4px;
+    margin: 0;
+  }
+
+  .switcher-scroll-area::-webkit-scrollbar {
+    display: none;
+  }
+
+  .switcher-chip,
+  .athlete-switcher.scrollable .switcher-chip {
+    flex: 0 0 calc((100% - 16px) / 3);
+    min-width: 0;
+    height: 38px;
+    min-height: 38px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.18);
+    color: rgba(17, 17, 17, 0.76);
+    box-shadow: none;
+    -webkit-backdrop-filter: saturate(170%) blur(16px);
+    backdrop-filter: saturate(170%) blur(16px);
+    font-size: 0.92rem;
+    font-weight: var(--fw-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    scroll-snap-align: center;
+  }
+
+  .switcher-chip.active {
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.40) 0%,
+        rgba(255, 255, 255, 0.24) 55%,
+        rgba(255, 255, 255, 0.10) 100%
+      );
+    color: rgba(17, 17, 17, 0.88);
+    border: 0.5px solid rgba(0, 0, 0, 0.10);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: none;
+  }
+
+
+
+
+  /* ═══════════════════════════════════════════════
+     View Panels — edge-to-edge, no desktop glass
+     ═══════════════════════════════════════════════ */
+  .view-panel {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    overflow: visible;
+    animation: none;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Section Headings — iOS large title
+     ═══════════════════════════════════════════════ */
+  .section-heading {
+    margin: 8px 2px 16px;
+    text-align: left;
+  }
+
+  .section-heading.left {
+    text-align: left;
+  }
+
+  .section-heading h2 {
+    font-size: 1.5rem;
+    line-height: 1.08;
+    font-weight: 680;
+    letter-spacing: var(--letter-flat);
+    color: var(--ios-label);
+    margin: 0;
+    padding: 0;
+  }
+
+  .category-section-title {
+    color: var(--ios-label);
+    font-size: 1.2rem;
+    font-weight: var(--fw-heavy);
+    letter-spacing: var(--letter-flat);
+    margin: 0;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Grouped Cards — lightweight iOS glass
+     ═══════════════════════════════════════════════ */
+  .selector-card,
+  .category-section,
+  .glass-form,
+  .yw-card,
+  .text-item-row,
+  .empty-state-panel,
+  .settings-block,
+  .manager-row,
+  .overview-group-card,
+  .upload-card,
+  .subcategory-block {
+    border: 1px solid var(--ios-card-border);
+    background: var(--ios-card-bg);
+    box-shadow: var(--ios-card-shadow);
+    -webkit-backdrop-filter: saturate(150%) blur(10px);
+    backdrop-filter: saturate(150%) blur(10px);
+  }
+
+  /* ═══════════════════════════════════════════════
+     Home View — stacked athlete cards
+     ═══════════════════════════════════════════════ */
+  .athlete-selector-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .selector-card {
+    border-radius: 28px;
+    overflow: hidden;
+  }
+
+  .selector-image-wrap {
+    aspect-ratio: 4 / 5;
+  }
+
+  .selector-name-overlay {
+    padding: 42px 18px 18px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.58));
+  }
+
+  .selector-name {
+    font-size: 1.35rem;
+    font-weight: var(--fw-heavy);
+    line-height: 1.15;
+    letter-spacing: var(--letter-flat);
+  }
+
+  /* ═══════════════════════════════════════════════
+     Athlete Detail — hero + grouped content flow
+     ═══════════════════════════════════════════════ */
+  .detail-hero-card {
+    padding: 8px 0 18px;
+    gap: 18px;
+  }
+
+  .detail-hero-image-wrap {
+    width: min(220px, 58vw);
+    border-width: 6px;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+  }
+
+  .detail-hero-name {
+    font-size: 3.4rem;
+    letter-spacing: var(--letter-flat);
+  }
+
+  .grouped-content {
+    gap: 16px;
+    margin-top: 36px;
+  }
+
+  /* ── Category sections ── */
+  .category-section {
+    padding: 18px;
+    border-radius: 28px;
+    margin: 0;
+  }
+
+  .category-section-header {
+    margin-bottom: 8px;
+  }
+
+  .subcategory-sections {
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  .subcategory-block {
+    padding: 16px;
+    border-radius: 24px;
+    margin: 0;
+  }
+
+  .subcategory-block + .subcategory-block {
+    border-top: 1px solid var(--ios-card-border);
+  }
+
+  .subcategory-title {
+    color: var(--ios-label);
+    font-size: 1.2rem;
+    font-weight: var(--fw-heavy);
+    letter-spacing: var(--letter-flat);
+  }
+
+  .form-heading {
+    font-size: 1.1rem;
+    font-weight: var(--fw-heavy);
+    color: var(--ios-label);
+  }
+
+  .subcategory-counts,
+  .upload-summary {
+    color: var(--ios-secondary-label);
+    font-size: 0.82rem;
+    margin: 2px 0 0;
+  }
+
+  .subcategory-content {
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  /* ── YW Rails (horizontal scroll cards) ── */
+  .rail-block {
+    position: relative;
+  }
+
+  .rail-block::before,
+  .rail-block::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .rail-block::before {
+    left: 0;
+    background: linear-gradient(to right, var(--ios-bg), transparent);
+    opacity: var(--rail-fade-l, 0);
+  }
+
+  .rail-block::after {
+    right: 0;
+    background: linear-gradient(to left, var(--ios-bg), transparent);
+    opacity: var(--rail-fade-r, 0);
+  }
+
+  .rail-list {
+    gap: 12px;
+    padding: 4px 0 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rail-card {
+    flex: 0 0 100%;
+    max-width: 290px;
+  }
+
+  /* ── Gallery on iPhone ── */
+  .athlete-gallery {
+    margin-top: 24px;
+  }
+
+  .gallery-heading {
+    margin-bottom: 8px;
+    padding: 0 2px;
+  }
+
+  .gallery-title {
+    font-size: 1.2rem;
+    font-weight: var(--fw-heavy);
+    letter-spacing: var(--letter-flat);
+    color: var(--ios-label);
+  }
+
+  .gallery-counts {
+    color: var(--ios-secondary-label);
+    font-size: 0.82rem;
+  }
+
+  .gallery-card {
+    flex: 0 0 100%;
+    max-width: 200px;
+    border-radius: 24px;
+    border: 1px solid var(--ios-card-border);
+    background: var(--ios-card-bg);
+    box-shadow: var(--ios-card-shadow);
+  }
+
+  .gallery-card-image-wrap {
+    border-radius: 24px;
+  }
+
+  .gallery-settings-row {
+    gap: 8px;
+  }
+
+  .toggle-label {
+    color: var(--ios-label);
+    font-size: 17px;
+  }
+
+  .gallery-photo-count {
+    color: var(--ios-secondary-label);
+  }
+
+  .yw-card {
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .yw-card-image-wrap {
+    border-radius: 24px 24px 0 0;
+  }
+
+  .yw-card-body {
+    padding: 14px 14px 16px;
+  }
+
+  .yw-title,
+  .text-item-title {
+    color: var(--ios-label);
+    font-size: 1rem;
+    font-weight: var(--fw-semibold);
+    line-height: 1.28;
+  }
+
+  .yw-status,
+  .yw-date,
+  .text-item-status,
+  .text-item-date {
+    color: var(--ios-secondary-label);
+    font-size: 0.82rem;
+  }
+
+  .yw-meta-row,
+  .text-item-meta-row {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Text-only item rows ── */
+  .text-item-row {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    border-radius: 20px;
+    padding: 16px;
+    border-bottom: none;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Forms — single column iOS style
+     ═══════════════════════════════════════════════ */
+  .form-grid.three-columns,
+  .form-grid.two-columns,
+  .dual-upload-grid,
+  .settings-stack-layout,
+  .category-form-row,
+  .person-form-layout,
+  .person-manager-layout,
+  .add-row-grid-bottom,
+  .person-upload-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .status-field,
+  .form-spacer {
+    grid-column: auto;
+  }
+
+  .form-spacer {
+    display: none;
+  }
+
+  .glass-form,
+  .settings-block {
+    padding: 18px;
+    border-radius: 28px;
+    gap: 16px;
+    margin: 0 0 16px;
+  }
+
+  .add-item-form {
+    gap: 16px;
+  }
+
+  label {
+    gap: 7px;
+    color: var(--ios-secondary-label);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  .date-display-button {
+    min-height: 50px;
+    border-radius: 16px;
+    border: 1px solid var(--ios-separator);
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: none;
+    color: var(--ios-label);
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  select:focus,
+  .date-display-button:focus-visible {
+    background: rgba(255, 255, 255, 0.62);
+    border-color: var(--ios-separator);
+    box-shadow: none;
+  }
+
+  .checkbox-panel {
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .checkbox-inline-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .upload-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .small-upload {
+    padding: 13px 15px;
+  }
+
+  .upload-title {
+    color: var(--ios-label);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* ── Buttons (primary, secondary, mini, danger) ── */
+  .primary-button,
+  .secondary-button,
+  .mini-button,
+  .mini-file-button,
+  .file-picker:not(.primary-button),
+  .danger-button {
+    min-height: 48px;
+    border-radius: 999px;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .file-picker.primary-button,
+  .form-footer-actions .primary-button {
+    background: var(--ios-primary-bg);
+    background-image: none;
+    color: var(--ios-primary-fg);
+    box-shadow: none;
+  }
+
+  .mini-button,
+  .mini-file-button,
+  .subtle-icon-btn,
+  .file-picker:not(.primary-button) {
+    background: var(--ios-fill);
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--ios-label);
+  }
+
+  .danger-button,
+  .danger-lite-button {
+    background: var(--ios-danger-bg);
+    color: var(--ios-danger);
+    box-shadow: none;
+  }
+
+  /* ── Action grids (stack vertically) ── */
+  .inline-actions,
+  .form-footer-actions,
+  .person-photo-actions,
+  .person-create-actions,
+  .data-manage-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .upload-card .button-icon {
+    display: none;
+  }
+
+  .person-photo-actions .mini-file-button,
+  .person-photo-actions .danger-button,
+  .person-create-actions .primary-button,
+  .person-create-actions .mini-file-button {
+    height: auto;
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Settings — category overview cards
+     ═══════════════════════════════════════════════ */
+  .settings-layout {
+    gap: 16px;
+  }
+
+  .overview-list {
+    gap: 14px;
+  }
+
+  .overview-group-card {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 24px;
+  }
+
+  .overview-group-header {
+    padding: 16px;
+  }
+
+  .overview-group-content {
+    padding: 0 16px 16px;
+  }
+
+  .overview-group-title,
+  .manager-row-title {
+    color: var(--ios-label);
+    font-size: 1.05rem;
+    font-weight: var(--fw-semibold);
+  }
+
+  .overview-group-meta,
+  .manager-row-subtitle {
+    color: var(--ios-secondary-label);
+    font-size: 0.82rem;
+  }
+
+  .manager-row,
+  .overview-category-row {
+    padding: 13px 14px;
+    border-radius: 16px;
+  }
+
+  .manager-row .order-actions {
+    margin-left: auto;
+    margin-top: 0;
+  }
+
+  .overview-toolbar {
+    margin-bottom: 8px;
+  }
+
+  .overview-person-filter {
+    width: 100%;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Empty State
+     ═══════════════════════════════════════════════ */
+  .empty-state-panel {
+    padding: 44px 18px;
+    text-align: center;
+    border-radius: 28px;
+  }
+
+  .empty-state-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+  }
+
+  .empty-state-copy {
+    color: var(--ios-secondary-label);
+  }
+
+  /* ═══════════════════════════════════════════════
+     Icon Buttons (circle, for menus/toggles)
+     ═══════════════════════════════════════════════ */
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .item-menu-wrap .icon-btn,
+  .compact-menu-wrap .icon-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .mini-button.icon-btn,
+  .mini-file-button.icon-btn,
+  .danger-lite-button.icon-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    padding: 0;
+  }
+
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+  }
+
+  .icon-text-button {
+    gap: 8px;
+  }
+
+  .icon-text-button .button-icon {
+    width: 17px;
+    height: 17px;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Modals — Bottom Sheet iOS style
+     ═══════════════════════════════════════════════ */
+  .modal-overlay {
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 100vh;
+    padding:
+      12px
+      10px
+      20px;
+    background: rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  @supports (height: 100dvh) {
+    .modal-overlay {
+      min-height: 100dvh;
+    }
+  }
+
+  .modal-content {
+    width: 100%;
+    max-width: none;
+    border-radius: 30px;
+    padding: 22px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.56);
+    box-shadow: 0 -18px 48px rgba(15, 23, 42, 0.18);
+    -webkit-backdrop-filter: saturate(210%) blur(26px);
+    backdrop-filter: saturate(210%) blur(26px);
+    animation: iosSheetUp 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  @keyframes iosSheetUp {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .crop-modal-content {
+    width: 100%;
+  }
+
+  .modal-title,
+  .crop-modal-content h3 {
+    color: var(--ios-label);
+    font-size: 20px;
+    line-height: 1.2;
+    text-align: center;
+    margin: 0 0 12px;
+  }
+
+  .modal-msg {
+    color: var(--ios-label);
+    font-size: 17px;
+    line-height: 1.45;
+    text-align: center;
+  }
+
+  .modal-actions,
+  .crop-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .crop-modal-actions button {
+    max-width: none;
+  }
+
+  /* ── Date picker ── */
+  .date-picker-modal-content {
+    gap: 14px;
+    padding-bottom: 18px;
+  }
+
+  .date-picker-columns {
+    --datepicker-height: 190px;
+    border-radius: 18px;
+    background: var(--ios-fill);
+    border-color: transparent;
+  }
+
+  .date-picker-selection-bar {
+    border-top-color: var(--ios-separator);
+    border-bottom-color: var(--ios-separator);
+    background: rgba(255, 255, 255, 0.36);
+  }
+
+  /* ── Crop ── */
+  .crop-preview-container {
+    max-width: 100%;
+    border-radius: 20px;
+    background: transparent;
+  }
+
+  /* ── Photo manage grid ── */
+  .photo-thumb-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    max-height: 42vh;
+    padding: 2px 0;
+  }
+
+  @supports (height: 100dvh) {
+    .photo-thumb-grid {
+      max-height: 42dvh;
+    }
+  }
+
+  .photo-thumb-item {
+    border-radius: 16px;
+    background: var(--ios-fill);
+  }
+
+  /* ── Status toggles ── */
+  .item-status-toggles {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .status-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .status-toggle-label {
+    color: var(--ios-label);
+    font-size: 17px;
+  }
+
+  .modal-actions-col {
+    display: grid;
+    gap: 10px;
+  }
+}
+
+/* ── Crop Modal ── */
+.crop-modal-content {
+  width: min(520px, 94vw);
+  padding: 32px;
+  background: #ffffff; /* solid white for color accuracy in crop preview */
+}
+
+.crop-modal-content h3 {
+  margin: 0 0 8px;
+  font-size: var(--text-xl);
+}
+
+
+.crop-preview-container {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  margin: 0 auto 24px;
+}
+
+.crop-preview-container.square { aspect-ratio: 1 / 1; }
+.crop-preview-container.portrait-45 { aspect-ratio: 4 / 5; }
+.crop-preview-container.portrait-34 { aspect-ratio: 3 / 4; }
+
+.crop-preview-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: center center;
+  user-select: none;
+  pointer-events: none;
+}
+
+.crop-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+.crop-rect {
+  position: absolute;
+  border: 2px solid #7cb8e4;
+  box-sizing: border-box;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.crop-handle {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  pointer-events: auto;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.crop-handle-tl { top: -12px; left: -12px; }
+.crop-handle-tr { top: -12px; right: -12px; }
+.crop-handle-bl { bottom: -12px; left: -12px; }
+.crop-handle-br { bottom: -12px; right: -12px; }
+
+.crop-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.crop-modal-actions button {
+  flex: 1;
+  max-width: 180px;
+}
+
+
+.photo-counter {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+/* ── 数据管理 ── */
+.data-manage-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}

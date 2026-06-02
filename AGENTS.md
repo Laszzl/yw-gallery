@@ -18,8 +18,19 @@
 
 ### 根文件
 - `index.html`：负责静态 DOM 结构、`template` 模板、全局 `window.YW` 初始化、脚本加载顺序；不承载业务流程。
-- `styles.css`：负责 CSS 变量、布局、响应式、暗色模式、Apple 风格视觉与设备媒体查询；不通过内联样式堆叠业务状态。
+- `styles.css`：作为唯一样式入口，通过 `@import` 按顺序加载 `css/*.css`；不直接承载大段业务样式。
 - `app.js`：只作为应用入口，调用 `YW.events.initApp()` 并处理初始化错误；不得放入业务逻辑。
+
+### css 模块
+- `css/tokens.css`：CSS 变量、全局色彩/尺寸 token 和基础设计参数。
+- `css/base.css`：基础 reset、body、通用按钮/输入/焦点可见性基础。
+- `css/layout.css`：页面 shell、topbar、主视图布局、主页空状态和通用布局容器。
+- `css/components.css`：主页卡片、详情页、画廊、设置块、表单块、YW 卡片和 rail 等组件样式。
+- `css/modals.css`：日期选择器、通用弹窗、图片缩略图、操作弹窗和状态开关样式。
+- `css/responsive.css`：iPad/iPhone 断点、移动端 Liquid Glass、bottom sheet 以及保持原级联顺序所需的后置裁剪/数据管理规则。
+- `css/preferences.css`：Mac hover/拖拽提示、减少动态效果、暗色模式和减少透明度规则。
+
+新增或调整样式时优先放入对应 `css/*.css` 模块；`styles.css` 只维护 import 顺序。拆分 CSS 时必须保持级联顺序，避免移动规则导致 iPhone、暗色模式或系统偏好覆盖失效。
 
 ### js 模块
 - `js/config.js`：集中维护常量、存储 key、裁剪参数、断点相关值和 `isMacDevice`。
@@ -242,6 +253,7 @@
 
 - 修改代码后刷新浏览器即可生效。
 - 文档或代码修改后，提交前运行 `git diff -- AGENTS.md CLAUDE.md` 或对应文件 diff 审阅变更。
+- 轻量架构验证可通过静态服务打开 `tests/smoke.html`；测试逻辑位于 `tests/smoke-runner.js`，不引入测试框架或构建步骤。
 - 提交前确认 `git status --short` 只包含本次任务预期文件。
 - 完成验证并确认 `git status --short` 只包含本次任务预期文件后，自动提交并推送到 GitHub（git add + commit + push）。
 - 代码变更导致 `AGENTS.md` 或 `CLAUDE.md` 描述不符时，询问用户是否同步更新规范。
@@ -250,6 +262,7 @@
 ### 验证清单
 
 文档或代码修改后，按变更风险选择验证范围；UI 或交互变更至少检查：
+- `tests/smoke.html` 全部 PASS，覆盖导入校验、normalize、serialize 白名单和详情页 ViewModel 兼容路径。
 - Mac 桌面宽屏：导航、表单、横向 YW 列表、hover、HTML5 拖拽排序。
 - iPad 横版和竖版：触控目标、弹窗宽度、表单列数、横向滚动、无横向溢出。
 - iPhone：两排顶部导航、3 个体育生 chip 可视范围、scroll-edge fade、bottom sheet 弹窗、safe-area。

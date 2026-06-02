@@ -97,6 +97,14 @@
     return empty;
   }
 
+  function cloneTemplate(templateName) {
+    return elements.templates[templateName].content.cloneNode(true);
+  }
+
+  function queryIn(root, selector) {
+    return root.querySelector(selector);
+  }
+
   function setDataset(element, values) {
     for (const [key, value] of Object.entries(values)) {
       element.dataset[key] = value;
@@ -108,8 +116,8 @@
     const overflow = state.people.length > 3;
     elements.athleteSwitcher.classList.toggle('scrollable', overflow);
     for (const person of state.people) {
-      const fragment = elements.templates.switcherChip.content.cloneNode(true);
-      const button = fragment.querySelector('.switcher-chip');
+      const fragment = cloneTemplate('switcherChip');
+      const button = queryIn(fragment, '.switcher-chip');
       button.textContent = person.name;
       button.setAttribute('aria-label', `查看${person.name}的图库`);
       const active = person.id === viewState.selectedPersonId;
@@ -205,10 +213,10 @@
     elements.athleteSelectorGrid.classList.toggle('people-count-many', count > 2);
 
     for (const person of state.people) {
-      const fragment = elements.templates.selectorCard.content.cloneNode(true);
-      const card = fragment.querySelector('.selector-card');
-      const image = fragment.querySelector('.selector-image');
-      const name = fragment.querySelector('.selector-name');
+      const fragment = cloneTemplate('selectorCard');
+      const card = queryIn(fragment, '.selector-card');
+      const image = queryIn(fragment, '.selector-image');
+      const name = queryIn(fragment, '.selector-name');
       name.textContent = person.name;
       card.addEventListener('click', () => showAthleteView(person.id));
       if (person.homePhotoUrl) {
@@ -231,9 +239,9 @@
       return;
     }
 
-    const heroFragment = elements.templates.detailHero.content.cloneNode(true);
-    const heroImage = heroFragment.querySelector('.detail-hero-image');
-    const heroName = heroFragment.querySelector('.detail-hero-name');
+    const heroFragment = cloneTemplate('detailHero');
+    const heroImage = queryIn(heroFragment, '.detail-hero-image');
+    const heroName = queryIn(heroFragment, '.detail-hero-name');
     heroName.textContent = person.name;
     if (person.detailPhotoUrl) heroImage.src = person.detailPhotoUrl;
     elements.athleteDetailHero.append(heroFragment);
@@ -256,13 +264,13 @@
     }
 
     for (const group of getOrderedGroupsForPerson(personId)) {
-      const fragment = elements.templates.overviewGroup.content.cloneNode(true);
-      const card = fragment.querySelector('.overview-group-card');
-      const title = fragment.querySelector('.overview-group-title');
-      const meta = fragment.querySelector('.overview-group-meta');
-      const content = fragment.querySelector('.overview-group-content');
-      const groupToggle = fragment.querySelector('[data-group-toggle]');
-      const remove = fragment.querySelector('[data-group-delete]');
+      const fragment = cloneTemplate('overviewGroup');
+      const card = queryIn(fragment, '.overview-group-card');
+      const title = queryIn(fragment, '.overview-group-title');
+      const meta = queryIn(fragment, '.overview-group-meta');
+      const content = queryIn(fragment, '.overview-group-content');
+      const groupToggle = queryIn(fragment, '[data-group-toggle]');
+      const remove = queryIn(fragment, '[data-group-delete]');
       setDataset(card, { personId, groupId: group.id });
       const categories = getOrderedCategoriesForPersonGroup(personId, group.id);
       const isCollapsed = Boolean(state.collapsedSettingsGroups[group.id]);
@@ -286,10 +294,10 @@
         content.append(createEmptyText('暂无小品类'));
       }
       for (const category of categories) {
-        const catFragment = elements.templates.overviewCategory.content.cloneNode(true);
-        const row = catFragment.querySelector('.overview-category-row');
-        const name = catFragment.querySelector('.manager-row-title');
-        const catDelete = catFragment.querySelector('[data-category-delete]');
+        const catFragment = cloneTemplate('overviewCategory');
+        const row = queryIn(catFragment, '.overview-category-row');
+        const name = queryIn(catFragment, '.manager-row-title');
+        const catDelete = queryIn(catFragment, '[data-category-delete]');
         setDataset(row, { personId, groupId: group.id, categoryId: category.id });
         name.textContent = category.name;
         YW.drag.attachOverviewCategoryDrag(row, category.id);
@@ -302,20 +310,20 @@
 
   function renderGroupSection(groupEntry) {
     const { group, categories } = groupEntry;
-    const fragment = elements.templates.categorySection.content.cloneNode(true);
-    const title = fragment.querySelector('.category-section-title');
-    const subSections = fragment.querySelector('.subcategory-sections');
+    const fragment = cloneTemplate('categorySection');
+    const title = queryIn(fragment, '.category-section-title');
+    const subSections = queryIn(fragment, '.subcategory-sections');
     title.textContent = group.name;
 
     for (const categoryEntry of categories) {
       const { category, items: categoryItems, imageItems, textItems } = categoryEntry;
-      const subFragment = elements.templates.subcategory.content.cloneNode(true);
-      const block = subFragment.querySelector('.subcategory-block');
-      const titleNode = subFragment.querySelector('.subcategory-title');
-      const countsNode = subFragment.querySelector('.subcategory-counts');
-      const imageRail = subFragment.querySelector('.image-items-rail');
-      const textRail = subFragment.querySelector('.text-items-rail');
-      const toggle = subFragment.querySelector('[data-subcategory-toggle]');
+      const subFragment = cloneTemplate('subcategory');
+      const block = queryIn(subFragment, '.subcategory-block');
+      const titleNode = queryIn(subFragment, '.subcategory-title');
+      const countsNode = queryIn(subFragment, '.subcategory-counts');
+      const imageRail = queryIn(subFragment, '.image-items-rail');
+      const textRail = queryIn(subFragment, '.text-items-rail');
+      const toggle = queryIn(subFragment, '[data-subcategory-toggle]');
 
       const personId = categoryItems[0]?.personId || '';
       const collapseKey = `${personId}:${category.id}`;
@@ -370,9 +378,9 @@
 
     for (let i = 0; i < person.galleryPhotos.length; i++) {
       const photoUrl = person.galleryPhotos[i];
-      const frag = elements.templates.galleryCard.content.cloneNode(true);
-      const card = frag.querySelector('.gallery-card');
-      const image = frag.querySelector('.gallery-card-image');
+      const frag = cloneTemplate('galleryCard');
+      const card = queryIn(frag, '.gallery-card');
+      const image = queryIn(frag, '.gallery-card-image');
       image.src = photoUrl;
       card.dataset.galleryIndex = String(i);
       YW.drag.attachGalleryDrag(card, String(i));
@@ -406,10 +414,10 @@
   }
 
   function buildImageItemCard(item) {
-    const fragment = elements.templates.ywCard.content.cloneNode(true);
-    const card = fragment.querySelector('.rail-card');
-    const image = fragment.querySelector('.yw-card-image');
-    const imageWrap = fragment.querySelector('.yw-card-image-wrap');
+    const fragment = cloneTemplate('ywCard');
+    const card = queryIn(fragment, '.rail-card');
+    const image = queryIn(fragment, '.yw-card-image');
+    const imageWrap = queryIn(fragment, '.yw-card-image-wrap');
 
     hydrateItemCard(card, item, 'image', { titleSelector: '.yw-title', dateSelector: '.yw-date', statusSelector: '.yw-status' });
 
@@ -440,8 +448,8 @@
   }
 
   function buildTextItemCard(item) {
-    const fragment = elements.templates.textItem.content.cloneNode(true);
-    const card = fragment.querySelector('.rail-card');
+    const fragment = cloneTemplate('textItem');
+    const card = queryIn(fragment, '.rail-card');
 
     hydrateItemCard(card, item, 'text', { titleSelector: '.text-item-title', dateSelector: '.text-item-date', statusSelector: '.text-item-status' });
     return card;
