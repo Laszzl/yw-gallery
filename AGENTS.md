@@ -10,7 +10,7 @@
 
 ## 技术栈
 - `index.html` + `app.js` + `styles.css`，直接浏览器打开。
-- IndexedDB 持久化，localStorage 回退，并在启动时自动迁移可用的 localStorage 数据。
+- IndexedDB/localStorage 持久化；双击 `index.html` 的 `file://` 场景优先使用 localStorage，本地服务器场景优先使用 IndexedDB。
 - 不引入框架、构建工具或需要编译步骤的依赖。
 - UI 使用中文文案、系统字体和 Apple 风格交互视觉。
 
@@ -111,7 +111,7 @@
 - 设置页支持体育生增删与主页/个人页图片更换；大品类/小品类增删、查看、折叠、拖拽排序；按体育生维度保存大小品类顺序。
 - 画廊按 person 开关启用；画廊图片支持添加、替换、删除全部和 Mac 端拖拽排序。
 - YW 支持新增、删除、状态切换、图片管理、同类型 Mac 端拖拽排序；图片支持上传、裁剪、多图添加、替换、删除全部。
-- 数据持久化优先使用 IndexedDB，localStorage 作为回退并自动迁移；支持 JSON 导入导出备份。
+- 数据持久化在本地服务器场景优先使用 IndexedDB，localStorage 作为回退并自动迁移；双击 `index.html` 的 `file://` 场景优先使用 localStorage，并将 IndexedDB 作为镜像/兼容路径；支持 JSON 导入导出备份。
 
 ## 设备检测
 
@@ -167,7 +167,8 @@
 ### 存储
 - IndexedDB: 数据库 `yw_gallery_v1`，store `app_data`，key `state`。
 - localStorage 回退: key `yw_data`，IndexedDB 失败时自动回退写入。
-- 自动迁移: 启动时优先加载有效 IndexedDB 数据；仅当 IndexedDB 无有效数据且 localStorage 有有效数据时迁移到 IndexedDB。两边都有不同的非空数据时优先保留 IndexedDB，并保留 localStorage 以便手动恢复。
+- 本地服务器存储: 启动时优先加载有效 IndexedDB 数据；仅当 IndexedDB 无有效数据且 localStorage 有有效数据时迁移到 IndexedDB。两边都有不同的非空数据时优先保留 IndexedDB，并保留 localStorage 以便手动恢复。
+- `file://` 双击存储: 启动时优先加载 localStorage 中非空有效数据；localStorage 为空且 IndexedDB 有有效数据时加载 IndexedDB 并镜像到 localStorage。保存时先写入 localStorage，再尝试同步 IndexedDB，IndexedDB 失败不得阻止本地数据保存。
 - 导出/导入: JSON 文件下载 + 上传验证。
 
 ### 导入导出兼容

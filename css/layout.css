@@ -1,7 +1,8 @@
 .page-shell {
-  width: min(1440px, calc(100% - 48px));
-  margin: 0 auto;
-  padding: 24px 0 88px;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px 24px 88px;
 }
 
 .topbar {
@@ -269,4 +270,3 @@
   color: var(--muted);
   font-size: var(--text-base);
 }
-
