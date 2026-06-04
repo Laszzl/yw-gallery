@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    Mac Desktop Only — hover (触摸设备不生效)
-   Apple-inspired: subtle highlight tint, no scale, no shadow on controls
+   Apple-inspired: luminance/scale, no translateY lift
    ═══════════════════════════════════════════════ */
 @media (hover: hover) and (pointer: fine) {
   .rail-card[draggable="true"],
@@ -47,14 +47,20 @@
     transition: filter 0.08s var(--ease-apple);
   }
 
-  /* ── Ghost Buttons: subtle background highlight, no shadow ── */
+  /* ── Ghost Buttons: surface brightens, border surfaces ── */
   .mini-button:hover,
   .mini-file-button:hover,
   .subtle-icon-btn:hover,
   .file-picker:not(.primary-button):hover,
   .switcher-chip:not(.active):hover {
-    background: var(--hover-control-bg);
-    border-color: var(--hover-control-border);
+    background: rgba(17, 17, 17, 0.05);
+    border-color: rgba(15, 23, 42, 0.14);
+    box-shadow: var(--hover-control-shadow);
+  }
+
+  /* Override: remove shadow from switcher-chip hover only */
+  .switcher-chip:not(.active):hover {
+    box-shadow: none;
   }
 
   .mini-button:active,
@@ -62,7 +68,7 @@
   .subtle-icon-btn:active,
   .file-picker:not(.primary-button):active,
   .switcher-chip:not(.active):active {
-    background: var(--hover-date-item-bg);
+    background: rgba(17, 17, 17, 0.06);
     transition: background 0.08s var(--ease-apple);
   }
 
@@ -71,11 +77,12 @@
   .danger-lite-button:hover {
     background: var(--hover-danger-bg);
     border-color: var(--hover-danger-border);
+    box-shadow: var(--hover-control-shadow);
   }
 
   .danger-button:active,
   .danger-lite-button:active {
-    filter: brightness(0.92);
+    filter: brightness(0.94);
     transition: filter 0.08s var(--ease-apple);
   }
 
@@ -96,8 +103,8 @@
 
   /* ── Checkbox / Toggle ── */
   .checkbox-panel:hover {
-    background: var(--hover-field-bg);
     border-color: var(--hover-field-border);
+    box-shadow: var(--hover-control-shadow);
   }
 
   .checkbox-label:hover .checkbox-ui {
@@ -110,36 +117,24 @@
   }
 
   .toggle-switch.active:hover {
-    box-shadow: 0 0 0 4px var(--hover-date-item-bg);
+    filter: brightness(1.03);
   }
 
 
-  /* ── Cards: subtle highlight lift ── */
+  /* ── Cards: subtle scale lift ── */
   .selector-card:hover {
-    background: var(--hover-field-bg);
+    transform: scale(1.006);
     border-color: var(--hover-control-border);
     box-shadow: var(--hover-panel-shadow);
   }
 
   .selector-card:hover .selector-image {
-    filter: brightness(1.05);
+    transform: scale(1.018);
   }
 
   .gallery-card:hover {
-    background: var(--hover-field-bg);
+    transform: scale(1.008);
     box-shadow: var(--hover-panel-shadow);
-  }
-
-  .yw-card:hover,
-  .text-item-row:hover {
-    border-color: var(--hover-control-border);
-    box-shadow: var(--hover-control-shadow);
-  }
-
-  .overview-group-card:hover,
-  .overview-category-row:hover {
-    border-color: var(--hover-control-border);
-    box-shadow: var(--hover-control-shadow);
   }
 
   /* ── Photo Thumbnails ── */
@@ -206,11 +201,11 @@
     --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.25);
     --shadow-control: 0 8px 20px rgba(0, 0, 0, 0.18);
     --shadow-topbar: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
-    --hover-control-bg: rgba(255, 255, 255, 0.14);
-    --hover-control-border: rgba(255, 255, 255, 0.16);
+    --hover-control-bg: rgba(255, 255, 255, 0.08);
+    --hover-control-border: rgba(255, 255, 255, 0.12);
     --hover-control-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
     --hover-primary-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
-    --hover-field-bg: rgba(255, 255, 255, 0.12);
+    --hover-field-bg: rgba(255, 255, 255, 0.08);
     --hover-field-border: rgba(255, 255, 255, 0.15);
     --hover-panel-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
     --hover-date-item-bg: rgba(255, 255, 255, 0.05);
