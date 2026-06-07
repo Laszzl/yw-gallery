@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YW Gallery Next Smoke Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      color: #1d1d1f;
+      background: #f5f5f7;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 20px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <h1>YW Gallery Next Smoke Test</h1>
+  <pre id="result">运行中...</pre>
+
+  <script>
+    window.YW = window.YW || {};
+  </script>
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/validators.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/view-models.js"></script>
+  <script src="smoke-runner.js"></script>
+</body>
+</html>

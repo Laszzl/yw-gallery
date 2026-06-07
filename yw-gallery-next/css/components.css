@@ -1,0 +1,83 @@
+.topbar__button,
+.topbar__chip {
+  min-height: 44px;
+  border-radius: 999px;
+  color: var(--color-text);
+  background: transparent;
+  padding: 0 var(--space-4);
+}
+
+.topbar__button {
+  color: #ffffff;
+  background: var(--color-accent);
+  font-weight: 700;
+}
+
+.topbar__chip[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--color-accent), transparent 86%);
+  color: var(--color-accent);
+}
+
+.empty-state,
+.panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-solid);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(24px, 5vw, 56px);
+}
+
+.empty-state {
+  min-height: 58vh;
+  display: grid;
+  align-content: center;
+  gap: var(--space-3);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 760px;
+  margin-bottom: 0;
+  font-size: clamp(2.2rem, 7vw, 5.2rem);
+  line-height: 1.04;
+}
+
+h2 {
+  margin-bottom: var(--space-3);
+  font-size: 1.45rem;
+}
+
+p {
+  max-width: 640px;
+  color: var(--color-muted);
+  line-height: 1.7;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .topbar__button,
+  .topbar__chip {
+    cursor: pointer;
+    transition: transform 160ms ease, background-color 160ms ease;
+  }
+
+  .topbar__button:hover,
+  .topbar__chip:hover {
+    transform: translateY(-1px);
+  }
+}

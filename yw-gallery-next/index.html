@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>YW Gallery Next</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="topbar__button" type="button" data-view-button="home">原味</button>
+      <nav class="topbar__nav" aria-label="主导航">
+        <button class="topbar__chip" type="button" data-view-button="detail">详情</button>
+        <button class="topbar__chip" type="button" data-view-button="add">添加</button>
+        <button class="topbar__chip" type="button" data-view-button="settings">设置</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <section id="view-home" class="view" data-view="home">
+        <div class="empty-state">
+          <p class="eyebrow">YW Gallery Next</p>
+          <h1>新的收藏空间已经就绪</h1>
+          <p>这是 M0 工程骨架。下一步会从 App shell 和基础 UI 开始逐步实现。</p>
+        </div>
+      </section>
+
+      <section id="view-detail" class="view" data-view="detail" hidden>
+        <div class="panel">
+          <h2>详情</h2>
+          <p data-summary>等待人物数据。</p>
+        </div>
+      </section>
+
+      <section id="view-add" class="view" data-view="add" hidden>
+        <div class="panel">
+          <h2>添加 YW</h2>
+          <p>表单将在后续 slice 实现。</p>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view" data-view="settings" hidden>
+        <div class="panel">
+          <h2>设置</h2>
+          <p>数据管理、导入导出和分类管理将在后续 slice 实现。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    window.YW = window.YW || {};
+  </script>
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/validators.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/view-models.js"></script>
+  <script src="js/dom.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/events.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

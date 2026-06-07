@@ -1,0 +1,35 @@
+.app-shell {
+  width: min(1120px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: max(20px, env(safe-area-inset-top)) var(--space-5) max(28px, env(safe-area-inset-bottom));
+}
+
+.topbar {
+  position: sticky;
+  top: max(12px, env(safe-area-inset-top));
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(22px) saturate(1.35);
+}
+
+.topbar__nav {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.main {
+  padding-top: var(--space-6);
+}
+
+.view[hidden] {
+  display: none;
+}
