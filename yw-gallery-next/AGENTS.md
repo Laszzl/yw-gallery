@@ -37,6 +37,10 @@
 - `js/events.js`：初始化和长期事件绑定。
 - `tests/`：无框架 smoke test、fixtures 和人工验收说明。
 - `agent-skills/`：项目专用 Codex/Claude skill 草案，安装或启用前必须人工审阅。
+- `.claude/skills/`：Claude Code 项目级 skills，只对本项目生效。
+- `briefs/`：Codex 写给 Claude Code 的单步 implementation brief。
+- `reviews/`：Codex 对 Claude Code 实现结果的审查记录。
+- `acceptance/`：人工验收矩阵和 milestone 验收记录。
 
 ## 数据原则
 
@@ -61,6 +65,16 @@
 - Claude Code 只实现当前 slice，不顺手做无关重构。
 - Codex review 优先检查：数据破坏、模块职责越界、移动端不可用、重复事件绑定、破坏性操作缺确认、测试缺口。
 - 每个 slice 完成后运行 smoke test，并按风险执行人工验收矩阵。
+- Claude Code 默认通过项目目录内的非交互命令执行：`claude -p --permission-mode acceptEdits --output-format text "$(cat briefs/<slice>.md)"`。
+- Codex review 后生成的修复 brief 只能要求修复 review 指出的具体问题，不得扩散为新功能或重构。
+
+## Skill 策略
+
+- Codex 官方 skills 优先使用 OpenAI 官方来源；当前安装 `define-goal`，并用 OpenAI 官方 `frontend-app-builder` 作为已移除 `frontend-skill` 的替代。
+- Claude Code 项目 skills 位于 `.claude/skills/`，包括规划、brief、UI 审查、数据兼容、执行约束、无构建前端、Apple UI、数据安全和 smoke harness。
+- `agent-skills/` 保留项目 skill 草案；同步到 `.claude/skills/` 前必须审阅 `SKILL.md`。
+- 第三方 skill 不直接安装。安装前必须审阅 `SKILL.md`、脚本、hooks、MCP、权限、维护情况和是否会修改全局配置。
+- `andrej-karpathy-skills` 暂不安装；仅将“暴露假设、小步修改、避免过度抽象、必须可验证”的原则内化到 `yw-implementation-runner`。
 
 ## Harness Engineering
 

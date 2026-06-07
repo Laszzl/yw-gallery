@@ -25,6 +25,20 @@
 - `tests/smoke.html` 可在浏览器打开并显示全部通过。
 - 项目不需要 npm install 或 build。
 
+### M0.1: Skill 和 Claude Code Orchestration
+
+- 安装 Codex 官方 `define-goal`，并用 OpenAI 官方 `frontend-app-builder` 作为当前可用的 frontend skill 替代。
+- 建立 `.claude/skills/`，让 Claude Code 使用项目级 YW skills。
+- 建立 `briefs/`、`reviews/`、`acceptance/` 协作记录目录。
+- 明确 Codex 通过 `claude -p --permission-mode acceptEdits --output-format text "$(cat briefs/<slice>.md)"` 调用 Claude Code。
+- 暂不安装第三方 skills；`andrej-karpathy-skills` 只内化核心工程原则。
+
+验收：
+- `.claude/skills/*/SKILL.md` 全部存在且含 `name` 与 `description`。
+- `AGENTS.md` 与 `CLAUDE.md` 完全一致。
+- smoke test 仍全部通过。
+- `claude --version` 可用。
+
 ### M1: App Shell 和基础 UI
 
 - 四个主视图：主页、详情、添加、设置。
